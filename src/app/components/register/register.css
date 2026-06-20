@@ -52,6 +52,7 @@
   width: auto;
   object-fit: contain;
   object-position: right bottom;
+  transform: translateX(250px);
   filter: drop-shadow(0 0 60px rgba(0, 150, 255, 0.15));
   -webkit-filter: drop-shadow(0 0 60px rgba(0, 150, 255, 0.15));
 }
@@ -288,6 +289,16 @@
   box-shadow:
     0 0 15px rgba(0, 150, 255, 0.1),
     inset 0 0 10px rgba(0, 150, 255, 0.05);
+}
+
+.field-error {
+  font-size: 10px;
+  color: #ff6a44;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  font-family: 'Cinzel', 'Trajan Pro', 'Georgia', serif;
+  padding: 0 4px;
+  margin-top: -10px;
 }
 
 .form-alert {

@@ -19,6 +19,35 @@ export class LoginComponent {
   public readonly showPassword = signal<boolean>(false);
   public readonly errorMessage = signal<string>('');
   public readonly successMessage = signal<string>('');
+  public readonly usernameError = signal<string>('');
+  public readonly passwordError = signal<string>('');
+
+  private validateUsername(value: string): boolean {
+    const trimmed = value.trim();
+    if (trimmed.length < 2) {
+      this.usernameError.set('EL USUARIO DEBE TENER AL MENOS 2 CARACTERES.');
+      return false;
+    }
+    if (trimmed.length > 15) {
+      this.usernameError.set('EL USUARIO NO PUEDE EXCEDER 15 CARACTERES.');
+      return false;
+    }
+    this.usernameError.set('');
+    return true;
+  }
+
+  private validatePassword(value: string): boolean {
+    if (value.length < 8) {
+      this.passwordError.set('LA CONTRASEÑA DEBE TENER AL MENOS 8 CARACTERES.');
+      return false;
+    }
+    if (value.length > 15) {
+      this.passwordError.set('LA CONTRASEÑA NO PUEDE EXCEDER 15 CARACTERES.');
+      return false;
+    }
+    this.passwordError.set('');
+    return true;
+  }
 
   public async handleSubmit(): Promise<void> {
     this.errorMessage.set('');
@@ -27,10 +56,9 @@ export class LoginComponent {
     const currentUsername = this.username().trim();
     const currentPassword = this.password();
 
-    if (!currentUsername || !currentPassword) {
-      this.errorMessage.set('ERROR: CAMPOS REQUERIDOS INCOMPLETOS.');
-      return;
-    }
+    const validUser = this.validateUsername(currentUsername);
+    const validPass = this.validatePassword(currentPassword);
+    if (!validUser || !validPass) return;
 
     try {
       const isValid = await this.authService.login({

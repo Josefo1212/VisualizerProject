@@ -21,6 +21,9 @@
         </span>
         <input type="text" id="register-username" [(ngModel)]="username" name="register-username" placeholder="Username" autocomplete="off" required />
       </div>
+      @if (usernameError()) {
+        <div class="field-error" role="alert">{{ usernameError() }}</div>
+      }
 
       <div class="input-group">
         <span class="ice-icon" aria-hidden="true">
@@ -31,6 +34,9 @@
         </span>
         <input type="email" id="register-email" [(ngModel)]="email" name="register-email" placeholder="Email" autocomplete="email" />
       </div>
+      @if (emailError()) {
+        <div class="field-error" role="alert">{{ emailError() }}</div>
+      }
 
       <div class="input-group">
         <span class="ice-icon" aria-hidden="true">
@@ -56,6 +62,9 @@
           }
         </button>
       </div>
+      @if (passwordError()) {
+        <div class="field-error" role="alert">{{ passwordError() }}</div>
+      }
 
       @if (errorMessage()) {
         <div class="form-alert error-alert" role="alert">{{ errorMessage() }}</div>

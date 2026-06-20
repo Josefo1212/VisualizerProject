@@ -21,6 +21,9 @@
         </span>
         <input type="text" id="login-username" [(ngModel)]="username" name="username" placeholder="Username" autocomplete="off" required />
       </div>
+      @if (usernameError()) {
+        <div class="field-error" role="alert">{{ usernameError() }}</div>
+      }
 
       <div class="input-group">
         <span class="lock-icon" aria-hidden="true">
@@ -46,6 +49,9 @@
           }
         </button>
       </div>
+      @if (passwordError()) {
+        <div class="field-error" role="alert">{{ passwordError() }}</div>
+      }
 
       @if (errorMessage()) {
         <div class="form-alert error-alert" role="alert">{{ errorMessage() }}</div>

@@ -20,6 +20,54 @@ export class RegisterComponent {
   public readonly showPassword = signal<boolean>(false);
   public readonly errorMessage = signal<string>('');
   public readonly successMessage = signal<string>('');
+  public readonly usernameError = signal<string>('');
+  public readonly emailError = signal<string>('');
+  public readonly passwordError = signal<string>('');
+
+  private validateUsername(value: string): boolean {
+    const trimmed = value.trim();
+    if (trimmed.length < 2) {
+      this.usernameError.set('EL USUARIO DEBE TENER AL MENOS 2 CARACTERES.');
+      return false;
+    }
+    if (trimmed.length > 15) {
+      this.usernameError.set('EL USUARIO NO PUEDE EXCEDER 15 CARACTERES.');
+      return false;
+    }
+    this.usernameError.set('');
+    return true;
+  }
+
+  private validateEmail(value: string): boolean {
+    const trimmed = value.trim();
+    if (trimmed.length < 10) {
+      this.emailError.set('EL CORREO DEBE TENER AL MENOS 10 CARACTERES.');
+      return false;
+    }
+    if (trimmed.length > 50) {
+      this.emailError.set('EL CORREO NO PUEDE EXCEDER 50 CARACTERES.');
+      return false;
+    }
+    if (!trimmed.endsWith('@gmail.com')) {
+      this.emailError.set('EL CORREO DEBE SER @gmail.com.');
+      return false;
+    }
+    this.emailError.set('');
+    return true;
+  }
+
+  private validatePassword(value: string): boolean {
+    if (value.length < 8) {
+      this.passwordError.set('LA CONTRASEÑA DEBE TENER AL MENOS 8 CARACTERES.');
+      return false;
+    }
+    if (value.length > 15) {
+      this.passwordError.set('LA CONTRASEÑA NO PUEDE EXCEDER 15 CARACTERES.');
+      return false;
+    }
+    this.passwordError.set('');
+    return true;
+  }
 
   public async handleSubmit(): Promise<void> {
     this.errorMessage.set('');
@@ -29,10 +77,10 @@ export class RegisterComponent {
     const currentEmail = this.email().trim();
     const currentPassword = this.password();
 
-    if (!currentUsername || !currentPassword || !currentEmail) {
-      this.errorMessage.set('ERROR: CAMPOS REQUERIDOS INCOMPLETOS.');
-      return;
-    }
+    const validUser = this.validateUsername(currentUsername);
+    const validEmail = this.validateEmail(currentEmail);
+    const validPass = this.validatePassword(currentPassword);
+    if (!validUser || !validEmail || !validPass) return;
 
     try {
       const isValid = await this.authService.register({
