@@ -1,0 +1,38 @@
+<div class="transition-container">
+
+  @if (transitioning()) {
+    <div class="particles-overlay" [class.ember]="currentView() === 'login'" [class.frost]="currentView() === 'register'">
+      @for (particle of particles(); track particle.id) {
+        <div class="particle"
+          [class.sweep-right]="direction() === 'right'"
+          [class.sweep-left]="direction() === 'left'"
+          [style]="{
+            left: particle.x,
+            top: particle.y,
+            width: particle.size,
+            height: particle.size,
+            animationDelay: particle.delay,
+            animationDuration: particle.duration
+          }">
+        </div>
+      }
+    </div>
+  }
+
+  <div class="views-stack">
+    <div class="view"
+      [class.front]="currentView() === 'login'"
+      [class.dissolve-right]="transitioning() && currentView() === 'login' && direction() === 'right'"
+      [class.dissolve-left]="transitioning() && currentView() === 'login' && direction() === 'left'">
+      <app-login (switchToRegister)="switchToRegister()" />
+    </div>
+
+    <div class="view"
+      [class.front]="currentView() === 'register'"
+      [class.dissolve-right]="transitioning() && currentView() === 'register' && direction() === 'right'"
+      [class.dissolve-left]="transitioning() && currentView() === 'register' && direction() === 'left'">
+      <app-register (switchToLogin)="switchToLogin()" />
+    </div>
+  </div>
+
+</div>

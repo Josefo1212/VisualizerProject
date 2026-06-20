@@ -1,0 +1,75 @@
+<img class="bg-image" src="/fondoNordico.png" alt="" aria-hidden="true" />
+<div class="vignette-overlay"></div>
+
+<div class="kratos-wrapper right">
+  <img class="kratos-character" src="/kratosNordico.png" alt="Kratos" />
+</div>
+
+<div class="form-wrapper left">
+  <div class="frost-border-glow"></div>
+  <div class="frost-panel">
+    <div class="rune-symbol" aria-hidden="true">ᚱ</div>
+    <h2 class="frost-welcome">Forge your destiny,</h2>
+
+    <form (ngSubmit)="handleSubmit()" class="auth-form" novalidate>
+      <div class="input-group">
+        <span class="ice-icon" aria-hidden="true">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+            <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+          </svg>
+        </span>
+        <input type="text" id="register-username" [(ngModel)]="username" name="register-username" placeholder="Username" autocomplete="off" required />
+      </div>
+
+      <div class="input-group">
+        <span class="ice-icon" aria-hidden="true">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+            <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+          </svg>
+        </span>
+        <input type="email" id="register-email" [(ngModel)]="email" name="register-email" placeholder="Email" autocomplete="email" />
+      </div>
+
+      <div class="input-group">
+        <span class="ice-icon" aria-hidden="true">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+            <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+          </svg>
+        </span>
+        <input [type]="showPassword() ? 'text' : 'password'" id="register-password" [(ngModel)]="password" name="register-password" placeholder="Password" required />
+        <button type="button" class="toggle-pw" (click)="showPassword.set(!showPassword())" [attr.aria-label]="showPassword() ? 'Ocultar contraseña' : 'Mostrar contraseña'">
+          @if (showPassword()) {
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/>
+              <path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/>
+              <line x1="1" y1="1" x2="23" y2="23"/>
+              <path d="M14.12 14.12a3 3 0 1 1-4.24-4.24"/>
+            </svg>
+          } @else {
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+              <circle cx="12" cy="12" r="3"/>
+            </svg>
+          }
+        </button>
+      </div>
+
+      @if (errorMessage()) {
+        <div class="form-alert error-alert" role="alert">{{ errorMessage() }}</div>
+      }
+
+      @if (successMessage()) {
+        <div class="form-alert success-alert" role="alert">{{ successMessage() }}</div>
+      }
+
+      <button type="submit" class="btn-register">CREATE ACCOUNT</button>
+    </form>
+
+    <p class="toggle-text">
+      <a class="back-link" (click)="switchToLogin.emit()">Back to Log In</a>
+    </p>
+  </div>
+</div>

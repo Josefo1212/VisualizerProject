@@ -1,0 +1,366 @@
+:host {
+  display: block;
+  width: 100%;
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+  font-family: 'Cinzel', 'Trajan Pro', 'Georgia', serif;
+}
+
+.bg-image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 0;
+}
+
+.vignette-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(
+    ellipse at 50% 50%,
+    transparent 30%,
+    rgba(0, 0, 0, 0.4) 60%,
+    rgba(0, 0, 0, 0.85) 100%
+  );
+  z-index: 1;
+  pointer-events: none;
+}
+
+.kratos-wrapper {
+  position: absolute;
+  bottom: 0;
+  height: 100%;
+  z-index: 2;
+  display: flex;
+  align-items: flex-end;
+  pointer-events: none;
+}
+
+.kratos-wrapper.right {
+  right: 0;
+}
+
+.kratos-character {
+  height: 100%;
+  width: auto;
+  object-fit: contain;
+  object-position: right bottom;
+  filter: drop-shadow(0 0 60px rgba(0, 150, 255, 0.15));
+  -webkit-filter: drop-shadow(0 0 60px rgba(0, 150, 255, 0.15));
+}
+
+.form-wrapper.left {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding-left: 120px;
+}
+
+.frost-border-glow {
+  position: absolute;
+  width: 440px;
+  height: 620px;
+  border-radius: 16px;
+  background: linear-gradient(
+    135deg,
+    rgba(0, 200, 255, 0.4) 0%,
+    rgba(0, 150, 200, 0.08) 15%,
+    rgba(50, 100, 150, 0.03) 30%,
+    transparent 40%,
+    transparent 60%,
+    rgba(50, 100, 150, 0.03) 70%,
+    rgba(0, 150, 200, 0.08) 85%,
+    rgba(0, 200, 255, 0.4) 100%
+  );
+  filter: blur(10px);
+  animation: frostPulse 4s ease-in-out infinite alternate;
+  z-index: 1;
+  pointer-events: none;
+}
+
+@keyframes frostPulse {
+  0% { opacity: 0.5; transform: scale(1); }
+  50% { opacity: 0.9; transform: scale(1.02); }
+  100% { opacity: 0.5; transform: scale(1); }
+}
+
+.frost-panel {
+  position: relative;
+  width: 420px;
+  padding: 50px 40px 40px;
+  background:
+    repeating-linear-gradient(
+      0deg, transparent, transparent 2px,
+      rgba(0, 50, 80, 0.08) 2px, rgba(0, 50, 80, 0.08) 4px
+    ),
+    repeating-linear-gradient(
+      90deg, transparent, transparent 3px,
+      rgba(255, 255, 255, 0.02) 3px, rgba(255, 255, 255, 0.02) 6px
+    ),
+    radial-gradient(ellipse at 50% 40%, #1a2a40, #0d1520 60%, #080d1a);
+  border: 2px solid rgba(0, 180, 255, 0.3);
+  border-radius: 14px;
+  box-shadow:
+    0 0 30px rgba(0, 150, 255, 0.12),
+    0 0 60px rgba(0, 120, 255, 0.06),
+    inset 0 0 80px rgba(0, 0, 0, 0.5),
+    inset 0 0 20px rgba(0, 150, 255, 0.05),
+    0 20px 60px rgba(0, 0, 0, 0.8);
+  z-index: 2;
+}
+
+.frost-panel::before {
+  content: '';
+  position: absolute;
+  inset: -3px;
+  border-radius: 16px;
+  background: linear-gradient(
+    135deg,
+    rgba(0, 200, 255, 0.35) 0%, transparent 12%,
+    transparent 40%, rgba(0, 180, 255, 0.1) 45%,
+    transparent 50%, transparent 55%,
+    rgba(0, 180, 255, 0.1) 60%, transparent 88%,
+    rgba(0, 200, 255, 0.35) 100%
+  );
+  z-index: -1;
+  filter: blur(2px);
+  pointer-events: none;
+}
+
+.frost-panel::after {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  border-radius: 16px;
+  background: linear-gradient(
+    45deg,
+    rgba(0, 180, 255, 0.15) 0%, transparent 8%,
+    transparent 45%, rgba(0, 150, 220, 0.1) 50%,
+    transparent 55%, transparent 92%,
+    rgba(0, 180, 255, 0.15) 100%
+  );
+  z-index: -2;
+  filter: blur(8px);
+  animation: frostCrackle 3s ease-in-out infinite alternate;
+  pointer-events: none;
+}
+
+@keyframes frostCrackle {
+  0% { opacity: 0.4; filter: blur(8px); }
+  100% { opacity: 0.9; filter: blur(14px); }
+}
+
+.rune-symbol {
+  text-align: center;
+  font-size: 68px;
+  font-weight: 900;
+  color: #4fc3f7;
+  text-shadow:
+    0 0 10px rgba(0, 200, 255, 0.8),
+    0 0 30px rgba(0, 150, 255, 0.5),
+    0 0 60px rgba(0, 100, 200, 0.3),
+    0 2px 0 #003355;
+  margin-bottom: 8px;
+  line-height: 1;
+  letter-spacing: 4px;
+  animation: runeGlow 3s ease-in-out infinite alternate;
+}
+
+@keyframes runeGlow {
+  0% {
+    text-shadow:
+      0 0 10px rgba(0, 200, 255, 0.6),
+      0 0 30px rgba(0, 150, 255, 0.4),
+      0 0 60px rgba(0, 100, 200, 0.2),
+      0 2px 0 #003355;
+  }
+  100% {
+    text-shadow:
+      0 0 15px rgba(0, 200, 255, 1),
+      0 0 40px rgba(0, 150, 255, 0.7),
+      0 0 80px rgba(0, 100, 200, 0.4),
+      0 2px 0 #003355;
+  }
+}
+
+.frost-welcome {
+  text-align: center;
+  color: #8ab4c8;
+  font-size: 16px;
+  font-weight: 400;
+  letter-spacing: 3px;
+  margin: 0 0 30px;
+  text-transform: uppercase;
+  font-family: 'Cinzel', 'Trajan Pro', 'Georgia', serif;
+}
+
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.input-group {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.ice-icon {
+  position: absolute;
+  left: 14px;
+  color: #5a7a8a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+  opacity: 0.7;
+  transition: opacity 0.3s ease;
+}
+
+.input-group:focus-within .ice-icon {
+  opacity: 1;
+  color: #4fc3f7;
+}
+
+.toggle-pw {
+  position: absolute;
+  right: 10px;
+  background: none;
+  border: none;
+  color: #5a7a8a;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+  opacity: 0.7;
+  transition: opacity 0.3s ease, color 0.3s ease;
+  z-index: 1;
+}
+
+.toggle-pw:hover {
+  opacity: 1;
+  color: #4fc3f7;
+}
+
+.input-group:focus-within .toggle-pw {
+  opacity: 1;
+  color: #4fc3f7;
+}
+
+.input-group input {
+  width: 100%;
+  padding: 14px 14px 14px 42px;
+  background: rgba(8, 13, 26, 0.7);
+  border: 1px solid rgba(80, 150, 200, 0.2);
+  border-radius: 6px;
+  color: #c8dce8;
+  font-size: 14px;
+  font-family: 'Cinzel', 'Trajan Pro', 'Georgia', serif;
+  letter-spacing: 1px;
+  transition: all 0.3s ease;
+  outline: none;
+}
+
+.input-group input::placeholder {
+  color: rgba(100, 160, 200, 0.35);
+  text-transform: uppercase;
+  font-size: 11px;
+  letter-spacing: 2px;
+}
+
+.input-group input:focus {
+  background: rgba(10, 18, 35, 0.85);
+  border-color: rgba(0, 180, 255, 0.5);
+  box-shadow:
+    0 0 15px rgba(0, 150, 255, 0.1),
+    inset 0 0 10px rgba(0, 150, 255, 0.05);
+}
+
+.form-alert {
+  padding: 10px 14px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  text-align: center;
+  letter-spacing: 1px;
+  font-family: 'Cinzel', 'Trajan Pro', 'Georgia', serif;
+  text-transform: uppercase;
+}
+
+.error-alert {
+  background: rgba(200, 30, 0, 0.15);
+  border: 1px solid rgba(200, 30, 0, 0.3);
+  color: #ff6a44;
+}
+
+.success-alert {
+  background: rgba(0, 180, 100, 0.12);
+  border: 1px solid rgba(0, 180, 100, 0.25);
+  color: #4ae0a0;
+}
+
+.btn-register {
+  width: 100%;
+  padding: 16px;
+  background: #e8f4ff;
+  color: #0d1520;
+  border: none;
+  border-radius: 6px;
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 4px;
+  cursor: pointer;
+  font-family: 'Cinzel', 'Trajan Pro', 'Georgia', serif;
+  text-transform: uppercase;
+  transition: all 0.3s ease;
+  margin-top: 4px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+}
+
+.btn-register:hover {
+  background: #ffffff;
+  transform: translateY(-2px);
+  box-shadow:
+    0 6px 30px rgba(0, 0, 0, 0.5),
+    0 0 20px rgba(0, 180, 255, 0.15);
+}
+
+.btn-register:active {
+  transform: translateY(0);
+}
+
+.toggle-text {
+  text-align: center;
+  color: #5a7a8a;
+  font-size: 13px;
+  letter-spacing: 1px;
+  margin: 24px 0 0;
+  font-family: 'Cinzel', 'Trajan Pro', 'Georgia', serif;
+}
+
+.back-link {
+  color: #7ab4d0;
+  cursor: pointer;
+  text-decoration: none;
+  transition: color 0.3s ease;
+  font-weight: 600;
+}
+
+.back-link:hover {
+  color: #4fc3f7;
+  text-shadow: 0 0 10px rgba(0, 150, 255, 0.3);
+}

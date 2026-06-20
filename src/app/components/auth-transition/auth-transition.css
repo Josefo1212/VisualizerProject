@@ -1,0 +1,179 @@
+:host {
+  display: block;
+  width: 100vw;
+  height: 100vh;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+.transition-container {
+  width: 100vw;
+  height: 100vh;
+  position: relative;
+  overflow: hidden;
+}
+
+/* ============ STACKED VIEWS ============ */
+.views-stack {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.view {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+}
+
+.view.front {
+  z-index: 3;
+}
+
+/* ============ DISSOLVE ANIMATIONS ============ */
+
+/* Right-to-left: login → register (closes from right edge) */
+.dissolve-right {
+  animation: dissolveRightToLeft 0.75s ease-out forwards;
+  pointer-events: none;
+}
+
+@keyframes dissolveRightToLeft {
+  0% {
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+    opacity: 1;
+  }
+  15% {
+    clip-path: polygon(0 0, 83% 2%, 85% 98%, 0 100%);
+    opacity: 0.95;
+  }
+  30% {
+    clip-path: polygon(0 0, 62% 1%, 60% 99%, 0 100%);
+    opacity: 0.85;
+  }
+  50% {
+    clip-path: polygon(0 0, 38% 3%, 35% 97%, 0 100%);
+    opacity: 0.65;
+  }
+  70% {
+    clip-path: polygon(0 0, 17% 1%, 15% 99%, 0 100%);
+    opacity: 0.35;
+  }
+  100% {
+    clip-path: polygon(0 0, 0 0, 0 100%, 0 100%);
+    opacity: 0;
+  }
+}
+
+/* Left-to-right: register → login (closes from left edge) */
+.dissolve-left {
+  animation: dissolveLeftToRight 0.75s ease-out forwards;
+  pointer-events: none;
+}
+
+@keyframes dissolveLeftToRight {
+  0% {
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+    opacity: 1;
+  }
+  15% {
+    clip-path: polygon(17% 2%, 100% 0, 100% 100%, 15% 98%);
+    opacity: 0.95;
+  }
+  30% {
+    clip-path: polygon(38% 1%, 100% 0, 100% 100%, 40% 99%);
+    opacity: 0.85;
+  }
+  50% {
+    clip-path: polygon(62% 3%, 100% 0, 100% 100%, 65% 97%);
+    opacity: 0.65;
+  }
+  70% {
+    clip-path: polygon(83% 1%, 100% 0, 100% 100%, 85% 99%);
+    opacity: 0.35;
+  }
+  100% {
+    clip-path: polygon(100% 0, 100% 0, 100% 100%, 100% 100%);
+    opacity: 0;
+  }
+}
+
+/* ============ PARTICLES ============ */
+.particles-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 10;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.particle {
+  position: absolute;
+  border-radius: 50%;
+  opacity: 0;
+}
+
+.particle.sweep-right {
+  animation: particleFlyRight 0.75s ease-out forwards;
+}
+
+.particle.sweep-left {
+  animation: particleFlyLeft 0.75s ease-out forwards;
+}
+
+/* Ember particles (Greek theme - login dissolving) */
+.particles-overlay.ember .particle {
+  background: radial-gradient(circle, #ff8a3a, #ff4400);
+  box-shadow: 0 0 6px rgba(255, 68, 0, 0.6);
+}
+
+/* Frost particles (Nordic theme - register dissolving) */
+.particles-overlay.frost .particle {
+  background: radial-gradient(circle, #4fc3f7, #0088cc);
+  box-shadow: 0 0 6px rgba(0, 136, 204, 0.6);
+}
+
+@keyframes particleFlyRight {
+  0% {
+    opacity: 0.9;
+    transform: translateX(0) translateY(0) scale(1);
+  }
+  30% {
+    opacity: 0.8;
+    transform: translateX(60px) translateY(-30px) scale(1.3);
+  }
+  60% {
+    opacity: 0.4;
+    transform: translateX(140px) translateY(20px) scale(0.7);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(250px) translateY(-10px) scale(0);
+  }
+}
+
+@keyframes particleFlyLeft {
+  0% {
+    opacity: 0.9;
+    transform: translateX(0) translateY(0) scale(1);
+  }
+  30% {
+    opacity: 0.8;
+    transform: translateX(-60px) translateY(-30px) scale(1.3);
+  }
+  60% {
+    opacity: 0.4;
+    transform: translateX(-140px) translateY(20px) scale(0.7);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(-250px) translateY(-10px) scale(0);
+  }
+}

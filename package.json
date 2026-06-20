@@ -10,7 +10,6 @@
     "serve:ssr:TimeVisualizerProject": "node dist/TimeVisualizerProject/server/server.mjs"
   },
   "private": true,
-  "packageManager": "npm@11.12.1",
   "dependencies": {
     "@angular/common": "^22.0.0",
     "@angular/compiler": "^22.0.0",
