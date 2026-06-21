@@ -59,7 +59,7 @@ export class AuthService {
       this._isLoggedIn.set(true);
       this._currentUser.set(user.username);
       await this.db.setSession(user.username);
-      this.router.navigate(['/wait']);
+      this.router.navigate(['/dashboard']);
       return true;
     } catch {
       return false;

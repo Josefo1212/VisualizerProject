@@ -1,6 +1,6 @@
 import { Component, signal } from '@angular/core';
-import { LoginComponent } from '../login/login';
-import { RegisterComponent } from '../register/register';
+import { LoginComponent } from '../login/Login';
+import { RegisterComponent } from '../register/Register';
 
 interface Particle {
   id: number;
@@ -15,8 +15,8 @@ interface Particle {
   selector: 'app-auth-transition',
   standalone: true,
   imports: [LoginComponent, RegisterComponent],
-  templateUrl: './auth-transition.html',
-  styleUrl: './auth-transition.css',
+  templateUrl: './AuthTransition.html',
+  styleUrl: './AuthTransition.css',
 })
 export class AuthTransition {
   public readonly currentView = signal<'login' | 'register'>('login');

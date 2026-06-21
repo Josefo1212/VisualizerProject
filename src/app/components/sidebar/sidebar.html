@@ -1,4 +1,4 @@
-<nav class="sidebar" [class.collapsed]="collapsed()">
+<nav class="sidebar" [class.collapsed]="collapsed()" [class.disabled]="inactive">
   <div class="sidebar-header">
     <button class="toggle-btn" (click)="toggle()" [attr.aria-label]="collapsed() ? 'Expandir barra' : 'Plegar barra'">
       @if (collapsed()) {
@@ -12,7 +12,7 @@
       }
     </button>
     @if (!collapsed()) {
-      <span class="sidebar-title">DISEÑOS</span>
+      <span class="sidebar-title">GAME CENTER</span>
     }
   </div>
 
@@ -21,16 +21,16 @@
   <div class="design-list">
     @if (!collapsed()) {
       <div class="design-item">
-        <span class="design-icon">🗡</span>
-        <span class="design-name">Diseño 1</span>
+        <span class="design-icon">🎮</span>
+        <span class="design-name">Estación Plasma</span>
       </div>
       <div class="design-item">
-        <span class="design-icon">🛡</span>
-        <span class="design-name">Diseño 2</span>
+        <span class="design-icon">🕹</span>
+        <span class="design-name">Estación Neón</span>
       </div>
       <div class="design-item">
-        <span class="design-icon">⚔</span>
-        <span class="design-name">Diseño 3</span>
+        <span class="design-icon">⚡</span>
+        <span class="design-name">Estación Vortex</span>
       </div>
     }
   </div>

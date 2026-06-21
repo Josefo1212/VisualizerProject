@@ -4,8 +4,8 @@ import { Router } from '@angular/router';
 @Component({
   selector: 'app-wait',
   standalone: true,
-  templateUrl: './wait.html',
-  styleUrl: './wait.css',
+  templateUrl: './Wait.html',
+  styleUrl: './Wait.css',
 })
 export class WaitComponent implements OnInit {
   private readonly router = inject(Router);

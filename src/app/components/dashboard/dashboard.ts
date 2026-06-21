@@ -1,11 +1,20 @@
-import { Component } from '@angular/core';
-import { SidebarComponent } from '../sidebar/sidebar';
+import { Component, signal } from '@angular/core';
+import { SidebarComponent } from '../sidebar/Sidebar';
+import { PowerScreenComponent } from '../power-screen/PowerScreen';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [SidebarComponent],
-  templateUrl: './dashboard.html',
-  styleUrl: './dashboard.css',
+  imports: [SidebarComponent, PowerScreenComponent],
+  templateUrl: './Dashboard.html',
+  styleUrl: './Dashboard.css',
 })
-export class DashboardComponent {}
+export class DashboardComponent {
+  readonly isSystemOnline = signal<boolean>(false);
+
+  onVideoTimeUpdate(video: HTMLVideoElement): void {
+    if (video.duration && video.currentTime >= video.duration - 0.08) {
+      video.currentTime = 0;
+    }
+  }
+}

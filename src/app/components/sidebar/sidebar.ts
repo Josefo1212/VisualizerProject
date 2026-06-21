@@ -1,15 +1,17 @@
-import { Component, signal } from '@angular/core';
+import { Component, Input, signal } from '@angular/core';
 
 @Component({
   selector: 'app-sidebar',
   standalone: true,
-  templateUrl: './sidebar.html',
-  styleUrl: './sidebar.css',
+  templateUrl: './Sidebar.html',
+  styleUrl: './Sidebar.css',
 })
 export class SidebarComponent {
-  public readonly collapsed = signal<boolean>(false);
+  @Input() inactive = false;
+  readonly collapsed = signal<boolean>(false);
 
-  public toggle(): void {
+  toggle(): void {
+    if (this.inactive) return;
     this.collapsed.update(v => !v);
   }
 }

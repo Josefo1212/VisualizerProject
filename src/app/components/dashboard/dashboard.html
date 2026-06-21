@@ -1,9 +1,30 @@
-<app-sidebar />
+<div class="dashboard" [class.online]="isSystemOnline()">
 
-<div class="dashboard-bg">
-  <div class="vignette"></div>
-  <div class="message-card">
-    <div class="omega-small">Ω</div>
-    <h1 class="greeting">Bienvenido profe, a esto aún le falta, no se preocupe</h1>
-  </div>
+  <video #bgVideo class="bg-video" [class.visible]="isSystemOnline()" autoplay muted playsinline preload="auto"
+    (timeupdate)="onVideoTimeUpdate(bgVideo)">
+    <source src="/fondo.mp4" type="video/mp4" />
+  </video>
+  <div class="video-overlay" [class.visible]="isSystemOnline()"></div>
+
+  <app-sidebar [inactive]="!isSystemOnline()" />
+
+  <main class="main-content">
+    @if (!isSystemOnline()) {
+      <app-power-screen (powerOnFinished)="isSystemOnline.set(true)" />
+    } @else {
+      <div class="station">
+        <div class="welcome-card">
+          <div class="rgb-border"></div>
+          <div class="card-content">
+            <div class="status-indicator">
+              <span class="status-dot"></span>
+              <span class="status-label">SYSTEM ONLINE</span>
+            </div>
+            <h1 class="welcome-title">GAME CENTER</h1>
+            <p class="welcome-sub">Bienvenido profe, a esto aún le falta, no se preocupe</p>
+          </div>
+        </div>
+      </div>
+    }
+  </main>
 </div>
