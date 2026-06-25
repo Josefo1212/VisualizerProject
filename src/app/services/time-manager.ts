@@ -1,27 +1,21 @@
 import { Injectable, signal } from '@angular/core';
 
+const getCurrentHour = (): number => {
+  const now = new Date();
+  return now.getHours() + now.getMinutes() / 60 + now.getSeconds() / 3600;
+};
+
 @Injectable({
   providedIn: 'root',
 })
 export class TimeManagerService {
-  readonly horaActual = signal<number>(6);
-  private intervalId: ReturnType<typeof setInterval> | null = null;
+  readonly horaActual = signal<number>(getCurrentHour());
+  private intervalId: ReturnType<typeof setInterval>;
 
-  startRealTime(): void {
-    this.stop();
+  constructor() {
     this.intervalId = setInterval(() => {
-      this.horaActual.update(h => {
-        const next = h + 1 / 60;
-        return next >= 24 ? next - 24 : next;
-      });
-    }, 100);
-  }
-
-  stop(): void {
-    if (this.intervalId !== null) {
-      clearInterval(this.intervalId);
-      this.intervalId = null;
-    }
+      this.horaActual.set(getCurrentHour());
+    }, 1000);
   }
 
   setHora(h: number): void {

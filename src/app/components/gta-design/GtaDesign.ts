@@ -5,19 +5,15 @@ interface Rgb { r: number; g: number; b: number; }
 interface SkyPt { h: number; top: Rgb; mid: Rgb; bot: Rgb; }
 interface FilterPt { h: number; bright: number; sepia: number; sat: number; cont: number; }
 
-function lerp(a: number, b: number, t: number): number {
-  return a + (b - a) * t;
-}
+const lerp = (a: number, b: number, t: number): number => a + (b - a) * t;
 
-function lerpRgb(a: Rgb, b: Rgb, t: number): Rgb {
-  return {
-    r: lerp(a.r, b.r, t),
-    g: lerp(a.g, b.g, t),
-    b: lerp(a.b, b.b, t),
-  };
-}
+const lerpRgb = (a: Rgb, b: Rgb, t: number): Rgb => ({
+  r: lerp(a.r, b.r, t),
+  g: lerp(a.g, b.g, t),
+  b: lerp(a.b, b.b, t),
+});
 
-function findSegment<T extends { h: number }>(pts: T[], h: number): [T, T, number] {
+const findSegment = <T extends { h: number }>(pts: T[], h: number): [T, T, number] => {
   if (h <= pts[0].h) return [pts[0], pts[1], 0];
   if (h >= pts[pts.length - 1].h) return [pts[pts.length - 2], pts[pts.length - 1], 1];
   for (let i = 0; i < pts.length - 1; i++) {
@@ -27,7 +23,7 @@ function findSegment<T extends { h: number }>(pts: T[], h: number): [T, T, numbe
     }
   }
   return [pts[0], pts[1], 0];
-}
+};
 
 const SKY_PTS: SkyPt[] = [
   { h: 0,  top: { r: 7, g: 7, b: 20 },   mid: { r: 13, g: 13, b: 43 },  bot: { r: 10, g: 10, b: 26 } },
@@ -118,13 +114,23 @@ export class GtaDesignComponent {
     return 1 + 0.5 * ((y - 50) / 40);
   });
 
+  readonly luzOpacity: Signal<number> = computed((): number => {
+    const h = this.horaActual();
+    if (h < 17) return 0;
+    if (h < 18) return (h - 17) * 0.4;
+    if (h < 20) return 0.4 + (h - 18) * 0.225;
+    return 0.85;
+  });
+
   readonly esDeDia: Signal<boolean> = computed((): boolean => {
     const h = this.horaActual();
     return h >= 6 && h < 18;
   });
 
   readonly horaDisplay: Signal<string> = computed((): string => {
-    const h = Math.floor(this.horaActual());
-    return h.toString().padStart(2, '0');
+    const total = this.horaActual();
+    const h = Math.floor(total);
+    const m = Math.floor((total - h) * 60);
+    return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}`;
   });
 }

@@ -1,7 +1,6 @@
 import { Component, inject, signal } from '@angular/core';
 import { SidebarComponent } from '../sidebar/Sidebar';
 import { PowerScreenComponent } from '../power-screen/PowerScreen';
-import { TimeManagerService } from '../../services/time-manager';
 import { GtaDesignComponent } from '../gta-design/GtaDesign';
 
 @Component({
@@ -12,7 +11,6 @@ import { GtaDesignComponent } from '../gta-design/GtaDesign';
   styleUrl: './Dashboard.css',
 })
 export class DashboardComponent {
-  private readonly timeManager = inject(TimeManagerService);
   readonly isSystemOnline = signal<boolean>(false);
   readonly selectedDesign = signal<string>('');
 
@@ -22,11 +20,6 @@ export class DashboardComponent {
 
   onDesignChange(id: string): void {
     this.selectedDesign.set(id);
-    if (id === 'gta') {
-      this.timeManager.startRealTime();
-    } else {
-      this.timeManager.stop();
-    }
   }
 
   onVideoTimeUpdate(video: HTMLVideoElement): void {
