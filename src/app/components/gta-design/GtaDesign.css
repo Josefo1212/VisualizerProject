@@ -1,0 +1,149 @@
+:host {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.gta-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+/* ============ SKY ============ */
+
+.sky {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  transition: background 1.5s ease;
+}
+
+.sky-morning {
+  background: linear-gradient(180deg, #ff9a9e 0%, #fad0c4 30%, #a1c4fd 75%, #6b8fc4 100%);
+}
+
+.sky-midday {
+  background: linear-gradient(180deg, #1e90ff 0%, #4facfe 40%, #00f2fe 100%);
+}
+
+.sky-sunset {
+  background: linear-gradient(180deg, #ff4b1f 0%, #ff9068 25%, #f09819 55%, #ffd3a5 85%, #c77d5e 100%);
+}
+
+.sky-night {
+  background: linear-gradient(180deg, #070714 0%, #0d0d2b 30%, #141450 60%, #0a0a1a 100%);
+}
+
+/* ============ ASTROS ============ */
+
+.astro {
+  position: absolute;
+  z-index: 1;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+.sun {
+  background: radial-gradient(circle at 35% 35%, #fff7b0, #fdb813 30%, #f90 60%, #e65c00);
+  box-shadow:
+    0 0 40px rgba(253, 184, 19, 0.4),
+    0 0 80px rgba(255, 153, 0, 0.25),
+    0 0 120px rgba(230, 92, 0, 0.15);
+}
+
+.moon {
+  width: 48px;
+  height: 48px;
+  background: radial-gradient(circle at 40% 40%, #f0f4ff, #c0d0e0 40%, #8a9bb5 80%);
+  box-shadow:
+    0 0 30px rgba(192, 208, 224, 0.25),
+    0 0 60px rgba(138, 155, 181, 0.12),
+    0 0 100px rgba(100, 130, 160, 0.08);
+}
+
+/* ============ CITY ============ */
+
+.city {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+  z-index: 2;
+  pointer-events: none;
+  transition: filter 1.5s ease;
+}
+
+/* ============ CONTENT OVERLAY ============ */
+
+.content-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.time-card {
+  pointer-events: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 32px 48px;
+  border-radius: 12px;
+  background: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  box-shadow: 0 0 40px rgba(0, 0, 0, 0.4);
+  animation: cardFade 0.8s ease-out;
+}
+
+@keyframes cardFade {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.time-icon {
+  line-height: 0;
+  margin-bottom: 4px;
+}
+
+.time-display {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.time-digits {
+  font-family: 'Cinzel', 'Trajan Pro', 'Georgia', serif;
+  font-size: 42px;
+  font-weight: 700;
+  letter-spacing: 4px;
+  color: #f0f0f0;
+  text-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+}
+
+.time-period {
+  font-family: 'Courier New', monospace;
+  font-size: 16px;
+  letter-spacing: 2px;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.time-franja {
+  font-family: 'Courier New', monospace;
+  font-size: 11px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.25);
+  margin-top: 4px;
+}
