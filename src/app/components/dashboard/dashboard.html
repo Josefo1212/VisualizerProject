@@ -1,6 +1,6 @@
 <div class="dashboard" [class.online]="isSystemOnline()">
 
-  <video #bgVideo class="bg-video" [class.visible]="isSystemOnline()" autoplay muted playsinline preload="auto"
+  <video #bgVideo class="bg-video" [class.visible]="isSystemOnline()" autoplay muted playsinline preload="auto" loop
     (timeupdate)="onVideoTimeUpdate(bgVideo)">
     <source src="/fondo.mp4" type="video/mp4" />
   </video>
@@ -10,7 +10,7 @@
 
   <main class="main-content">
     @if (!isSystemOnline()) {
-      <app-power-screen (powerOnFinished)="isSystemOnline.set(true)" />
+      <app-power-screen (powerOnFinished)="onPowerOnFinished()" />
     } @else {
       <div class="station">
         <div class="welcome-card">

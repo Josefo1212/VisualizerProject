@@ -85,16 +85,17 @@
     rgba(200, 50, 0, 0.1) 85%,
     rgba(255, 60, 0, 0.6) 100%
   );
+  background-size: 200% 200%;
   filter: blur(8px);
-  animation: emberPulse 4s ease-in-out infinite alternate;
+  animation: emberFlow 5s ease-in-out infinite alternate;
   z-index: 1;
   pointer-events: none;
 }
 
-@keyframes emberPulse {
-  0% { opacity: 0.6; transform: scale(1); }
-  50% { opacity: 1; transform: scale(1.02); }
-  100% { opacity: 0.6; transform: scale(1); }
+@keyframes emberFlow {
+  0% { background-position: 0% 0%; opacity: 0.5; transform: scale(1); }
+  50% { opacity: 0.9; transform: scale(1.02); }
+  100% { background-position: 100% 100%; opacity: 0.5; transform: scale(1); }
 }
 
 .tablet {
@@ -135,9 +136,16 @@
     rgba(255, 50, 0, 0.15) 60%, transparent 88%,
     rgba(255, 70, 0, 0.5) 100%
   );
+  background-size: 200% 200%;
   z-index: -1;
   filter: blur(2px);
+  animation: emberBefore 6s ease-in-out infinite alternate;
   pointer-events: none;
+}
+
+@keyframes emberBefore {
+  0% { background-position: 0% 0%; }
+  100% { background-position: 100% 100%; }
 }
 
 .tablet::after {
@@ -152,15 +160,16 @@
     transparent 55%, transparent 92%,
     rgba(255, 40, 0, 0.2) 100%
   );
+  background-size: 200% 200%;
   z-index: -2;
   filter: blur(6px);
-  animation: emberCrackle 3s ease-in-out infinite alternate;
+  animation: emberAfter 4s ease-in-out infinite alternate;
   pointer-events: none;
 }
 
-@keyframes emberCrackle {
-  0% { opacity: 0.5; filter: blur(6px); }
-  100% { opacity: 1; filter: blur(10px); }
+@keyframes emberAfter {
+  0% { background-position: 100% 0%; opacity: 0.4; filter: blur(6px); }
+  100% { background-position: 0% 100%; opacity: 1; filter: blur(10px); }
 }
 
 .omega-symbol {

@@ -85,16 +85,17 @@
     rgba(0, 150, 200, 0.08) 85%,
     rgba(0, 200, 255, 0.4) 100%
   );
+  background-size: 200% 200%;
   filter: blur(10px);
-  animation: frostPulse 4s ease-in-out infinite alternate;
+  animation: frostFlow 5s ease-in-out infinite alternate;
   z-index: 1;
   pointer-events: none;
 }
 
-@keyframes frostPulse {
-  0% { opacity: 0.5; transform: scale(1); }
-  50% { opacity: 0.9; transform: scale(1.02); }
-  100% { opacity: 0.5; transform: scale(1); }
+@keyframes frostFlow {
+  0% { background-position: 0% 0%; opacity: 0.4; transform: scale(1); }
+  50% { opacity: 0.8; transform: scale(1.02); }
+  100% { background-position: 100% 100%; opacity: 0.4; transform: scale(1); }
 }
 
 .frost-panel {
@@ -135,9 +136,16 @@
     rgba(0, 180, 255, 0.1) 60%, transparent 88%,
     rgba(0, 200, 255, 0.35) 100%
   );
+  background-size: 200% 200%;
   z-index: -1;
   filter: blur(2px);
+  animation: frostBefore 6s ease-in-out infinite alternate;
   pointer-events: none;
+}
+
+@keyframes frostBefore {
+  0% { background-position: 0% 0%; }
+  100% { background-position: 100% 100%; }
 }
 
 .frost-panel::after {
@@ -152,15 +160,16 @@
     transparent 55%, transparent 92%,
     rgba(0, 180, 255, 0.15) 100%
   );
+  background-size: 200% 200%;
   z-index: -2;
   filter: blur(8px);
-  animation: frostCrackle 3s ease-in-out infinite alternate;
+  animation: frostAfter 4s ease-in-out infinite alternate;
   pointer-events: none;
 }
 
-@keyframes frostCrackle {
-  0% { opacity: 0.4; filter: blur(8px); }
-  100% { opacity: 0.9; filter: blur(14px); }
+@keyframes frostAfter {
+  0% { background-position: 100% 0%; opacity: 0.3; filter: blur(8px); }
+  100% { background-position: 0% 100%; opacity: 0.8; filter: blur(14px); }
 }
 
 .rune-symbol {

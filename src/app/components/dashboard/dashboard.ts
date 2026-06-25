@@ -12,8 +12,12 @@ import { PowerScreenComponent } from '../power-screen/PowerScreen';
 export class DashboardComponent {
   readonly isSystemOnline = signal<boolean>(false);
 
+  onPowerOnFinished(): void {
+    this.isSystemOnline.set(true);
+  }
+
   onVideoTimeUpdate(video: HTMLVideoElement): void {
-    if (video.duration && video.currentTime >= video.duration - 0.08) {
+    if (video.duration && video.currentTime >= video.duration - 0.35) {
       video.currentTime = 0;
     }
   }
