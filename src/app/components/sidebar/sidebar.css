@@ -95,6 +95,20 @@
   cursor: pointer;
 }
 
+.sidebar:not(.disabled) .design-item.active {
+  background: rgba(0, 243, 255, 0.08);
+  border-color: rgba(0, 243, 255, 0.2);
+  box-shadow: inset 0 0 12px rgba(0, 243, 255, 0.05);
+}
+
+.sidebar:not(.disabled) .design-item.active .design-name {
+  color: #00f3ff;
+}
+
+.sidebar:not(.disabled) .design-item.active .design-icon {
+  opacity: 1;
+}
+
 .sidebar:not(.disabled) .design-item:hover {
   background: rgba(0, 243, 255, 0.06);
   border-color: rgba(0, 243, 255, 0.25);

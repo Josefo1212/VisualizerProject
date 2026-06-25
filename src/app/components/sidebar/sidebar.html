@@ -20,18 +20,16 @@
 
   <div class="design-list">
     @if (!collapsed()) {
-      <div class="design-item">
-        <span class="design-icon">🎮</span>
-        <span class="design-name">Estación Plasma</span>
-      </div>
-      <div class="design-item">
-        <span class="design-icon">🕹</span>
-        <span class="design-name">Estación Neón</span>
-      </div>
-      <div class="design-item">
-        <span class="design-icon">⚡</span>
-        <span class="design-name">Estación Vortex</span>
-      </div>
+      @for (d of designs; track d.id) {
+        <div
+          class="design-item"
+          [class.active]="d.id === selectedDesign"
+          (click)="selectDesign(d.id)"
+        >
+          <span class="design-icon">{{ d.icon }}</span>
+          <span class="design-name">{{ d.name }}</span>
+        </div>
+      }
     }
   </div>
 </nav>

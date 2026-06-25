@@ -6,25 +6,33 @@
   </video>
   <div class="video-overlay" [class.visible]="isSystemOnline()"></div>
 
-  <app-sidebar [inactive]="!isSystemOnline()" />
+  <app-sidebar
+    [inactive]="!isSystemOnline()"
+    [selectedDesign]="selectedDesign()"
+    (designChange)="onDesignChange($event)"
+  />
 
   <main class="main-content">
     @if (!isSystemOnline()) {
       <app-power-screen (powerOnFinished)="onPowerOnFinished()" />
     } @else {
-      <div class="station">
-        <div class="welcome-card">
-          <div class="rgb-border"></div>
-          <div class="card-content">
-            <div class="status-indicator">
-              <span class="status-dot"></span>
-              <span class="status-label">SYSTEM ONLINE</span>
+      @if (selectedDesign() === 'gta') {
+        <app-gta-design class="gta-view" />
+      } @else {
+        <div class="station">
+          <div class="welcome-card">
+            <div class="rgb-border"></div>
+            <div class="card-content">
+              <div class="status-indicator">
+                <span class="status-dot"></span>
+                <span class="status-label">SYSTEM ONLINE</span>
+              </div>
+              <h1 class="welcome-title">GAME CENTER</h1>
+              <p class="welcome-sub">Bienvenido profe, a esto aún le falta, no se preocupe</p>
             </div>
-            <h1 class="welcome-title">GAME CENTER</h1>
-            <p class="welcome-sub">Bienvenido profe, a esto aún le falta, no se preocupe</p>
           </div>
         </div>
-      </div>
+      }
     }
   </main>
 </div>

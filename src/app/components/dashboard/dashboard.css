@@ -57,6 +57,13 @@
   overflow: hidden;
 }
 
+/* ============ GTA DESIGN VIEW ============ */
+
+.gta-view {
+  position: absolute;
+  inset: 0;
+}
+
 /* ============ POWERED-ON STATION ============ */
 
 .station {

@@ -1,20 +1,27 @@
 <div class="gta-container">
 
-  <div class="sky" [class]="'sky ' + claseCielo()"></div>
+  <div class="sky" [style.background]="skyGradient()"></div>
 
-  @if (solVisible() && esDeDia()) {
-    <div class="astro sun" [style.left.%]="solX()" [style.top.%]="solY()"></div>
-  }
+  <div
+    class="astro sun"
+    [style.left.%]="solX()"
+    [style.top.%]="solY()"
+    [style.opacity]="solOpacity()"
+    [style.transform]="'translate(-50%, -50%) scale(' + solScale() + ')'"
+  ></div>
 
-  @if (lunaVisible() && esDeNoche()) {
-    <div class="astro moon" [style.left.%]="lunaX()" [style.top.%]="lunaY()"></div>
-  }
+  <div
+    class="astro moon"
+    [style.left.%]="lunaX()"
+    [style.top.%]="lunaY()"
+    [style.opacity]="lunaOpacity()"
+  ></div>
 
   <img
     class="city"
-    src="../../../../public/fondoGTA.png"
+    src="/fondoGTA.png"
     alt="Los Santos skyline"
-    [style.filter]="filtrosCiudad()"
+    [style.filter]="skyFilter()"
   />
 
   <div class="content-overlay">
@@ -43,8 +50,6 @@
         <span class="time-digits">{{ horaDisplay() }}:00</span>
         <span class="time-period">{{ esDeDia() ? 'AM' : 'PM' }}</span>
       </div>
-
-      <div class="time-franja">{{ franja() }}</div>
     </div>
   </div>
 
