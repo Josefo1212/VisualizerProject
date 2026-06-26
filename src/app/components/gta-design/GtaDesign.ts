@@ -4,7 +4,6 @@ import { SliderComponent } from '../slider/Slider';
 
 interface Rgb { r: number; g: number; b: number; }
 interface SkyPt { h: number; top: Rgb; mid: Rgb; bot: Rgb; }
-interface FilterPt { h: number; bright: number; sepia: number; sat: number; cont: number; }
 
 const lerp = (a: number, b: number, t: number): number => a + (b - a) * t;
 
@@ -38,19 +37,6 @@ const SKY_PTS: SkyPt[] = [
   { h: 18, top: { r: 255, g: 75, b: 31 },  mid: { r: 255, g: 100, b: 60 },   bot: { r: 199, g: 125, b: 94 } },
   { h: 19, top: { r: 140, g: 50, b: 40 },  mid: { r: 74, g: 14, b: 78 },    bot: { r: 26, g: 26, b: 62 } },
   { h: 20, top: { r: 7, g: 7, b: 20 },    mid: { r: 13, g: 13, b: 43 },    bot: { r: 10, g: 10, b: 26 } },
-];
-
-const FILTER_PTS: FilterPt[] = [
-  { h: 0,  bright: 0.25, sepia: 0,    sat: 0.15, cont: 1.3 },
-  { h: 5,  bright: 0.5,  sepia: 0.1,  sat: 0.6,  cont: 1.2 },
-  { h: 6,  bright: 0.85, sepia: 0.25, sat: 1.1,  cont: 1.05 },
-  { h: 8,  bright: 0.95, sepia: 0.1,  sat: 1.05, cont: 1 },
-  { h: 12, bright: 1,    sepia: 0,    sat: 1,    cont: 1 },
-  { h: 16, bright: 1,    sepia: 0.2,  sat: 1.2,  cont: 1.05 },
-  { h: 17, bright: 1.05, sepia: 0.5,  sat: 1.6,  cont: 1.15 },
-  { h: 18, bright: 0.9,  sepia: 0.6,  sat: 1.8,  cont: 1.2 },
-  { h: 19, bright: 0.5,  sepia: 0.15, sat: 0.5,  cont: 1.35 },
-  { h: 20, bright: 0.25, sepia: 0,    sat: 0.15, cont: 1.3 },
 ];
 
 @Component({
@@ -99,16 +85,6 @@ export class GtaDesignComponent {
     return `linear-gradient(180deg, rgb(${top.r},${top.g},${top.b}) 0%, rgb(${mid.r},${mid.g},${mid.b}) 35%, rgb(${bot.r},${bot.g},${bot.b}) 100%)`;
   });
 
-  readonly skyFilter: Signal<string> = computed((): string => {
-    const h = this.horaActual();
-    const [a, b, t] = findSegment(FILTER_PTS, h);
-    const bright = lerp(a.bright, b.bright, t);
-    const sepia = lerp(a.sepia, b.sepia, t);
-    const sat = lerp(a.sat, b.sat, t);
-    const cont = lerp(a.cont, b.cont, t);
-    return `brightness(${bright}) sepia(${sepia}) saturate(${sat}) contrast(${cont})`;
-  });
-
   readonly solScale: Signal<number> = computed((): number => {
     const y = this.solY();
     if (y < 50) return 1;
@@ -116,12 +92,32 @@ export class GtaDesignComponent {
     return 1 + 0.5 * ((y - 50) / 40);
   });
 
-  readonly luzOpacity: Signal<number> = computed((): number => {
+  /* ── Crossfade opacities for day / sunset / night images ── */
+
+  readonly img1Opacity: Signal<number> = computed((): number => {
+    const h = this.horaActual();
+    if (h < 5) return 0;
+    if (h < 6) return h - 5;
+    if (h < 17) return 1;
+    if (h < 18) return 18 - h;
+    return 0;
+  });
+
+  readonly img2Opacity: Signal<number> = computed((): number => {
     const h = this.horaActual();
     if (h < 17) return 0;
-    if (h < 18) return (h - 17) * 0.4;
-    if (h < 20) return 0.4 + (h - 18) * 0.225;
-    return 0.85;
+    if (h < 18) return h - 17;
+    if (h < 19) return 19 - h;
+    return 0;
+  });
+
+  readonly img3Opacity: Signal<number> = computed((): number => {
+    const h = this.horaActual();
+    if (h < 5) return 1;
+    if (h < 6) return 6 - h;
+    if (h < 18) return 0;
+    if (h < 19) return h - 18;
+    return 1;
   });
 
   readonly esDeDia: Signal<boolean> = computed((): boolean => {

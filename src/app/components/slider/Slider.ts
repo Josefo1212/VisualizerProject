@@ -19,7 +19,6 @@ export class SliderComponent {
   }
 
   get displayValue(): string {
-percent: any;
     return this.formatFn ? this.formatFn(this.value) : this.value.toFixed(1);
   }
 

@@ -2,7 +2,7 @@
 
   <video #bgVideo class="bg-video" [class.visible]="isSystemOnline()" autoplay muted playsinline preload="auto" loop
     (timeupdate)="onVideoTimeUpdate(bgVideo)">
-    <source src="/fondo.mp4" type="video/mp4" />
+    <source src="/General/fondo.mp4" type="video/mp4" />
   </video>
   <div class="video-overlay" [class.visible]="isSystemOnline()"></div>
 

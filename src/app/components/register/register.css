@@ -44,7 +44,7 @@
 }
 
 .kratos-wrapper.right {
-  right: 0;
+  right: -220px;
 }
 
 .kratos-character {
@@ -52,7 +52,6 @@
   width: auto;
   object-fit: contain;
   object-position: right bottom;
-  transform: translateX(250px);
   filter: drop-shadow(0 0 60px rgba(0, 150, 255, 0.15));
   -webkit-filter: drop-shadow(0 0 60px rgba(0, 150, 255, 0.15));
 }
