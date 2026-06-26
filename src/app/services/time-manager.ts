@@ -1,4 +1,4 @@
-import { Injectable, signal } from '@angular/core';
+import { Injectable, signal, Signal } from '@angular/core';
 
 const getCurrentHour = (): number => {
   const now = new Date();
@@ -9,16 +9,29 @@ const getCurrentHour = (): number => {
   providedIn: 'root',
 })
 export class TimeManagerService {
-  readonly horaActual = signal<number>(getCurrentHour());
+  private readonly _horaActual = signal<number>(getCurrentHour());
+  private readonly _modoManual = signal<boolean>(false);
+
+  readonly horaActual: Signal<number> = this._horaActual.asReadonly();
+  readonly modoManual: Signal<boolean> = this._modoManual.asReadonly();
+
   private intervalId: ReturnType<typeof setInterval>;
 
   constructor() {
     this.intervalId = setInterval(() => {
-      this.horaActual.set(getCurrentHour());
+      if (!this._modoManual()) {
+        this._horaActual.set(getCurrentHour());
+      }
     }, 1000);
   }
 
   setHora(h: number): void {
-    this.horaActual.set(Math.max(0, Math.min(24, h)));
+    this._modoManual.set(true);
+    this._horaActual.set(Math.max(0, Math.min(24, h)));
+  }
+
+  resetToRealTime(): void {
+    this._modoManual.set(false);
+    this._horaActual.set(getCurrentHour());
   }
 }

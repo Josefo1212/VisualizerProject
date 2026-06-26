@@ -1,5 +1,6 @@
 import { Component, inject, computed, Signal } from '@angular/core';
 import { TimeManagerService } from '../../services/time-manager';
+import { SliderComponent } from '../slider/Slider';
 
 interface Rgb { r: number; g: number; b: number; }
 interface SkyPt { h: number; top: Rgb; mid: Rgb; bot: Rgb; }
@@ -55,11 +56,12 @@ const FILTER_PTS: FilterPt[] = [
 @Component({
   selector: 'app-gta-design',
   standalone: true,
+  imports: [SliderComponent],
   templateUrl: './GtaDesign.html',
   styleUrl: './GtaDesign.css',
 })
 export class GtaDesignComponent {
-  private readonly time = inject(TimeManagerService);
+  readonly time = inject(TimeManagerService);
 
   readonly horaActual: Signal<number> = this.time.horaActual;
 
@@ -133,4 +135,18 @@ export class GtaDesignComponent {
     const m = Math.floor((total - h) * 60);
     return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}`;
   });
+
+  readonly formatSliderHour = (v: number): string => {
+    const h = Math.floor(v);
+    const m = Math.floor((v - h) * 60);
+    return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}`;
+  };
+
+  onSliderChange(h: number): void {
+    this.time.setHora(h);
+  }
+
+  onResetTime(): void {
+    this.time.resetToRealTime();
+  }
 }

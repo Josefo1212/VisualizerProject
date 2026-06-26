@@ -261,8 +261,8 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 8px;
-  padding: 32px 48px;
+  gap: 14px;
+  padding: 28px 40px;
   border-radius: 12px;
   background: rgba(0, 0, 0, 0.45);
   backdrop-filter: blur(12px);
@@ -294,6 +294,48 @@
   letter-spacing: 4px;
   color: #f0f0f0;
   text-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+}
+
+.time-controls {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+}
+
+app-slider {
+  --slider-track-color: rgba(255, 200, 100, 0.15);
+  --slider-fill-color: linear-gradient(90deg, #ff4b1f, #f09819, #fdb813);
+  --slider-thumb-color: #ffd700;
+  --slider-thumb-size: 18px;
+  --slider-track-height: 5px;
+  --slider-value-color: rgba(255, 200, 100, 0.5);
+  --slider-value-font: 'Cinzel', 'Trajan Pro', 'Georgia', serif;
+  --slider-thumb-shadow:
+    0 0 12px rgba(255, 215, 0, 0.4),
+    0 0 24px rgba(255, 140, 0, 0.15);
+  --slider-thumb-bg: radial-gradient(circle at 35% 35%, #ffe680, #ffd700 40%, #f90);
+  --slider-fill-radius: 3px;
+}
+
+.reset-btn {
+  font-family: 'Courier New', monospace;
+  font-size: 10px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  padding: 5px 14px;
+  border-radius: 4px;
+  border: 1px solid rgba(255, 200, 100, 0.2);
+  background: rgba(255, 200, 100, 0.06);
+  color: #fdb813;
+  cursor: pointer;
+  transition: background 0.3s ease, box-shadow 0.3s ease;
+}
+
+.reset-btn:hover {
+  background: rgba(255, 200, 100, 0.12);
+  box-shadow: 0 0 12px rgba(255, 200, 100, 0.12);
 }
 
 

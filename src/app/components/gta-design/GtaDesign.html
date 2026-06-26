@@ -82,6 +82,20 @@
       <div class="time-display">
         <span class="time-digits">{{ horaDisplay() }}</span>
       </div>
+
+      <div class="time-controls">
+        <app-slider
+          [value]="horaActual()"
+          [min]="0"
+          [max]="24"
+          [step]="0.05"
+          [formatFn]="formatSliderHour"
+          (valueChange)="onSliderChange($event)"
+        />
+        @if (time.modoManual()) {
+          <button class="reset-btn" (click)="onResetTime()">⏱ REAL</button>
+        }
+      </div>
     </div>
   </div>
 
