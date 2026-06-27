@@ -61,14 +61,9 @@
       <div class="progress-fill" [style.width.%]="minutoPorcentaje()"></div>
       <div class="crewmate" [style.left.%]="minutoPorcentaje()">
         <div class="crewmate-frames">
-          <img class="frame" src="/AmongUs/sprite0.png" alt="">
-          <img class="frame" src="/AmongUs/sprite1.png" alt="">
-          <img class="frame" src="/AmongUs/sprite2.png" alt="">
-          <img class="frame" src="/AmongUs/sprite3.png" alt="">
-          <img class="frame" src="/AmongUs/sprite4.png" alt="">
-          <img class="frame" src="/AmongUs/sprite5.png" alt="">
-          <img class="frame" src="/AmongUs/sprite6.png" alt="">
-          <img class="frame" src="/AmongUs/sprite7.png" alt="">
+          @for (idx of frameIndices; track idx) {
+            <img class="frame" src="/AmongUs/sprite{{idx}}.png" [class.active]="idx === currentFrameIndex()" alt="">
+          }
         </div>
       </div>
     </div>

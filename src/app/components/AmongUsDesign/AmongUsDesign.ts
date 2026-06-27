@@ -1,4 +1,4 @@
-import { Component, computed, signal } from '@angular/core';
+import { Component, computed, signal, OnInit, OnDestroy } from '@angular/core';
 
 interface Tarea {
   id: number;
@@ -19,7 +19,7 @@ interface DiaSemana {
   templateUrl: './AmongUsDesign.html',
   styleUrl: './AmongUsDesign.css',
 })
-export class AmongUsDesignComponent {
+export class AmongUsDesignComponent implements OnInit, OnDestroy {
   readonly tiempoTotal = signal<number>(540); // minutos desde 00:00 (540 = 09:00)
   readonly sabotajeSegundos = signal<number>(60);
   readonly vivos = signal<number>(10);
@@ -100,10 +100,26 @@ export class AmongUsDesignComponent {
     { nombre: 'DOM', estado: 'futuro' },
   ];
 
+  readonly frameIndices = [0, 1, 2, 3, 4, 5, 6, 7];
+frameIndices: any;
+  readonly currentFrameIndex = signal(0);
+
   private sabotajeInterval?: ReturnType<typeof setInterval>;
+  private frameInterval?: ReturnType<typeof setInterval>;
 
   constructor() {
     this.iniciarSabotaje();
+  }
+
+  ngOnInit(): void {
+    this.frameInterval = setInterval(() => {
+      this.currentFrameIndex.update(i => (i + 1) % 8);
+    }, 80);
+  }
+
+  ngOnDestroy(): void {
+    clearInterval(this.frameInterval);
+    clearInterval(this.sabotajeInterval);
   }
 
   private iniciarSabotaje(): void {
