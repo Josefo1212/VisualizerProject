@@ -64,6 +64,12 @@
   inset: 0;
 }
 
+.among-us-view {
+  position: absolute;
+  inset: 0;
+  display: flex;
+}
+
 /* ============ POWERED-ON STATION ============ */
 
 .station {

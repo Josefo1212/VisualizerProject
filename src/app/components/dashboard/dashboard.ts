@@ -2,11 +2,12 @@ import { Component, inject, signal } from '@angular/core';
 import { SidebarComponent } from '../Sidebar/Sidebar';
 import { PowerScreenComponent } from '../PowerScreen/PowerScreen';
 import { GtaDesignComponent } from '../GtaDesign/GtaDesign';
+import { AmongUsDesignComponent } from '../AmongUsDesign/AmongUsDesign';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [SidebarComponent, PowerScreenComponent, GtaDesignComponent],
+  imports: [SidebarComponent, PowerScreenComponent, GtaDesignComponent, AmongUsDesignComponent],
   templateUrl: './Dashboard.html',
   styleUrl: './Dashboard.css',
 })

@@ -1,0 +1,78 @@
+<div class="tablet">
+  <div class="tablet-bg"></div>
+
+  <!-- ENCABEZADO -->
+  <header class="header">
+    <h1 class="header-title">🚀 TASK MANAGER v.2024</h1>
+    <p class="header-sub">The Skeld — Tripulante #042</p>
+  </header>
+
+  <div class="body-grid">
+
+    <!-- PANEL IZQUIERDO: Lista de Tareas -->
+    <section class="panel panel-tasks">
+      <div class="panel-header">📋 TAREAS DEL DÍA</div>
+      <div class="task-list">
+        @for (t of tareas; track t.id) {
+          <div class="task-item" [class.completed]="t.completada">
+            <span class="task-status">{{ t.completada ? '✅' : '⬜' }}</span>
+            <span class="task-name">{{ t.nombre }}</span>
+            <span class="task-time">{{ t.hora }}</span>
+          </div>
+        }
+      </div>
+    </section>
+
+    <!-- PANEL DERECHO: Sabotaje -->
+    <section class="panel panel-sabotaje">
+      <div class="panel-header">⚡ SABOTAGE LEVEL</div>
+      <div class="sabotaje-content">
+        <div class="sabotaje-bar-wrapper">
+          <div class="sabotaje-bar" [style.width.%]="sabotajePorcentaje()" [class.critical]="sabotajeCritico()"></div>
+        </div>
+        <div class="sabotaje-label">
+          <span>{{ sabotajeSegundos() }}s</span>
+          <span>reactor</span>
+        </div>
+        <div class="sabotaje-alert" [class.active]="sabotajeCritico()">⚠️ SABOTAJE CRÍTICO</div>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- PANEL INFERIOR: Barra de Progreso + Sprite -->
+  <section class="progress-section">
+    <div class="progress-header">
+      <span>⏱️ MINUTOS</span>
+      <span class="progress-value">{{ minutos() }} / 60</span>
+    </div>
+
+    <div class="progress-track">
+      <div class="progress-fill" [style.width.%]="minutosPorcentaje()"></div>
+      <div class="crewmate" [style.left.%]="minutosPorcentaje()">
+        <div class="crewmate-sprite"></div>
+      </div>
+    </div>
+
+    <input
+      type="range"
+      class="progress-slider"
+      min="0"
+      max="60"
+      step="1"
+      [value]="minutos()"
+      (input)="onMinutosChange($event)"
+    />
+  </section>
+
+  <!-- PANEL INFERIOR: Tripulación -->
+  <section class="crew-section">
+    <div class="crew-label">👥 TRIPULANTES:</div>
+    <div class="crew-dots">
+      @for (v of [1,2,3,4,5,6,7,8,9,10]; track v) {
+        <span class="crew-dot" [class.dead]="v > vivos()" [style.animation-delay.s]="0.1 * v"></span>
+      }
+    </div>
+    <div class="crew-count">{{ vivos() }}/10 vivos</div>
+  </section>
+</div>
