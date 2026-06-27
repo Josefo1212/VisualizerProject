@@ -2,47 +2,20 @@
   position: relative;
   overflow: hidden;
   isolation: isolate;
+  display: block;
 }
 
-:host::after {
-  content: '';
+.hover-reveal-bg {
   position: absolute;
   inset: 0;
   border-radius: inherit;
-  background-image:
-    linear-gradient(to right, var(--corner-color, #00f3ff) 2px, transparent 0),
-    linear-gradient(to bottom, var(--corner-color, #00f3ff) 2px, transparent 0),
-    linear-gradient(to left, var(--corner-color, #00f3ff) 2px, transparent 0),
-    linear-gradient(to bottom, var(--corner-color, #00f3ff) 2px, transparent 0),
-    linear-gradient(to right, var(--corner-color, #00f3ff) 2px, transparent 0),
-    linear-gradient(to top, var(--corner-color, #00f3ff) 2px, transparent 0),
-    linear-gradient(to left, var(--corner-color, #00f3ff) 2px, transparent 0),
-    linear-gradient(to top, var(--corner-color, #00f3ff) 2px, transparent 0),
-    var(--cover-img);
-  background-size:
-    22px 2px, 2px 22px,
-    22px 2px, 2px 22px,
-    22px 2px, 2px 22px,
-    22px 2px, 2px 22px,
-    cover;
-  background-position:
-    8px 8px, 8px 8px,
-    calc(100% - 30px) 8px, calc(100% - 10px) 8px,
-    8px calc(100% - 10px), 8px calc(100% - 30px),
-    calc(100% - 30px) calc(100% - 10px), calc(100% - 10px) calc(100% - 30px),
-    center;
-  background-repeat:
-    no-repeat, no-repeat,
-    no-repeat, no-repeat,
-    no-repeat, no-repeat,
-    no-repeat, no-repeat,
-    no-repeat;
+  background-size: cover;
+  background-position: center;
   z-index: 0;
   pointer-events: none;
 }
 
-:host::before {
-  content: '';
+.hover-reveal-overlay {
   position: absolute;
   inset: 0;
   border-radius: inherit;
@@ -52,11 +25,11 @@
   transition: opacity 0.35s ease;
 }
 
-:host(:hover)::before {
+:host(:hover) .hover-reveal-overlay {
   opacity: 0;
 }
 
-:host([data-disabled])::before,
-:host([data-disabled]):hover::before {
+:host([data-disabled]) .hover-reveal-overlay,
+:host([data-disabled]:hover) .hover-reveal-overlay {
   opacity: 1;
 }
