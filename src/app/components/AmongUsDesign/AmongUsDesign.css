@@ -12,18 +12,17 @@
 .tablet {
   position: relative;
   width: 100%;
-  max-width: 1200px;
-  height: 100%;
-  max-height: 800px;
-  border-radius: 24px;
+  max-width: 900px;
+  aspect-ratio: 1408 / 768;
+  border-radius: 20px;
   overflow: hidden;
   box-shadow:
     0 0 40px rgba(0, 243, 255, 0.15),
     inset 0 0 60px rgba(0, 0, 0, 0.6);
   display: flex;
   flex-direction: column;
-  padding: 24px 28px;
-  gap: 12px;
+  padding: clamp(8px, 1.6vh, 14px) clamp(10px, 1.8vw, 16px);
+  gap: clamp(5px, 0.7vh, 8px);
 }
 
 .tablet-bg {
@@ -32,6 +31,7 @@
   z-index: 0;
   background: url('/AmongUs/fondoAmongUs.png') center / cover no-repeat;
   filter: brightness(0.5) saturate(0.8);
+  transform: scale(1.35);
 }
 
 /* ============ ENCABEZADO ============ */
@@ -40,157 +40,204 @@
   position: relative;
   z-index: 1;
   text-align: center;
-  padding-bottom: 8px;
+  padding-bottom: 3px;
   border-bottom: 1px solid rgba(0, 243, 255, 0.2);
+  flex-shrink: 0;
 }
 
 .header-title {
   font-family: 'Courier New', 'Consolas', monospace;
-  font-size: 22px;
+  font-size: clamp(13px, 1.5vw, 17px);
   font-weight: 700;
   color: #00f3ff;
   text-shadow: 0 0 20px rgba(0, 243, 255, 0.4);
   margin: 0;
-  letter-spacing: 3px;
+  letter-spacing: 2px;
 }
 
 .header-sub {
   font-family: 'Segoe UI', sans-serif;
-  font-size: 13px;
+  font-size: clamp(8px, 0.8vw, 10px);
   color: rgba(200, 200, 220, 0.6);
-  margin: 4px 0 0;
+  margin: 1px 0 0;
   letter-spacing: 1px;
 }
 
-/* ============ BODY GRID ============ */
+/* ============ ROWS ============ */
 
-.body-grid {
+.row {
   position: relative;
   z-index: 1;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
-  flex: 1;
+  flex-shrink: 0;
+  margin-inline: clamp(8px, 1.2vw, 16px);
+}
+
+/* ============ FILA DE TAREAS (3 módulos) ============ */
+
+.row-tasks {
+  display: flex;
+  justify-content: center;
+  gap: clamp(6px, 0.8vw, 12px);
+  margin-top: clamp(4px, 0.5vh, 8px);
+}
+
+.module {
+  flex: 0 1 30%;
+  min-width: 0;
+  background: rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(0, 243, 255, 0.1);
+  border-radius: 8px;
+  padding: clamp(10px, 1.4vh, 16px) clamp(8px, 0.9vw, 12px);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 5px;
+  backdrop-filter: blur(3px);
   min-height: 0;
 }
 
-.panel {
-  background: rgba(0, 0, 0, 0.55);
-  border: 1px solid rgba(0, 243, 255, 0.12);
-  border-radius: 12px;
-  padding: 14px;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-  backdrop-filter: blur(4px);
-}
-
-.panel-header {
+.module-header {
   font-family: 'Courier New', 'Consolas', monospace;
-  font-size: 13px;
+  font-size: clamp(9px, 0.9vw, 11px);
   font-weight: 700;
   color: #00f3ff;
-  letter-spacing: 2px;
-  margin-bottom: 10px;
-  padding-bottom: 6px;
-  border-bottom: 1px solid rgba(0, 243, 255, 0.15);
+  letter-spacing: 1px;
   flex-shrink: 0;
 }
 
-/* ============ LISTA DE TAREAS ============ */
+/* --- Módulo Completadas --- */
 
-.task-list {
-  flex: 1;
-  overflow-y: auto;
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
-  padding-right: 4px;
+.counter-big {
+  font-family: 'Courier New', 'Consolas', monospace;
+  font-size: clamp(24px, 3vw, 32px);
+  font-weight: 700;
+  color: #44cc44;
+  text-shadow: 0 0 12px rgba(68, 204, 68, 0.3);
+  line-height: 1;
 }
 
-.task-list::-webkit-scrollbar {
-  width: 4px;
+.counter-total {
+  font-size: 0.5em;
+  color: rgba(200, 200, 220, 0.3);
+  font-weight: 400;
 }
 
-.task-list::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.task-list::-webkit-scrollbar-thumb {
-  background: rgba(0, 243, 255, 0.3);
-  border-radius: 2px;
-}
-
-.task-item {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 5px 8px;
-  border-radius: 4px;
-  font-size: 12px;
-  color: rgba(200, 200, 220, 0.5);
-  transition: background 0.2s;
-}
-
-.task-item:hover {
-  background: rgba(0, 243, 255, 0.05);
-}
-
-.task-item.completed {
-  color: rgba(200, 200, 220, 0.85);
-}
-
-.task-status {
-  flex-shrink: 0;
-  font-size: 12px;
-}
-
-.task-name {
-  flex: 1;
+.module-footer {
   font-family: 'Segoe UI', sans-serif;
-  font-weight: 500;
+  font-size: clamp(8px, 0.75vw, 10px);
+  color: rgba(200, 200, 220, 0.45);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-.task-time {
-  flex-shrink: 0;
+/* --- Módulo Actual --- */
+
+.module-current {
+  border-color: rgba(244, 202, 22, 0.2);
+  background: rgba(0, 0, 0, 0.55);
+}
+
+.current-task-name {
   font-family: 'Courier New', 'Consolas', monospace;
-  font-size: 11px;
-  color: rgba(0, 243, 255, 0.5);
+  font-size: clamp(12px, 1.3vw, 16px);
+  font-weight: 700;
+  color: #f4ca16;
+  text-shadow: 0 0 8px rgba(244, 202, 22, 0.2);
 }
 
-.task-item.completed .task-time {
-  color: rgba(0, 243, 255, 0.8);
+.current-elapsed {
+  font-family: 'Segoe UI', sans-serif;
+  font-size: clamp(9px, 0.9vw, 11px);
+  color: rgba(200, 200, 220, 0.5);
 }
 
-/* ============ SABOTAJE ============ */
+.current-bar-wrapper {
+  width: 100%;
+  height: 8px;
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 4px;
+  overflow: hidden;
+  border: 1px solid rgba(244, 202, 22, 0.12);
+}
 
-.sabotaje-content {
+.current-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #f4ca16, #f4e04d);
+  border-radius: 4px;
+  transition: width 0.15s linear;
+  box-shadow: 0 0 8px rgba(244, 202, 22, 0.2);
+}
+
+/* --- Módulo Siguiente --- */
+
+.next-task-name {
+  font-family: 'Courier New', 'Consolas', monospace;
+  font-size: clamp(11px, 1.1vw, 14px);
+  font-weight: 600;
+  color: rgba(200, 200, 220, 0.8);
+}
+
+.next-time {
+  font-family: 'Courier New', 'Consolas', monospace;
+  font-size: clamp(16px, 1.8vw, 22px);
+  font-weight: 700;
+  color: #00f3ff;
+  text-shadow: 0 0 8px rgba(0, 243, 255, 0.2);
+}
+
+.next-status {
+  font-family: 'Segoe UI', sans-serif;
+  font-size: clamp(9px, 0.9vw, 11px);
+  color: rgba(200, 200, 220, 0.4);
+}
+
+/* ============ FILA DE SABOTAJE ============ */
+
+.row-sabotaje {
+  display: flex;
+  align-items: center;
+  gap: clamp(6px, 0.8vw, 12px);
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(255, 60, 60, 0.12);
+  border-radius: 8px;
+  padding: clamp(10px, 1.2vh, 16px) clamp(8px, 1vw, 12px);
+  margin-top: clamp(14px, 1.8vh, 22px);
+  margin-inline: clamp(24px, 3.2vw, 40px);
+  backdrop-filter: blur(3px);
+}
+
+.sabotaje-left {
   flex: 1;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
+  gap: 4px;
+  min-width: 0;
+}
+
+.sabotaje-header {
+  font-family: 'Courier New', 'Consolas', monospace;
+  font-size: clamp(8px, 0.8vw, 10px);
+  font-weight: 700;
+  color: #ff4444;
+  letter-spacing: 1px;
 }
 
 .sabotaje-bar-wrapper {
   width: 100%;
-  height: 20px;
+  height: 10px;
   background: rgba(255, 0, 0, 0.08);
   border: 1px solid rgba(255, 60, 60, 0.2);
-  border-radius: 10px;
+  border-radius: 5px;
   overflow: hidden;
 }
 
 .sabotaje-bar {
   height: 100%;
   background: linear-gradient(90deg, #ff4444, #ff0000);
-  border-radius: 10px;
+  border-radius: 5px;
   transition: width 0.3s ease;
-  box-shadow: 0 0 12px rgba(255, 0, 0, 0.3);
+  box-shadow: 0 0 8px rgba(255, 0, 0, 0.3);
 }
 
 .sabotaje-bar.critical {
@@ -199,65 +246,78 @@
 }
 
 @keyframes sabotage-pulse {
-  0% { box-shadow: 0 0 8px rgba(255, 0, 0, 0.4); }
-  100% { box-shadow: 0 0 30px rgba(255, 0, 0, 0.9), 0 0 60px rgba(255, 0, 0, 0.3); }
+  0% { box-shadow: 0 0 6px rgba(255, 0, 0, 0.4); }
+  100% { box-shadow: 0 0 24px rgba(255, 0, 0, 0.9), 0 0 48px rgba(255, 0, 0, 0.3); }
+}
+
+.sabotaje-center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.sabotaje-seconds {
+  font-family: 'Courier New', 'Consolas', monospace;
+  font-size: clamp(18px, 2vw, 24px);
+  font-weight: 700;
+  color: #ff4444;
+  text-shadow: 0 0 12px rgba(255, 0, 0, 0.4);
+  line-height: 1;
 }
 
 .sabotaje-label {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  font-family: 'Courier New', 'Consolas', monospace;
-  font-size: 28px;
-  font-weight: 700;
-  color: #ff4444;
-  text-shadow: 0 0 16px rgba(255, 0, 0, 0.5);
-}
-
-.sabotaje-label span:last-child {
-  font-size: 14px;
+  font-family: 'Segoe UI', sans-serif;
+  font-size: clamp(7px, 0.7vw, 9px);
+  color: rgba(255, 80, 80, 0.4);
+  letter-spacing: 1px;
   text-transform: uppercase;
-  color: rgba(255, 80, 80, 0.5);
-  letter-spacing: 3px;
 }
 
-.sabotaje-alert {
-  font-family: 'Courier New', 'Consolas', monospace;
-  font-size: 13px;
-  font-weight: 700;
-  color: rgba(255, 60, 60, 0.4);
-  letter-spacing: 2px;
+.sabotaje-right {
+  display: flex;
+  gap: 5px;
+  flex-shrink: 0;
+}
+
+.reactor-dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: rgba(255, 0, 0, 0.15);
+  border: 1px solid rgba(255, 0, 0, 0.2);
   transition: all 0.3s;
 }
 
-.sabotaje-alert.active {
-  color: #ff2222;
-  text-shadow: 0 0 20px rgba(255, 0, 0, 0.8);
-  animation: alert-blink 0.4s ease-in-out infinite alternate;
+.reactor-dot.active {
+  background: #ff2222;
+  box-shadow: 0 0 12px rgba(255, 0, 0, 0.6);
+  animation: reactor-blink 0.4s ease-in-out infinite alternate;
 }
 
-@keyframes alert-blink {
+@keyframes reactor-blink {
   0% { opacity: 0.5; }
   100% { opacity: 1; }
 }
 
-/* ============ BARRA DE PROGRESO (MINUTOS) ============ */
+/* ============ FILA DE PROGRESO (MINUTOS + CREWMATE) ============ */
 
-.progress-section {
-  position: relative;
-  z-index: 1;
-  padding: 12px 0 4px;
+.row-progress {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding-bottom: clamp(6px, 0.8vh, 10px);
+  margin-top: clamp(18px, 2.2vh, 28px);
+  margin-inline: clamp(24px, 3.2vw, 40px);
 }
 
 .progress-header {
   display: flex;
   justify-content: space-between;
   font-family: 'Courier New', 'Consolas', monospace;
-  font-size: 12px;
-  color: rgba(200, 200, 220, 0.6);
+  font-size: clamp(8px, 0.8vw, 10px);
+  color: rgba(200, 200, 220, 0.5);
   letter-spacing: 1px;
-  margin-bottom: 6px;
 }
 
 .progress-value {
@@ -267,126 +327,197 @@
 
 .progress-track {
   position: relative;
-  height: 14px;
-  background: rgba(255, 255, 255, 0.06);
-  border-radius: 7px;
+  height: 10px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 5px;
   overflow: visible;
-  border: 1px solid rgba(244, 202, 22, 0.15);
+  border: 1px solid rgba(244, 202, 22, 0.12);
 }
 
 .progress-fill {
   height: 100%;
   background: linear-gradient(90deg, #f4ca16, #f4e04d);
-  border-radius: 7px;
+  border-radius: 5px;
   transition: width 0.15s linear;
-  box-shadow: 0 0 20px rgba(244, 202, 22, 0.3);
+  box-shadow: 0 0 12px rgba(244, 202, 22, 0.25);
 }
 
 .crewmate {
   position: absolute;
-  top: 50%;
-  transform: translate(-50%, -50%);
+  bottom: 100%;
+  left: 0;
+  transform: translateX(-50%);
   transition: left 0.2s linear;
   pointer-events: none;
   z-index: 2;
+  margin-bottom: 3px;
 }
 
-.crewmate-sprite {
-  width: 40px;
-  height: 56px;
-  background: url('/AmongUs/spriteAmongUs.png') no-repeat;
-  background-size: 400% 100%;
-  background-position: 0 0;
-  image-rendering: pixelated;
-  animation: crewmate-run 0.6s steps(4) infinite;
+.crewmate-frames {
+  position: relative;
+  width: 34px;
+  height: 36px;
 }
 
-@keyframes crewmate-run {
-  0% { background-position: 0 0; }
-  100% { background-position: 100% 0; }
-}
-
-.progress-slider {
+.frame {
+  position: absolute;
+  inset: 0;
   width: 100%;
-  margin-top: 6px;
+  height: 100%;
+  object-fit: cover;
+  image-rendering: pixelated;
+  opacity: 0;
+  animation: cycle 1.12s ease-in-out infinite;
+}
+
+.frame:nth-child(1) { animation-delay: 0s; }
+.frame:nth-child(2) { animation-delay: 0.14s; }
+.frame:nth-child(3) { animation-delay: 0.28s; }
+.frame:nth-child(4) { animation-delay: 0.42s; }
+.frame:nth-child(5) { animation-delay: 0.56s; }
+.frame:nth-child(6) { animation-delay: 0.7s; }
+.frame:nth-child(7) { animation-delay: 0.84s; }
+.frame:nth-child(8) { animation-delay: 0.98s; }
+
+@keyframes cycle {
+  0%, 5% { opacity: 1; }
+  17.5% { opacity: 0; }
+  100% { opacity: 0; }
+}
+
+/* ============ FILA DE DÍAS ============ */
+
+.row-days {
+  display: flex;
+  align-items: center;
+  gap: clamp(4px, 0.5vw, 8px);
+  padding: 3px 0;
+  margin-top: clamp(16px, 2vh, 24px);
+}
+
+.days-label {
+  font-family: 'Courier New', 'Consolas', monospace;
+  font-size: clamp(8px, 0.8vw, 10px);
+  color: rgba(200, 200, 220, 0.4);
+  letter-spacing: 1px;
+  flex-shrink: 0;
+  margin-right: 2px;
+}
+
+.day-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  flex: 1;
+  min-width: 0;
+}
+
+.day-circle {
+  width: clamp(14px, 1.5vw, 18px);
+  height: clamp(14px, 1.5vw, 18px);
+  border-radius: 50%;
+  transition: all 0.3s;
+}
+
+.day-item.past .day-circle {
+  background: #44cc44;
+  box-shadow: 0 0 6px rgba(68, 204, 68, 0.3);
+}
+
+.day-item.today .day-circle {
+  background: #ff4444;
+  box-shadow: 0 0 10px rgba(255, 60, 60, 0.5);
+  animation: today-pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes today-pulse {
+  0%, 100% { box-shadow: 0 0 6px rgba(255, 60, 60, 0.4); }
+  50% { box-shadow: 0 0 16px rgba(255, 60, 60, 0.8); }
+}
+
+.day-item.future .day-circle {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.day-name {
+  font-family: 'Courier New', 'Consolas', monospace;
+  font-size: clamp(6px, 0.6vw, 8px);
+  color: rgba(200, 200, 220, 0.4);
+  letter-spacing: 0.5px;
+}
+
+.day-arrow {
+  font-size: clamp(6px, 0.6vw, 8px);
+  color: #ff4444;
+  line-height: 1;
+  margin-top: -1px;
+}
+
+/* ============ FILA DE CONTROL DE TIEMPO ============ */
+
+.row-time-control {
+  display: flex;
+  align-items: center;
+  gap: clamp(6px, 0.8vw, 10px);
+  padding: 2px 0 0;
+  margin-top: clamp(14px, 1.8vh, 22px);
+}
+
+.time-label-left,
+.time-label-right {
+  font-family: 'Courier New', 'Consolas', monospace;
+  font-size: clamp(8px, 0.8vw, 10px);
+  color: rgba(200, 200, 220, 0.35);
+  letter-spacing: 1px;
+  flex-shrink: 0;
+}
+
+.time-slider-wrapper {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1px;
+}
+
+.time-control-header {
+  font-family: 'Courier New', 'Consolas', monospace;
+  font-size: clamp(6px, 0.6vw, 8px);
+  color: rgba(200, 200, 220, 0.25);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+.time-slider {
+  width: 100%;
   -webkit-appearance: none;
   appearance: none;
-  height: 4px;
-  background: rgba(244, 202, 22, 0.15);
+  height: 3px;
+  background: rgba(0, 243, 255, 0.1);
   border-radius: 2px;
   outline: none;
   cursor: pointer;
+  margin: 0;
 }
 
-.progress-slider::-webkit-slider-thumb {
+.time-slider::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
-  background: #f4ca16;
-  border: 2px solid rgba(0, 0, 0, 0.5);
-  cursor: pointer;
-  box-shadow: 0 0 10px rgba(244, 202, 22, 0.4);
-  transition: box-shadow 0.2s;
+  width: 0;
+  height: 0;
+  opacity: 0;
 }
 
-.progress-slider::-webkit-slider-thumb:hover {
-  box-shadow: 0 0 20px rgba(244, 202, 22, 0.7);
+.time-slider::-moz-range-thumb {
+  width: 0;
+  height: 0;
+  opacity: 0;
 }
 
-/* ============ TRIPULACIÓN ============ */
-
-.crew-section {
-  position: relative;
-  z-index: 1;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 8px 0 4px;
-  border-top: 1px solid rgba(0, 243, 255, 0.1);
-}
-
-.crew-label {
-  font-family: 'Courier New', 'Consolas', monospace;
-  font-size: 12px;
-  color: rgba(200, 200, 220, 0.6);
-  letter-spacing: 1px;
-  flex-shrink: 0;
-}
-
-.crew-dots {
-  display: flex;
-  gap: 6px;
-  flex: 1;
-}
-
-.crew-dot {
-  width: 18px;
-  height: 18px;
-  border-radius: 50%;
-  background: #44cc44;
-  box-shadow: 0 0 8px rgba(68, 204, 68, 0.4);
-  transition: all 0.5s;
-  animation: crew-breathe 2s ease-in-out infinite;
-}
-
-.crew-dot.dead {
-  background: #ff3333;
-  box-shadow: 0 0 8px rgba(255, 50, 50, 0.4);
-  animation: none;
-  opacity: 0.6;
-}
-
-@keyframes crew-breathe {
-  0%, 100% { opacity: 0.7; }
-  50% { opacity: 1; }
-}
-
-.crew-count {
-  font-family: 'Courier New', 'Consolas', monospace;
-  font-size: 12px;
-  color: rgba(200, 200, 220, 0.5);
-  letter-spacing: 1px;
-  flex-shrink: 0;
+.time-slider::-ms-thumb {
+  width: 0;
+  height: 0;
+  opacity: 0;
 }

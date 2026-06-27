@@ -4,75 +4,104 @@
   <!-- ENCABEZADO -->
   <header class="header">
     <h1 class="header-title">🚀 TASK MANAGER v.2024</h1>
-    <p class="header-sub">The Skeld — Tripulante #042</p>
+    <p class="header-sub">The Skeld — Tripulante #042 · {{ tiempoDisplay() }}</p>
   </header>
 
-  <div class="body-grid">
+  <!-- FILA CENTRAL: 3 Módulos de Tareas -->
+  <div class="row row-tasks">
+    <div class="module module-completed">
+      <div class="module-header">✅ COMPLETADAS</div>
+      <div class="counter-big">{{ completadasCount() }} <span class="counter-total">/ 24</span></div>
+      <div class="module-footer">Última: {{ tareaAnterior().nombre }} — {{ tareaAnterior().hora }}</div>
+    </div>
 
-    <!-- PANEL IZQUIERDO: Lista de Tareas -->
-    <section class="panel panel-tasks">
-      <div class="panel-header">📋 TAREAS DEL DÍA</div>
-      <div class="task-list">
-        @for (t of tareas; track t.id) {
-          <div class="task-item" [class.completed]="t.completada">
-            <span class="task-status">{{ t.completada ? '✅' : '⬜' }}</span>
-            <span class="task-name">{{ t.nombre }}</span>
-            <span class="task-time">{{ t.hora }}</span>
-          </div>
-        }
+    <div class="module module-current">
+      <div class="module-header">▶️ ACTUAL</div>
+      <div class="current-task-name">{{ tareaActual().nombre }}</div>
+      <div class="current-elapsed">{{ minutoActual() }} min / 60</div>
+      <div class="current-bar-wrapper">
+        <div class="current-bar-fill" [style.width.%]="minutoPorcentaje()"></div>
       </div>
-    </section>
+    </div>
 
-    <!-- PANEL DERECHO: Sabotaje -->
-    <section class="panel panel-sabotaje">
-      <div class="panel-header">⚡ SABOTAGE LEVEL</div>
-      <div class="sabotaje-content">
-        <div class="sabotaje-bar-wrapper">
-          <div class="sabotaje-bar" [style.width.%]="sabotajePorcentaje()" [class.critical]="sabotajeCritico()"></div>
-        </div>
-        <div class="sabotaje-label">
-          <span>{{ sabotajeSegundos() }}s</span>
-          <span>reactor</span>
-        </div>
-        <div class="sabotaje-alert" [class.active]="sabotajeCritico()">⚠️ SABOTAJE CRÍTICO</div>
-      </div>
-    </section>
-
+    <div class="module module-next">
+      <div class="module-header">⏭️ SIGUIENTE</div>
+      <div class="next-task-name">{{ tareaSiguiente().nombre }}</div>
+      <div class="next-time">{{ tareaSiguiente().hora }}</div>
+      <div class="next-status">⬜ Pendiente</div>
+    </div>
   </div>
 
-  <!-- PANEL INFERIOR: Barra de Progreso + Sprite -->
-  <section class="progress-section">
-    <div class="progress-header">
-      <span>⏱️ MINUTOS</span>
-      <span class="progress-value">{{ minutos() }} / 60</span>
-    </div>
-
-    <div class="progress-track">
-      <div class="progress-fill" [style.width.%]="minutosPorcentaje()"></div>
-      <div class="crewmate" [style.left.%]="minutosPorcentaje()">
-        <div class="crewmate-sprite"></div>
+  <!-- FILA DE SABOTAJE -->
+  <div class="row row-sabotaje">
+    <div class="sabotaje-left">
+      <div class="sabotaje-header">⚡ SABOTAGE LEVEL</div>
+      <div class="sabotaje-bar-wrapper">
+        <div class="sabotaje-bar" [style.width.%]="sabotajePorcentaje()" [class.critical]="sabotajeCritico()"></div>
       </div>
     </div>
-
-    <input
-      type="range"
-      class="progress-slider"
-      min="0"
-      max="60"
-      step="1"
-      [value]="minutos()"
-      (input)="onMinutosChange($event)"
-    />
-  </section>
-
-  <!-- PANEL INFERIOR: Tripulación -->
-  <section class="crew-section">
-    <div class="crew-label">👥 TRIPULANTES:</div>
-    <div class="crew-dots">
-      @for (v of [1,2,3,4,5,6,7,8,9,10]; track v) {
-        <span class="crew-dot" [class.dead]="v > vivos()" [style.animation-delay.s]="0.1 * v"></span>
-      }
+    <div class="sabotaje-center">
+      <div class="sabotaje-seconds">{{ sabotajeSegundos() }}s</div>
+      <div class="sabotaje-label">seg restantes</div>
     </div>
-    <div class="crew-count">{{ vivos() }}/10 vivos</div>
-  </section>
+    <div class="sabotaje-right">
+      <div class="reactor-dot" [class.active]="sabotajeCritico()"></div>
+      <div class="reactor-dot" [class.active]="sabotajeCritico()"></div>
+      <div class="reactor-dot" [class.active]="sabotajeCritico()"></div>
+    </div>
+  </div>
+
+  <!-- FILA DE MINUTOS Y CREWMATE -->
+  <div class="row row-progress">
+    <div class="progress-header">
+      <span>⏱️ HORA ACTUAL</span>
+      <span class="progress-value">{{ minutoActual() }} / 60 min</span>
+    </div>
+    <div class="progress-track">
+      <div class="progress-fill" [style.width.%]="minutoPorcentaje()"></div>
+      <div class="crewmate" [style.left.%]="minutoPorcentaje()">
+        <div class="crewmate-frames">
+          <img class="frame" src="/AmongUs/sprite0.png" alt="">
+          <img class="frame" src="/AmongUs/sprite1.png" alt="">
+          <img class="frame" src="/AmongUs/sprite2.png" alt="">
+          <img class="frame" src="/AmongUs/sprite3.png" alt="">
+          <img class="frame" src="/AmongUs/sprite4.png" alt="">
+          <img class="frame" src="/AmongUs/sprite5.png" alt="">
+          <img class="frame" src="/AmongUs/sprite6.png" alt="">
+          <img class="frame" src="/AmongUs/sprite7.png" alt="">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FILA DE DÍAS DE LA SEMANA -->
+  <div class="row row-days">
+    @for (d of diasSemana; track d.nombre) {
+      <div class="day-item" [class.past]="d.estado === 'pasado'" [class.today]="d.estado === 'hoy'" [class.future]="d.estado === 'futuro'">
+        <div class="day-circle"></div>
+        <span class="day-name">{{ d.nombre }}</span>
+        @if (d.estado === 'hoy') {
+          <span class="day-arrow">▲</span>
+        }
+      </div>
+    }
+  </div>
+
+  <!-- FILA DE CONTROL DE TIEMPO -->
+  <div class="row row-time-control">
+    <span class="time-label-left">00:00</span>
+    <div class="time-slider-wrapper">
+      <div class="time-control-header">CONTROL DE TIEMPO</div>
+      <input
+        type="range"
+        class="time-slider"
+        min="0"
+        max="1439"
+        step="1"
+        [value]="tiempoTotal()"
+        (input)="onTiempoChange($event)"
+      />
+    </div>
+    <span class="time-label-right">23:59</span>
+  </div>
 </div>

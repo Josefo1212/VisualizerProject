@@ -17,7 +17,7 @@ export class SidebarComponent {
 
   readonly designs = [
     { id: 'gta', icon: '🌆', name: 'Los Santos', cover: '/GTA/botonGTA.jpg' },
-    { id: 'amongus', icon: '🚀', name: 'Among Us', cover: '/AmongUs/fondoAmongUs.png' },
+    { id: 'amongus', icon: '🚀', name: 'Among Us', cover: '/AmongUs/botonAmongUs.jpg' },
   ];
 
   toggle(): void {
