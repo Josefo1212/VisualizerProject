@@ -15,7 +15,7 @@
   z-index: 0;
   pointer-events: none;
   opacity: 0;
-  transition: opacity 0.35s ease;
+  transition: opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 :host(:hover) .hover-reveal-bg {
