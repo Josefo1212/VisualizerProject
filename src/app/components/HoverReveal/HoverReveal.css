@@ -3,6 +3,7 @@
   overflow: hidden;
   isolation: isolate;
   display: block;
+  background: #08080c;
 }
 
 .hover-reveal-bg {
@@ -13,23 +14,15 @@
   background-position: center;
   z-index: 0;
   pointer-events: none;
-}
-
-.hover-reveal-overlay {
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  background: #08080c;
-  z-index: 1;
-  pointer-events: none;
+  opacity: 0;
   transition: opacity 0.35s ease;
 }
 
-:host(:hover) .hover-reveal-overlay {
-  opacity: 0;
+:host(:hover) .hover-reveal-bg {
+  opacity: 1;
 }
 
-:host([data-disabled]) .hover-reveal-overlay,
-:host([data-disabled]:hover) .hover-reveal-overlay {
-  opacity: 1;
+:host([data-disabled]) .hover-reveal-bg,
+:host([data-disabled]:hover) .hover-reveal-bg {
+  opacity: 0;
 }

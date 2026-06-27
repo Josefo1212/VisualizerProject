@@ -8,7 +8,6 @@ import { Component, Input, HostBinding } from '@angular/core';
       class="hover-reveal-bg"
       [style.background-image]="coverImage ? 'url(' + coverImage + ')' : 'none'"
     ></div>
-    <div class="hover-reveal-overlay"></div>
     <ng-content></ng-content>
   `,
   styleUrl: './HoverReveal.css',
