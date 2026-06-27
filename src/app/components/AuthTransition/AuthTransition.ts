@@ -1,6 +1,6 @@
 import { Component, signal } from '@angular/core';
-import { LoginComponent } from '../login/Login';
-import { RegisterComponent } from '../register/Register';
+import { LoginComponent } from '../Login/Login';
+import { RegisterComponent } from '../Register/Register';
 
 interface Particle {
   id: number;

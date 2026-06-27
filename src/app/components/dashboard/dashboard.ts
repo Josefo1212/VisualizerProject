@@ -1,7 +1,7 @@
 import { Component, inject, signal } from '@angular/core';
-import { SidebarComponent } from '../sidebar/Sidebar';
-import { PowerScreenComponent } from '../power-screen/PowerScreen';
-import { GtaDesignComponent } from '../gta-design/GtaDesign';
+import { SidebarComponent } from '../Sidebar/Sidebar';
+import { PowerScreenComponent } from '../PowerScreen/PowerScreen';
+import { GtaDesignComponent } from '../GtaDesign/GtaDesign';
 
 @Component({
   selector: 'app-dashboard',

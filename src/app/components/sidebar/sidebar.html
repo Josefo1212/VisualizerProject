@@ -21,14 +21,16 @@
   <div class="design-list">
     @if (!collapsed()) {
       @for (d of designs; track d.id) {
-        <div
+        <app-hover-reveal
           class="design-item"
           [class.active]="d.id === selectedDesign"
           (click)="selectDesign(d.id)"
+          [coverImage]="d.cover ?? ''"
+          [disabled]="inactive"
         >
           <span class="design-icon">{{ d.icon }}</span>
           <span class="design-name">{{ d.name }}</span>
-        </div>
+        </app-hover-reveal>
       }
     }
   </div>

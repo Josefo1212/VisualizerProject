@@ -1,0 +1,62 @@
+:host {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+:host::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background-image:
+    linear-gradient(to right, var(--corner-color, #00f3ff) 2px, transparent 0),
+    linear-gradient(to bottom, var(--corner-color, #00f3ff) 2px, transparent 0),
+    linear-gradient(to left, var(--corner-color, #00f3ff) 2px, transparent 0),
+    linear-gradient(to bottom, var(--corner-color, #00f3ff) 2px, transparent 0),
+    linear-gradient(to right, var(--corner-color, #00f3ff) 2px, transparent 0),
+    linear-gradient(to top, var(--corner-color, #00f3ff) 2px, transparent 0),
+    linear-gradient(to left, var(--corner-color, #00f3ff) 2px, transparent 0),
+    linear-gradient(to top, var(--corner-color, #00f3ff) 2px, transparent 0),
+    var(--cover-img);
+  background-size:
+    22px 2px, 2px 22px,
+    22px 2px, 2px 22px,
+    22px 2px, 2px 22px,
+    22px 2px, 2px 22px,
+    cover;
+  background-position:
+    8px 8px, 8px 8px,
+    calc(100% - 30px) 8px, calc(100% - 10px) 8px,
+    8px calc(100% - 10px), 8px calc(100% - 30px),
+    calc(100% - 30px) calc(100% - 10px), calc(100% - 10px) calc(100% - 30px),
+    center;
+  background-repeat:
+    no-repeat, no-repeat,
+    no-repeat, no-repeat,
+    no-repeat, no-repeat,
+    no-repeat, no-repeat,
+    no-repeat;
+  z-index: 0;
+  pointer-events: none;
+}
+
+:host::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: #08080c;
+  z-index: 1;
+  pointer-events: none;
+  transition: opacity 0.35s ease;
+}
+
+:host(:hover)::before {
+  opacity: 0;
+}
+
+:host([data-disabled])::before,
+:host([data-disabled]):hover::before {
+  opacity: 1;
+}

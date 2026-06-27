@@ -1,6 +1,6 @@
 import { Component, inject, computed, Signal } from '@angular/core';
 import { TimeManagerService } from '../../services/time-manager';
-import { SliderComponent } from '../slider/Slider';
+import { SliderComponent } from '../Slider/Slider';
 
 interface Rgb { r: number; g: number; b: number; }
 interface SkyPt { h: number; top: Rgb; mid: Rgb; bot: Rgb; }

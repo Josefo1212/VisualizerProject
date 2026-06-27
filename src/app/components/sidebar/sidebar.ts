@@ -1,8 +1,10 @@
 import { Component, Input, Output, EventEmitter, signal } from '@angular/core';
+import { HoverRevealComponent } from '../HoverReveal/HoverReveal';
 
 @Component({
   selector: 'app-sidebar',
   standalone: true,
+  imports: [HoverRevealComponent],
   templateUrl: './Sidebar.html',
   styleUrl: './Sidebar.css',
 })
@@ -14,7 +16,7 @@ export class SidebarComponent {
   readonly collapsed = signal<boolean>(false);
 
   readonly designs = [
-    { id: 'gta', icon: '🌆', name: 'Los Santos' },
+    { id: 'gta', icon: '🌆', name: 'Los Santos', cover: '/GTA/botonGTA.jpg' },
   ];
 
   toggle(): void {
