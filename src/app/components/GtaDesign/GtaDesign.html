@@ -4,36 +4,36 @@
 
   <div
     class="astro sun"
-    [style.left.%]="solX()"
-    [style.top.%]="solY()"
-    [style.opacity]="solOpacity()"
-    [style.transform]="'translate(-50%, -50%) scale(' + solScale() + ')'"
+    [style.left.%]="sunX()"
+    [style.top.%]="sunY()"
+    [style.opacity]="sunOpacity()"
+    [style.transform]="'translate(-50%, -50%) scale(' + sunScale() + ')'"
   ></div>
 
   <div
     class="astro moon"
-    [style.left.%]="lunaX()"
-    [style.top.%]="lunaY()"
-    [style.opacity]="lunaOpacity()"
+    [style.left.%]="moonX()"
+    [style.top.%]="moonY()"
+    [style.opacity]="moonOpacity()"
   ></div>
 
   <div class="city-stack">
     <img
       class="city-img"
       src="/GTA/fondoGTA1.png"
-      alt="Los Santos — día"
+      alt="Los Santos — day"
       [style.opacity]="img1Opacity()"
     />
     <img
       class="city-img"
       src="/GTA/fondoGTA2.png"
-      alt="Los Santos — atardecer"
+      alt="Los Santos — sunset"
       [style.opacity]="img2Opacity()"
     />
     <img
       class="city-img"
       src="/GTA/fondoGTA3.png"
-      alt="Los Santos — noche"
+      alt="Los Santos — night"
       [style.opacity]="img3Opacity()"
     />
   </div>
@@ -41,7 +41,7 @@
   <div class="content-overlay">
     <div class="time-card">
       <div class="time-icon">
-        @if (esDeDia()) {
+        @if (isDaytime()) {
           <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#fdb813" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <circle cx="12" cy="12" r="5"/>
             <line x1="12" y1="1" x2="12" y2="3"/>
@@ -61,19 +61,19 @@
       </div>
 
       <div class="time-display">
-        <span class="time-digits">{{ horaDisplay() }}</span>
+        <span class="time-digits">{{ hourDisplay() }}</span>
       </div>
 
       <div class="time-controls">
         <app-slider
-          [value]="horaActual()"
+          [value]="currentHour()"
           [min]="0"
           [max]="24"
           [step]="0.05"
           [formatFn]="formatSliderHour"
           (valueChange)="onSliderChange($event)"
         />
-        @if (time.modoManual$()) {
+        @if (time.manualMode$()) {
           <button class="reset-btn" (click)="onResetTime()">⏱ REAL</button>
         }
       </div>

@@ -1,26 +1,26 @@
 import { Injectable, signal, computed, Signal } from '@angular/core';
 import { BaseTimeEngine } from './baseTimeEngine';
-import { DiaInfo, NOMBRES_DIAS } from '../interfaces/amongUs';
+import { DayInfo, DAY_NAMES } from '../interfaces/amongUs';
 
 @Injectable({ providedIn: 'root' })
 export class AmongUsTimeEngineService extends BaseTimeEngine {
-  private readonly _diaSemana = signal(0);
+  private readonly _currentDayIndex = signal(0);
   private previousHour = -1;
 
-  readonly diaSemana$: Signal<number> = this._diaSemana.asReadonly();
+  readonly currentDayIndex$: Signal<number> = this._currentDayIndex.asReadonly();
 
-  readonly diasInfo: Signal<DiaInfo[]> = computed(() => {
-    const today = this._diaSemana();
-    return NOMBRES_DIAS.map((nombre, i) => ({
-      nombre,
-      estado: i < today ? 'pasado' as const : i === today ? 'hoy' as const : 'futuro' as const
+  readonly daysInfo: Signal<DayInfo[]> = computed(() => {
+    const today = this._currentDayIndex();
+    return DAY_NAMES.map((name, i) => ({
+      name,
+      status: i < today ? 'past' as const : i === today ? 'today' as const : 'future' as const
     }));
   });
 
   protected override onTick(): void {
-    const h = this.horas$();
+    const h = this.hours$();
     if (this.previousHour === 23 && h === 0) {
-      this._diaSemana.update(d => (d + 1) % 7);
+      this._currentDayIndex.update(d => (d + 1) % 7);
     }
     this.previousHour = h;
   }

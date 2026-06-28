@@ -1,6 +1,6 @@
 <nav class="sidebar" [class.collapsed]="collapsed()" [class.disabled]="inactive">
   <div class="sidebar-header">
-    <button class="toggle-btn" (click)="toggle()" [attr.aria-label]="collapsed() ? 'Expandir barra' : 'Plegar barra'">
+    <button class="toggle-btn" (click)="toggle()" [attr.aria-label]="collapsed() ? 'Expand sidebar' : 'Collapse sidebar'">
       <svg class="arrow-icon" [class.rotated]="!collapsed()" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
         <polyline points="9 18 15 12 9 6"/>
       </svg>

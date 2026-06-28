@@ -10,7 +10,7 @@ export const authGuard: CanActivateFn = (route, state) => {
     return true;
   }
 
-  // Intercepción limpia y redirección de seguridad
+  // Clean interception and security redirect
   router.navigate(['/login']);
   return false;
 };

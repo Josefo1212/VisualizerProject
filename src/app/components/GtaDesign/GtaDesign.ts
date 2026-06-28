@@ -33,35 +33,35 @@ const findSegment = <T extends { h: number }>(pts: T[], h: number): [T, T, numbe
 export class GtaDesignComponent {
   readonly time = inject(GtaTimeEngineService);
 
-  readonly horaActual: Signal<number> = this.time.horaActual$;
+  readonly currentHour: Signal<number> = this.time.currentHour$;
 
-  readonly angulo: Signal<number> = computed((): number => {
-    const h = this.horaActual();
+  readonly angle: Signal<number> = computed((): number => {
+    const h = this.currentHour();
     return ((h - 6) / 24) * 2 * Math.PI + Math.PI;
   });
 
-  readonly solX: Signal<number> = computed((): number => 50 + 45 * Math.cos(this.angulo()));
-  readonly solY: Signal<number> = computed((): number => 75 + 60 * Math.sin(this.angulo()));
+  readonly sunX: Signal<number> = computed((): number => 50 + 45 * Math.cos(this.angle()));
+  readonly sunY: Signal<number> = computed((): number => 75 + 60 * Math.sin(this.angle()));
 
-  readonly lunaX: Signal<number> = computed((): number => 50 + 45 * Math.cos(this.angulo() + Math.PI));
-  readonly lunaY: Signal<number> = computed((): number => 75 + 60 * Math.sin(this.angulo() + Math.PI));
+  readonly moonX: Signal<number> = computed((): number => 50 + 45 * Math.cos(this.angle() + Math.PI));
+  readonly moonY: Signal<number> = computed((): number => 75 + 60 * Math.sin(this.angle() + Math.PI));
 
-  readonly solOpacity: Signal<number> = computed((): number => {
-    const y = this.solY();
+  readonly sunOpacity: Signal<number> = computed((): number => {
+    const y = this.sunY();
     if (y < 70) return 1;
     if (y >= 100) return 0;
     return 1 - (y - 70) / 30;
   });
 
-  readonly lunaOpacity: Signal<number> = computed((): number => {
-    const y = this.lunaY();
+  readonly moonOpacity: Signal<number> = computed((): number => {
+    const y = this.moonY();
     if (y < 70) return 1;
     if (y >= 100) return 0;
     return 1 - (y - 70) / 30;
   });
 
   readonly skyGradient: Signal<string> = computed((): string => {
-    const h = this.horaActual();
+    const h = this.currentHour();
     const [a, b, t] = findSegment(SKY_PTS, h);
     const top = lerpRgb(a.top, b.top, t);
     const mid = lerpRgb(a.mid, b.mid, t);
@@ -69,8 +69,8 @@ export class GtaDesignComponent {
     return `linear-gradient(180deg, rgb(${top.r},${top.g},${top.b}) 0%, rgb(${mid.r},${mid.g},${mid.b}) 35%, rgb(${bot.r},${bot.g},${bot.b}) 100%)`;
   });
 
-  readonly solScale: Signal<number> = computed((): number => {
-    const y = this.solY();
+  readonly sunScale: Signal<number> = computed((): number => {
+    const y = this.sunY();
     if (y < 50) return 1;
     if (y >= 90) return 1.5;
     return 1 + 0.5 * ((y - 50) / 40);
@@ -79,7 +79,7 @@ export class GtaDesignComponent {
   /* ── Crossfade opacities for day / sunset / night images ── */
 
   readonly img1Opacity: Signal<number> = computed((): number => {
-    const h = this.horaActual();
+    const h = this.currentHour();
     if (h < 5) return 0;
     if (h < 6) return h - 5;
     if (h < 17) return 1;
@@ -88,7 +88,7 @@ export class GtaDesignComponent {
   });
 
   readonly img2Opacity: Signal<number> = computed((): number => {
-    const h = this.horaActual();
+    const h = this.currentHour();
     if (h < 17) return 0;
     if (h < 18) return h - 17;
     if (h < 19) return 19 - h;
@@ -96,7 +96,7 @@ export class GtaDesignComponent {
   });
 
   readonly img3Opacity: Signal<number> = computed((): number => {
-    const h = this.horaActual();
+    const h = this.currentHour();
     if (h < 5) return 1;
     if (h < 6) return 6 - h;
     if (h < 18) return 0;
@@ -104,13 +104,13 @@ export class GtaDesignComponent {
     return 1;
   });
 
-  readonly esDeDia: Signal<boolean> = computed((): boolean => {
-    const h = this.horaActual();
+  readonly isDaytime: Signal<boolean> = computed((): boolean => {
+    const h = this.currentHour();
     return h >= 6 && h < 18;
   });
 
-  readonly horaDisplay: Signal<string> = computed((): string => {
-    const total = this.horaActual();
+  readonly hourDisplay: Signal<string> = computed((): string => {
+    const total = this.currentHour();
     const h = Math.floor(total);
     const m = Math.floor((total - h) * 60);
     return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}`;

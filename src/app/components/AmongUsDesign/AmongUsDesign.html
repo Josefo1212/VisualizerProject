@@ -1,99 +1,80 @@
 <div class="tablet">
   <div class="tablet-bg"></div>
 
-  <!-- ENCABEZADO -->
-  <header class="header">
-    <h1 class="header-title">🚀 TASK MANAGER v.2024</h1>
-    <p class="header-sub">The Skeld — Tripulante #042 · {{ tiempoDisplay() }}</p>
+  <!-- ROW 1: MASTER CLOCK -->
+  <header class="row header">
+    <span class="clock-display monitor-glow">{{ clockDisplay() }}</span>
+    <span class="date-display">{{ dateDisplay() }}</span>
   </header>
 
-  <!-- FILA CENTRAL: 3 Módulos de Tareas -->
-  <div class="row row-tasks">
-    <div class="module module-completed">
-      <div class="module-header">✅ COMPLETADAS</div>
-      <div class="counter-big">{{ completadasCount() }} <span class="counter-total">/ 24</span></div>
-      <div class="module-footer">Última: {{ tareaAnterior().nombre }} — {{ tareaAnterior().hora }}</div>
-    </div>
-
-    <div class="module module-current">
-      <div class="module-header">▶️ ACTUAL</div>
-      <div class="current-task-name">{{ tareaActual().nombre }}</div>
-      <div class="current-elapsed">{{ minutoActual() }} min / 60</div>
-      <div class="current-bar-wrapper">
-        <div class="current-bar-fill" [style.width.%]="minutoPorcentaje()"></div>
+  <!-- MIDDLE SECTION: centered vertically -->
+  <div class="middle">
+    <!-- ROW 2: ENERGY EXTINCTION CANDLE -->
+    <div class="row row-energy">
+      <div class="energy-header">
+        <span>▶️ TASK IN PROGRESS: <strong>{{ currentTask().name }}</strong></span>
+      </div>
+      <div class="energy-track" [class.critical]="barCritical()">
+        <div class="energy-fill" [style.width.%]="remainingPercentage()"></div>
+        <div class="crewmate" [style.left.%]="crewmatePosition()">
+          <div class="crewmate-frames">
+            @for (idx of frameIndices; track idx) {
+              <img class="frame" src="/AmongUs/sprite{{idx}}.png" [class.active]="idx === currentFrameIndex()" alt="">
+            }
+          </div>
+        </div>
+      </div>
+      <div class="energy-footer">
+        ⏳ MINUTE SCAN: {{ minutesLeft() }}/60s
       </div>
     </div>
 
-    <div class="module module-next">
-      <div class="module-header">⏭️ SIGUIENTE</div>
-      <div class="next-task-name">{{ tareaSiguiente().nombre }}</div>
-      <div class="next-time">{{ tareaSiguiente().hora }}</div>
-      <div class="next-status">⬜ Pendiente</div>
-    </div>
-  </div>
-
-  <!-- FILA DE SCANNER (MedBay Scan) -->
-  <div class="row row-scanner">
-    <div class="scanner-left">
-      <div class="scanner-header">🧬 SCANNER PROGRESS</div>
-      <div class="scanner-bar">
-        @for (idx of scannerSegments; track idx) {
-          <div class="segment" [class.lit]="idx < scannerSegundos()"></div>
-        }
-      </div>
-    </div>
-    <div class="scanner-right">
-      <div class="scanner-time">{{ scannerSegundos() }}s <span class="scanner-total">/ 60s</span></div>
-      <div class="scanner-status">ESTADO: ESCANEANDO...</div>
-    </div>
-  </div>
-
-  <!-- FILA DE MINUTOS Y CREWMATE -->
-  <div class="row row-progress">
-    <div class="progress-header">
-      <span>⏱️ HORA ACTUAL</span>
-      <span class="progress-value">{{ minutoActual() }} / 60 min</span>
-    </div>
-    <div class="progress-track">
-      <div class="progress-fill" [style.width.%]="minutoPorcentaje()"></div>
-      <div class="crewmate" [style.left.%]="minutoPorcentaje()">
-        <div class="crewmate-frames">
-          @for (idx of frameIndices; track idx) {
-            <img class="frame" src="/AmongUs/sprite{{idx}}.png" [class.active]="idx === currentFrameIndex()" alt="">
+    <!-- ROW 3: MEDICAL SCAN — OXYGEN DECOMPRESSION -->
+    <div class="row row-scanner">
+      <div class="scanner-left">
+        <div class="scanner-label">🧬 MEDICAL SCAN</div>
+        <div class="scanner-bar">
+          @for (idx of scannerSegments; track idx) {
+            <div class="segment" [class.lit]="scannerBlockLit(idx)"></div>
           }
         </div>
       </div>
+      <div class="scanner-right">
+        <div class="scanner-seconds">{{ scannerRemaining() }}<span class="scanner-unit">s</span></div>
+        <div class="scanner-alert">🚀 SCAN: {{ scannerRemaining() }}/60 segment{{ scannerRemaining() === 1 ? '' : 's' }}</div>
+      </div>
+    </div>
+
+    <!-- ROW 4: WEEKLY TIMELINE -->
+    <div class="row row-days">
+      @for (d of daysInfo(); track d.name) {
+        <div class="day-item"
+             [class.past]="d.status === 'past'"
+             [class.today]="d.status === 'today'"
+             [class.future]="d.status === 'future'">
+          <div class="day-circle"></div>
+          <span class="day-label">{{ d.name }}</span>
+        </div>
+      }
     </div>
   </div>
 
-  <!-- FILA DE DÍAS DE LA SEMANA -->
-  <div class="row row-days">
-    @for (d of diasSemana(); track d.nombre) {
-      <div class="day-item" [class.past]="d.estado === 'pasado'" [class.today]="d.estado === 'hoy'" [class.future]="d.estado === 'futuro'">
-        <div class="day-circle"></div>
-        <span class="day-name">{{ d.nombre }}</span>
-        @if (d.estado === 'hoy') {
-          <span class="day-arrow">▲</span>
-        }
-      </div>
-    }
-  </div>
-
-  <!-- FILA DE CONTROL DE TIEMPO -->
-  <div class="row row-time-control">
-    <span class="time-label-left">00:00</span>
-    <div class="time-slider-wrapper">
-      <div class="time-control-header">CONTROL DE TIEMPO</div>
+  <!-- ROW 5: MASTER TIME SLIDER -->
+  <div class="row row-slider">
+    <span class="slider-edge">00:00</span>
+    <div class="slider-body">
+      <div class="slider-header">TIME CONTROL</div>
       <input
         type="range"
-        class="time-slider"
+        class="slider-input"
         min="0"
         max="1439"
         step="1"
-        [value]="tiempoTotal()"
-        (input)="onTiempoChange($event)"
+        [value]="totalTime()"
+        [style.--fill.%]="sliderPercentage()"
+        (input)="onTimeChange($event)"
       />
     </div>
-    <span class="time-label-right">23:59</span>
+    <span class="slider-edge">23:59</span>
   </div>
 </div>

@@ -20,7 +20,7 @@
   transition: background 0.5s linear;
 }
 
-/* ============ ASTROS ============ */
+/* ============ CELESTIAL BODIES ============ */
 
 .astro {
   position: absolute;
@@ -32,7 +32,7 @@
   transition: left 0.3s linear, top 0.3s linear, opacity 0.5s ease, transform 0.3s ease;
 }
 
-/* ────── SOL ────── */
+/* ────── SUN ────── */
 
 .sun {
   width: 80px;
@@ -132,7 +132,7 @@
   to { transform: rotate(360deg); }
 }
 
-/* ────── LUNA ────── */
+/* ────── MOON ────── */
 
 .moon {
   width: 56px;

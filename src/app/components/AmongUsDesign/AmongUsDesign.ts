@@ -1,6 +1,6 @@
 import { Component, computed, signal, OnInit, OnDestroy, inject } from '@angular/core';
 import { AmongUsTimeEngineService } from '../../services/amongUsTimeEngine';
-import { Tarea } from '../../interfaces/amongUs';
+import { Task } from '../../interfaces/amongUs';
 
 @Component({
   selector: 'app-among-us-design',
@@ -11,75 +11,68 @@ import { Tarea } from '../../interfaces/amongUs';
 export class AmongUsDesignComponent implements OnInit, OnDestroy {
   readonly timeEngine = inject(AmongUsTimeEngineService);
 
-  readonly tiempoTotal = computed(() => this.timeEngine.horas$() * 60 + this.timeEngine.minutos$());
-  readonly scannerSegundos = signal<number>(0);
-  readonly vivos = signal<number>(10);
+  readonly totalTime = computed(() => this.timeEngine.hours$() * 60 + this.timeEngine.minutes$());
+  readonly scannerSeconds = signal<number>(0);
   readonly scannerSegments = Array.from({ length: 60 }, (_, i) => i);
+  readonly sliderPercentage = computed(() => (this.totalTime() / 1439) * 100);
 
-  readonly horaActual = this.timeEngine.horas$;
-  readonly minutoActual = this.timeEngine.minutos$;
-  readonly minutoPorcentaje = computed(() => (this.minutoActual() / 60) * 100);
-  readonly tiempoPorcentaje = computed(() => (this.tiempoTotal() / 1439) * 100);
+  readonly currentHour = this.timeEngine.hours$;
+  readonly currentMinute = this.timeEngine.minutes$;
+  readonly currentSecond = this.timeEngine.seconds$;
+  readonly daysInfo = this.timeEngine.daysInfo;
 
-  readonly tareas: Tarea[] = [
-    { id: 1, nombre: 'Swipe Card', hora: '07:00', horaIndex: 7, completada: true },
-    { id: 2, nombre: 'Calibrate Distributor', hora: '08:00', horaIndex: 8, completada: true },
-    { id: 3, nombre: 'Clean Vent', hora: '09:00', horaIndex: 9, completada: true },
-    { id: 4, nombre: 'Fix Wiring', hora: '10:00', horaIndex: 10, completada: true },
-    { id: 5, nombre: 'Upload Data', hora: '11:00', horaIndex: 11, completada: true },
-    { id: 6, nombre: 'Swipe Card', hora: '12:00', horaIndex: 12, completada: true },
-    { id: 7, nombre: 'Prime Shields', hora: '13:00', horaIndex: 13, completada: true },
-    { id: 8, nombre: 'Chart Course', hora: '14:00', horaIndex: 14, completada: true },
-    { id: 9, nombre: 'Stabilize Steering', hora: '15:00', horaIndex: 15, completada: false },
-    { id: 10, nombre: 'Clean Vent', hora: '16:00', horaIndex: 16, completada: false },
-    { id: 11, nombre: 'Calibrate Distributor', hora: '17:00', horaIndex: 17, completada: false },
-    { id: 12, nombre: 'Fix Wiring', hora: '18:00', horaIndex: 18, completada: false },
-    { id: 13, nombre: 'Swipe Card', hora: '19:00', horaIndex: 19, completada: false },
-    { id: 14, nombre: 'Upload Data', hora: '20:00', horaIndex: 20, completada: false },
-    { id: 15, nombre: 'Prime Shields', hora: '21:00', horaIndex: 21, completada: false },
-    { id: 16, nombre: 'Chart Course', hora: '22:00', horaIndex: 22, completada: false },
-    { id: 17, nombre: 'Stabilize Steering', hora: '23:00', horaIndex: 23, completada: false },
-    { id: 18, nombre: 'Clean Vent', hora: '00:00', horaIndex: 0, completada: false },
-    { id: 19, nombre: 'Fix Wiring', hora: '01:00', horaIndex: 1, completada: false },
-    { id: 20, nombre: 'Swipe Card', hora: '02:00', horaIndex: 2, completada: false },
-    { id: 21, nombre: 'Calibrate Distributor', hora: '03:00', horaIndex: 3, completada: false },
-    { id: 22, nombre: 'Upload Data', hora: '04:00', horaIndex: 4, completada: false },
-    { id: 23, nombre: 'Prime Shields', hora: '05:00', horaIndex: 5, completada: false },
-    { id: 24, nombre: 'Chart Course', hora: '06:00', horaIndex: 6, completada: false },
-  ];
-
-  readonly tareaActual = computed(() => {
-    const h = this.horaActual();
-    return this.tareas.find(t => t.horaIndex === h) ?? this.tareas[0];
-  });
-
-  readonly tareaAnterior = computed(() => {
-    const idx = this.tareas.indexOf(this.tareaActual());
-    if (idx <= 0) return this.tareas[this.tareas.length - 1];
-    return this.tareas[idx - 1];
-  });
-
-  readonly tareaSiguiente = computed(() => {
-    const idx = this.tareas.indexOf(this.tareaActual());
-    if (idx >= this.tareas.length - 1) return this.tareas[0];
-    return this.tareas[idx + 1];
-  });
-
-  readonly completadas = computed(() => {
-    const h = this.horaActual();
-    if (h === 0) return this.tareas.filter(t => t.horaIndex >= 7 || t.horaIndex < 0);
-    return this.tareas.filter(t => t.horaIndex < h && t.horaIndex >= 7);
-  });
-
-  readonly completadasCount = computed(() => this.completadas().length);
-
-  readonly tiempoDisplay = computed(() => {
-    const h = this.horaActual().toString().padStart(2, '0');
-    const m = this.minutoActual().toString().padStart(2, '0');
+  readonly clockDisplay = computed(() => {
+    const h = this.currentHour().toString().padStart(2, '0');
+    const m = this.currentMinute().toString().padStart(2, '0');
     return `${h}:${m}`;
   });
 
-  readonly diasSemana = this.timeEngine.diasInfo;
+  readonly dateDisplay = computed(() => {
+    const now = new Date();
+    const months = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
+    const today = this.daysInfo().find(d => d.status === 'today');
+    return `${today?.name ?? 'MON'}, ${now.getDate()} ${months[now.getMonth()]}`;
+  });
+
+  readonly tasks: Task[] = [
+    { id: 1, name: 'Swipe Card', hour: '07:00', hourIndex: 7, completed: true },
+    { id: 2, name: 'Calibrate Distributor', hour: '08:00', hourIndex: 8, completed: true },
+    { id: 3, name: 'Clean Vent', hour: '09:00', hourIndex: 9, completed: true },
+    { id: 4, name: 'Fix Wiring', hour: '10:00', hourIndex: 10, completed: true },
+    { id: 5, name: 'Upload Data', hour: '11:00', hourIndex: 11, completed: true },
+    { id: 6, name: 'Swipe Card', hour: '12:00', hourIndex: 12, completed: true },
+    { id: 7, name: 'Prime Shields', hour: '13:00', hourIndex: 13, completed: true },
+    { id: 8, name: 'Chart Course', hour: '14:00', hourIndex: 14, completed: true },
+    { id: 9, name: 'Stabilize Steering', hour: '15:00', hourIndex: 15, completed: false },
+    { id: 10, name: 'Clean Vent', hour: '16:00', hourIndex: 16, completed: false },
+    { id: 11, name: 'Calibrate Distributor', hour: '17:00', hourIndex: 17, completed: false },
+    { id: 12, name: 'Fix Wiring', hour: '18:00', hourIndex: 18, completed: false },
+    { id: 13, name: 'Swipe Card', hour: '19:00', hourIndex: 19, completed: false },
+    { id: 14, name: 'Upload Data', hour: '20:00', hourIndex: 20, completed: false },
+    { id: 15, name: 'Prime Shields', hour: '21:00', hourIndex: 21, completed: false },
+    { id: 16, name: 'Chart Course', hour: '22:00', hourIndex: 22, completed: false },
+    { id: 17, name: 'Stabilize Steering', hour: '23:00', hourIndex: 23, completed: false },
+    { id: 18, name: 'Clean Vent', hour: '00:00', hourIndex: 0, completed: false },
+    { id: 19, name: 'Fix Wiring', hour: '01:00', hourIndex: 1, completed: false },
+    { id: 20, name: 'Swipe Card', hour: '02:00', hourIndex: 2, completed: false },
+    { id: 21, name: 'Calibrate Distributor', hour: '03:00', hourIndex: 3, completed: false },
+    { id: 22, name: 'Upload Data', hour: '04:00', hourIndex: 4, completed: false },
+    { id: 23, name: 'Prime Shields', hour: '05:00', hourIndex: 5, completed: false },
+    { id: 24, name: 'Chart Course', hour: '06:00', hourIndex: 6, completed: false },
+  ];
+
+  readonly currentTask = computed(() => {
+    const h = this.currentHour();
+    return this.tasks.find(t => t.hourIndex === h) ?? this.tasks[0];
+  });
+
+  readonly remainingPercentage = computed(() => (this.currentMinute() / 60) * 100);
+  readonly minutesLeft = computed(() => this.currentMinute());
+  readonly barCritical = computed(() => this.remainingPercentage() > 80);
+  readonly crewmatePosition = this.remainingPercentage;
+
+  readonly scannerBlockLit = (idx: number): boolean => idx < this.scannerSeconds();
+  readonly scannerRemaining = computed(() => this.scannerSeconds());
 
   readonly frameIndices = [0, 1, 2, 3, 4, 5, 6, 7];
   readonly currentFrameIndex = signal(0);
@@ -89,13 +82,7 @@ export class AmongUsDesignComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.scannerInterval = setInterval(() => {
-      this.scannerSegundos.update(s => {
-        if (s >= 60) {
-          this.vivos.update(v => Math.max(0, v - 1));
-          return 0;
-        }
-        return s + 1;
-      });
+      this.scannerSeconds.update(s => s >= 60 ? 0 : s + 1);
     }, 1000);
 
     this.frameInterval = setInterval(() => {
@@ -108,7 +95,7 @@ export class AmongUsDesignComponent implements OnInit, OnDestroy {
     clearInterval(this.scannerInterval);
   }
 
-  onTiempoChange(event: Event): void {
+  onTimeChange(event: Event): void {
     const value = (event.target as HTMLInputElement).value;
     this.timeEngine.setHora(Number(value) / 60);
   }

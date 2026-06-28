@@ -27,11 +27,11 @@ export class RegisterComponent {
   private validateUsername(value: string): boolean {
     const trimmed = value.trim();
     if (trimmed.length < 2) {
-      this.usernameError.set('EL USUARIO DEBE TENER AL MENOS 2 CARACTERES.');
+      this.usernameError.set('USERNAME MUST BE AT LEAST 2 CHARACTERS.');
       return false;
     }
     if (trimmed.length > 15) {
-      this.usernameError.set('EL USUARIO NO PUEDE EXCEDER 15 CARACTERES.');
+      this.usernameError.set('USERNAME CANNOT EXCEED 15 CHARACTERS.');
       return false;
     }
     this.usernameError.set('');
@@ -41,15 +41,15 @@ export class RegisterComponent {
   private validateEmail(value: string): boolean {
     const trimmed = value.trim();
     if (trimmed.length < 10) {
-      this.emailError.set('EL CORREO DEBE TENER AL MENOS 10 CARACTERES.');
+      this.emailError.set('EMAIL MUST BE AT LEAST 10 CHARACTERS.');
       return false;
     }
     if (trimmed.length > 50) {
-      this.emailError.set('EL CORREO NO PUEDE EXCEDER 50 CARACTERES.');
+      this.emailError.set('EMAIL CANNOT EXCEED 50 CHARACTERS.');
       return false;
     }
     if (!trimmed.endsWith('@gmail.com')) {
-      this.emailError.set('EL CORREO DEBE SER @gmail.com.');
+      this.emailError.set('EMAIL MUST BE @gmail.com.');
       return false;
     }
     this.emailError.set('');
@@ -58,11 +58,11 @@ export class RegisterComponent {
 
   private validatePassword(value: string): boolean {
     if (value.length < 8) {
-      this.passwordError.set('LA CONTRASEÑA DEBE TENER AL MENOS 8 CARACTERES.');
+      this.passwordError.set('PASSWORD MUST BE AT LEAST 8 CHARACTERS.');
       return false;
     }
     if (value.length > 15) {
-      this.passwordError.set('LA CONTRASEÑA NO PUEDE EXCEDER 15 CARACTERES.');
+      this.passwordError.set('PASSWORD CANNOT EXCEED 15 CHARACTERS.');
       return false;
     }
     this.passwordError.set('');
@@ -90,13 +90,13 @@ export class RegisterComponent {
       });
 
       if (isValid) {
-        this.successMessage.set('REGISTRO EXITOSO. ENRUTANDO A ACCESO...');
+        this.successMessage.set('REGISTRATION SUCCESSFUL. ROUTING TO LOGIN...');
         setTimeout(() => this.switchToLogin.emit(), 1500);
       } else {
-        this.errorMessage.set('ERROR: EL USUARIO YA SE ENCUENTRA REGISTRADO.');
+        this.errorMessage.set('ERROR: USERNAME IS ALREADY REGISTERED.');
       }
     } catch {
-      this.errorMessage.set('ERROR DE CONEXIÓN CON LA BASE DE DATOS.');
+      this.errorMessage.set('DATABASE CONNECTION ERROR.');
     }
   }
 }

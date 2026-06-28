@@ -1,21 +1,21 @@
 <div class="power-screen">
   @if (state() === 'OFF') {
     <div class="off-state">
-      <p class="standby-text">SISTEMA APAGADO</p>
-      <button class="power-btn" (click)="powerOn()" aria-label="Encender centro de juegos">
+      <p class="standby-text">SYSTEM OFF</p>
+      <button class="power-btn" (click)="powerOn()" aria-label="Turn on game center">
         <svg class="power-icon" viewBox="0 0 100 100" fill="none">
           <circle cx="50" cy="50" r="44" stroke="currentColor" stroke-width="5" />
           <line x1="50" y1="22" x2="50" y2="52" stroke="currentColor" stroke-width="6" stroke-linecap="round" />
           <path d="M32 36 A22 22 0 1 0 68 36" stroke="currentColor" stroke-width="5" stroke-linecap="round" />
         </svg>
-        <span class="power-label">ENCENDER CENTRO DE JUEGOS</span>
+        <span class="power-label">TURN ON GAME CENTER</span>
       </button>
     </div>
   }
 
   @if (state() === 'BOOTING') {
     <div class="booting-state">
-      <p class="booting-label">ENCENDIENDO CENTRO DE JUEGOS</p>
+      <p class="booting-label">TURNING ON GAME CENTER</p>
       <div class="progress-track">
         <div class="progress-fill" [style.--progress]="progress()"></div>
       </div>

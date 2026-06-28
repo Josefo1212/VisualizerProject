@@ -25,11 +25,11 @@ export class LoginComponent {
   private validateUsername(value: string): boolean {
     const trimmed = value.trim();
     if (trimmed.length < 2) {
-      this.usernameError.set('EL USUARIO DEBE TENER AL MENOS 2 CARACTERES.');
+      this.usernameError.set('USERNAME MUST BE AT LEAST 2 CHARACTERS.');
       return false;
     }
     if (trimmed.length > 15) {
-      this.usernameError.set('EL USUARIO NO PUEDE EXCEDER 15 CARACTERES.');
+      this.usernameError.set('USERNAME CANNOT EXCEED 15 CHARACTERS.');
       return false;
     }
     this.usernameError.set('');
@@ -38,11 +38,11 @@ export class LoginComponent {
 
   private validatePassword(value: string): boolean {
     if (value.length < 8) {
-      this.passwordError.set('LA CONTRASEÑA DEBE TENER AL MENOS 8 CARACTERES.');
+      this.passwordError.set('PASSWORD MUST BE AT LEAST 8 CHARACTERS.');
       return false;
     }
     if (value.length > 15) {
-      this.passwordError.set('LA CONTRASEÑA NO PUEDE EXCEDER 15 CARACTERES.');
+      this.passwordError.set('PASSWORD CANNOT EXCEED 15 CHARACTERS.');
       return false;
     }
     this.passwordError.set('');
@@ -67,10 +67,10 @@ export class LoginComponent {
       });
 
       if (!isValid) {
-        this.errorMessage.set('ACCESO DENEGADO: CREDENCIALES ERRÓNEAS.');
+        this.errorMessage.set('ACCESS DENIED: INVALID CREDENTIALS.');
       }
     } catch {
-      this.errorMessage.set('ERROR DE CONEXIÓN CON LA BASE DE DATOS.');
+      this.errorMessage.set('DATABASE CONNECTION ERROR.');
     }
   }
 }

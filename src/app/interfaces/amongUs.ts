@@ -1,14 +1,14 @@
-export interface DiaInfo {
-  nombre: string;
-  estado: 'pasado' | 'hoy' | 'futuro';
+export interface DayInfo {
+  name: string;
+  status: 'past' | 'today' | 'future';
 }
 
-export interface Tarea {
+export interface Task {
   id: number;
-  nombre: string;
-  hora: string;
-  horaIndex: number;
-  completada: boolean;
+  name: string;
+  hour: string;
+  hourIndex: number;
+  completed: boolean;
 }
 
-export const NOMBRES_DIAS = ['LUN', 'MAR', 'MIÉ', 'JUE', 'VIE', 'SÁB', 'DOM'] as const;
+export const DAY_NAMES = ['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN'] as const;
