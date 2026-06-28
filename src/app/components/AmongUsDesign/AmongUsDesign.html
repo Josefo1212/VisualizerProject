@@ -62,7 +62,6 @@
   <div class="row row-slider">
     <span class="slider-edge">00:00</span>
     <div class="slider-body">
-      <div class="slider-header">TIME CONTROL</div>
       <input
         type="range"
         class="slider-input"
@@ -75,5 +74,8 @@
       />
     </div>
     <span class="slider-edge">23:59</span>
+    @if (timeEngine.manualMode$()) {
+      <button class="reset-btn" (click)="onResetTime()">⏱ REAL</button>
+    }
   </div>
 </div>

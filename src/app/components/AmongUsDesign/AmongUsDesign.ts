@@ -12,7 +12,6 @@ export class AmongUsDesignComponent implements OnInit, OnDestroy {
   readonly timeEngine = inject(AmongUsTimeEngineService);
 
   readonly totalTime = computed(() => this.timeEngine.hours$() * 60 + this.timeEngine.minutes$());
-  readonly scannerSeconds = signal<number>(0);
   readonly scannerSegments = Array.from({ length: 60 }, (_, i) => i);
   readonly sliderPercentage = computed(() => (this.totalTime() / 1439) * 100);
 
@@ -71,20 +70,15 @@ export class AmongUsDesignComponent implements OnInit, OnDestroy {
   readonly barCritical = computed(() => this.remainingPercentage() > 80);
   readonly crewmatePosition = this.remainingPercentage;
 
-  readonly scannerBlockLit = (idx: number): boolean => idx < this.scannerSeconds();
-  readonly scannerRemaining = computed(() => this.scannerSeconds());
+  readonly scannerBlockLit = (idx: number): boolean => idx < this.currentSecond();
+  readonly scannerRemaining = this.currentSecond;
 
   readonly frameIndices = [0, 1, 2, 3, 4, 5, 6, 7];
   readonly currentFrameIndex = signal(0);
 
-  private scannerInterval?: ReturnType<typeof setInterval>;
   private frameInterval?: ReturnType<typeof setInterval>;
 
   ngOnInit(): void {
-    this.scannerInterval = setInterval(() => {
-      this.scannerSeconds.update(s => s >= 60 ? 0 : s + 1);
-    }, 1000);
-
     this.frameInterval = setInterval(() => {
       this.currentFrameIndex.update(i => (i + 1) % 8);
     }, 80);
@@ -92,11 +86,14 @@ export class AmongUsDesignComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     clearInterval(this.frameInterval);
-    clearInterval(this.scannerInterval);
   }
 
   onTimeChange(event: Event): void {
     const value = (event.target as HTMLInputElement).value;
     this.timeEngine.setHora(Number(value) / 60);
+  }
+
+  onResetTime(): void {
+    this.timeEngine.resetToRealTime();
   }
 }
