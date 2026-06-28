@@ -73,7 +73,7 @@
           [formatFn]="formatSliderHour"
           (valueChange)="onSliderChange($event)"
         />
-        @if (time.modoManual()) {
+        @if (time.modoManual$()) {
           <button class="reset-btn" (click)="onResetTime()">⏱ REAL</button>
         }
       </div>

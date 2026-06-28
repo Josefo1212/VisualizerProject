@@ -1,18 +1,6 @@
 import { Component, computed, signal, OnInit, OnDestroy, inject } from '@angular/core';
-import { TimeManagerService } from '../../services/time-manager';
-
-interface Tarea {
-  id: number;
-  nombre: string;
-  hora: string;
-  horaIndex: number;
-  completada: boolean;
-}
-
-interface DiaSemana {
-  nombre: string;
-  estado: 'pasado' | 'hoy' | 'futuro';
-}
+import { AmongUsTimeEngineService } from '../../services/amongUsTimeEngine';
+import { Tarea } from '../../interfaces/amongUs';
 
 @Component({
   selector: 'app-among-us-design',
@@ -21,15 +9,15 @@ interface DiaSemana {
   styleUrl: './AmongUsDesign.css',
 })
 export class AmongUsDesignComponent implements OnInit, OnDestroy {
-  private timeManager = inject(TimeManagerService);
+  readonly timeEngine = inject(AmongUsTimeEngineService);
 
-  readonly tiempoTotal = computed(() => Math.floor(this.timeManager.horaActual() * 60));
+  readonly tiempoTotal = computed(() => this.timeEngine.horas$() * 60 + this.timeEngine.minutos$());
   readonly scannerSegundos = signal<number>(0);
   readonly vivos = signal<number>(10);
   readonly scannerSegments = Array.from({ length: 60 }, (_, i) => i);
 
-  readonly horaActual = computed(() => Math.floor(this.tiempoTotal() / 60));
-  readonly minutoActual = computed(() => this.tiempoTotal() % 60);
+  readonly horaActual = this.timeEngine.horas$;
+  readonly minutoActual = this.timeEngine.minutos$;
   readonly minutoPorcentaje = computed(() => (this.minutoActual() / 60) * 100);
   readonly tiempoPorcentaje = computed(() => (this.tiempoTotal() / 1439) * 100);
 
@@ -91,15 +79,7 @@ export class AmongUsDesignComponent implements OnInit, OnDestroy {
     return `${h}:${m}`;
   });
 
-  readonly diasSemana: DiaSemana[] = [
-    { nombre: 'LUN', estado: 'pasado' },
-    { nombre: 'MAR', estado: 'pasado' },
-    { nombre: 'MIÉ', estado: 'pasado' },
-    { nombre: 'JUE', estado: 'hoy' },
-    { nombre: 'VIE', estado: 'futuro' },
-    { nombre: 'SÁB', estado: 'futuro' },
-    { nombre: 'DOM', estado: 'futuro' },
-  ];
+  readonly diasSemana = this.timeEngine.diasInfo;
 
   readonly frameIndices = [0, 1, 2, 3, 4, 5, 6, 7];
   readonly currentFrameIndex = signal(0);
@@ -130,6 +110,6 @@ export class AmongUsDesignComponent implements OnInit, OnDestroy {
 
   onTiempoChange(event: Event): void {
     const value = (event.target as HTMLInputElement).value;
-    this.timeManager.setHora(Number(value) / 60);
+    this.timeEngine.setHora(Number(value) / 60);
   }
 }
