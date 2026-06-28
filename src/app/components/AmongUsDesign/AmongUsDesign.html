@@ -32,22 +32,19 @@
     </div>
   </div>
 
-  <!-- FILA DE SABOTAJE -->
-  <div class="row row-sabotaje">
-    <div class="sabotaje-left">
-      <div class="sabotaje-header">⚡ SABOTAGE LEVEL</div>
-      <div class="sabotaje-bar-wrapper">
-        <div class="sabotaje-bar" [style.width.%]="sabotajePorcentaje()" [class.critical]="sabotajeCritico()"></div>
+  <!-- FILA DE SCANNER (MedBay Scan) -->
+  <div class="row row-scanner">
+    <div class="scanner-left">
+      <div class="scanner-header">🧬 SCANNER PROGRESS</div>
+      <div class="scanner-bar">
+        @for (idx of scannerSegments; track idx) {
+          <div class="segment" [class.lit]="idx < scannerSegundos()"></div>
+        }
       </div>
     </div>
-    <div class="sabotaje-center">
-      <div class="sabotaje-seconds">{{ sabotajeSegundos() }}s</div>
-      <div class="sabotaje-label">seg restantes</div>
-    </div>
-    <div class="sabotaje-right">
-      <div class="reactor-dot" [class.active]="sabotajeCritico()"></div>
-      <div class="reactor-dot" [class.active]="sabotajeCritico()"></div>
-      <div class="reactor-dot" [class.active]="sabotajeCritico()"></div>
+    <div class="scanner-right">
+      <div class="scanner-time">{{ scannerSegundos() }}s <span class="scanner-total">/ 60s</span></div>
+      <div class="scanner-status">ESTADO: ESCANEANDO...</div>
     </div>
   </div>
 

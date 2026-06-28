@@ -1,4 +1,5 @@
-import { Component, computed, signal, OnInit, OnDestroy } from '@angular/core';
+import { Component, computed, signal, OnInit, OnDestroy, inject } from '@angular/core';
+import { TimeManagerService } from '../../services/time-manager';
 
 interface Tarea {
   id: number;
@@ -20,17 +21,17 @@ interface DiaSemana {
   styleUrl: './AmongUsDesign.css',
 })
 export class AmongUsDesignComponent implements OnInit, OnDestroy {
-  readonly tiempoTotal = signal<number>(540); // minutos desde 00:00 (540 = 09:00)
-  readonly sabotajeSegundos = signal<number>(60);
+  private timeManager = inject(TimeManagerService);
+
+  readonly tiempoTotal = computed(() => Math.floor(this.timeManager.horaActual() * 60));
+  readonly scannerSegundos = signal<number>(0);
   readonly vivos = signal<number>(10);
+  readonly scannerSegments = Array.from({ length: 60 }, (_, i) => i);
 
   readonly horaActual = computed(() => Math.floor(this.tiempoTotal() / 60));
   readonly minutoActual = computed(() => this.tiempoTotal() % 60);
   readonly minutoPorcentaje = computed(() => (this.minutoActual() / 60) * 100);
   readonly tiempoPorcentaje = computed(() => (this.tiempoTotal() / 1439) * 100);
-
-  readonly sabotajePorcentaje = computed(() => (this.sabotajeSegundos() / 60) * 100);
-  readonly sabotajeCritico = computed(() => this.sabotajeSegundos() <= 10);
 
   readonly tareas: Tarea[] = [
     { id: 1, nombre: 'Swipe Card', hora: '07:00', horaIndex: 7, completada: true },
@@ -101,17 +102,22 @@ export class AmongUsDesignComponent implements OnInit, OnDestroy {
   ];
 
   readonly frameIndices = [0, 1, 2, 3, 4, 5, 6, 7];
-frameIndices: any;
   readonly currentFrameIndex = signal(0);
 
-  private sabotajeInterval?: ReturnType<typeof setInterval>;
+  private scannerInterval?: ReturnType<typeof setInterval>;
   private frameInterval?: ReturnType<typeof setInterval>;
 
-  constructor() {
-    this.iniciarSabotaje();
-  }
-
   ngOnInit(): void {
+    this.scannerInterval = setInterval(() => {
+      this.scannerSegundos.update(s => {
+        if (s >= 60) {
+          this.vivos.update(v => Math.max(0, v - 1));
+          return 0;
+        }
+        return s + 1;
+      });
+    }, 1000);
+
     this.frameInterval = setInterval(() => {
       this.currentFrameIndex.update(i => (i + 1) % 8);
     }, 80);
@@ -119,23 +125,11 @@ frameIndices: any;
 
   ngOnDestroy(): void {
     clearInterval(this.frameInterval);
-    clearInterval(this.sabotajeInterval);
-  }
-
-  private iniciarSabotaje(): void {
-    this.sabotajeInterval = setInterval(() => {
-      this.sabotajeSegundos.update(s => {
-        if (s <= 0) {
-          this.vivos.update(v => Math.max(0, v - 1));
-          return 60;
-        }
-        return s - 1;
-      });
-    }, 1000);
+    clearInterval(this.scannerInterval);
   }
 
   onTiempoChange(event: Event): void {
     const value = (event.target as HTMLInputElement).value;
-    this.tiempoTotal.set(Number(value));
+    this.timeManager.setHora(Number(value) / 60);
   }
 }
