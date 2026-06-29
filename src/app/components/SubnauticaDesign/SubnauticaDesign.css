@@ -1,0 +1,497 @@
+:host {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  background: radial-gradient(ellipse at center, #0a1a2a 0%, #04080e 100%);
+}
+
+/* ───────────── PDA WRAPPER ───────────── */
+
+.pda-wrapper {
+  position: relative;
+  width: 100%;
+  max-width: 920px;
+  aspect-ratio: 1264 / 842;
+  background: url('/Subnautica/PdaSubnautica.png') center / contain no-repeat;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ───────────── PDA SCREEN (inner grid) ───────────── */
+
+.pda-screen {
+  position: absolute;
+  inset: 11% 13% 12% 13%;
+  display: grid;
+  grid-template-columns: 35% 65%;
+  grid-template-rows: 1fr auto;
+  gap: 0;
+  background: radial-gradient(ellipse at 30% 30%, #0a1e2e, #02090f);
+  border-radius: 6px;
+  overflow: visible;
+}
+
+/* ───────────── LEFT PANEL ───────────── */
+
+.left-panel {
+  grid-column: 1;
+  grid-row: 1;
+  clip-path: polygon(0% 0%, 100% 0%, 82% 100%, 0% 100%);
+  border: 1px solid rgba(0, 240, 255, 0.4);
+  border-right: none;
+  box-shadow: 0 0 10px rgba(0, 240, 255, 0.2) inset;
+  background: rgba(2, 14, 22, 0.85);
+  padding: clamp(6px, 1.2vh, 14px) clamp(6px, 1.2vw, 14px);
+  display: flex;
+  flex-direction: column;
+  gap: clamp(4px, 0.6vh, 8px);
+  transition: border-color 0.4s, box-shadow 0.4s;
+  z-index: 2;
+  position: relative;
+}
+
+.left-panel.critical {
+  border-color: rgba(255, 0, 60, 0.6);
+  box-shadow: 0 0 14px rgba(255, 0, 60, 0.25) inset;
+}
+
+/* Clock */
+.clock-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding-top: 2px;
+}
+
+.clock-display {
+  font-family: 'Courier New', 'Consolas', monospace;
+  font-size: clamp(16px, 2.4vw, 26px);
+  font-weight: 700;
+  color: #00f0ff;
+  letter-spacing: 3px;
+  text-shadow: 0 0 12px rgba(0, 240, 255, 0.4);
+  transition: color 0.4s, text-shadow 0.4s;
+}
+
+.clock-display.critical {
+  color: #ff003c;
+  text-shadow: 0 0 12px rgba(255, 0, 60, 0.5);
+}
+
+/* Pulse SVG */
+.pulse-svg {
+  width: 100%;
+  max-width: 180px;
+  height: 28px;
+}
+
+.pulse-path {
+  fill: none;
+  stroke: #00f0ff;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  filter: drop-shadow(0 0 4px rgba(0, 240, 255, 0.5));
+  transition: stroke 0.4s, filter 0.4s;
+}
+
+.pulse-path.critical,
+.pulse-svg.critical .pulse-path {
+  stroke: #ff003c;
+  filter: drop-shadow(0 0 6px rgba(255, 0, 60, 0.6));
+  animation: pulse-crit 0.3s ease-in-out infinite alternate;
+}
+
+@keyframes pulse-crit {
+  from { filter: drop-shadow(0 0 4px rgba(255, 0, 60, 0.4)); }
+  to   { filter: drop-shadow(0 0 10px rgba(255, 0, 60, 0.8)); }
+}
+
+/* Vitals */
+.vitals-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1px;
+  margin-top: auto;
+}
+
+.date-label {
+  font-family: 'Segoe UI', sans-serif;
+  font-size: clamp(7px, 0.7vw, 9px);
+  color: rgba(0, 240, 255, 0.5);
+  letter-spacing: 1px;
+}
+
+.vitals-label {
+  font-family: 'Courier New', 'Consolas', monospace;
+  font-size: clamp(8px, 0.8vw, 10px);
+  font-weight: 700;
+  color: #00f0ff;
+  letter-spacing: 2px;
+  transition: color 0.4s;
+}
+
+.vitals-label.critical {
+  color: #ff003c;
+  animation: vitals-blink 0.5s ease-in-out infinite alternate;
+}
+
+@keyframes vitals-blink {
+  from { opacity: 1; }
+  to   { opacity: 0.4; }
+}
+
+/* Beacons */
+.beacons-section {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  border-top: 1px solid rgba(0, 240, 255, 0.15);
+  padding-top: clamp(4px, 0.6vh, 8px);
+  margin-top: auto;
+}
+
+.beacons-title {
+  font-family: 'Courier New', 'Consolas', monospace;
+  font-size: clamp(6px, 0.6vw, 8px);
+  color: rgba(0, 240, 255, 0.4);
+  letter-spacing: 2px;
+}
+
+.beacons-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.beacon-item {
+  display: flex;
+  align-items: center;
+  gap: clamp(4px, 0.5vw, 8px);
+}
+
+.beacon-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.beacon-name {
+  font-family: 'Courier New', 'Consolas', monospace;
+  font-size: clamp(6px, 0.55vw, 8px);
+  color: rgba(200, 220, 240, 0.5);
+  letter-spacing: 1px;
+}
+
+/* ───────────── RIGHT PANEL ───────────── */
+
+.right-panel {
+  grid-column: 2;
+  grid-row: 1;
+  clip-path: polygon(18% 0%, 100% 0%, 100% 100%, 0% 100%);
+  margin-left: -7.5%;
+  padding-left: 10%;
+  border: 1px solid rgba(0, 240, 255, 0.4);
+  border-left: none;
+  box-shadow: 0 0 10px rgba(0, 240, 255, 0.2) inset;
+  background: rgba(2, 14, 22, 0.85);
+  padding: clamp(6px, 1.2vh, 14px) clamp(8px, 1.2vw, 14px) clamp(6px, 1.2vh, 14px) clamp(20px, 3vw, 40px);
+  display: flex;
+  flex-direction: column;
+  gap: clamp(6px, 0.8vh, 12px);
+  transition: border-color 0.4s, box-shadow 0.4s;
+  z-index: 1;
+  position: relative;
+}
+
+.right-panel.critical {
+  border-color: rgba(255, 0, 60, 0.6);
+  box-shadow: 0 0 14px rgba(255, 0, 60, 0.25) inset;
+}
+
+/* Oxygen Card */
+.oxigen-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: clamp(4px, 0.5vh, 8px);
+  border: 1px solid rgba(0, 240, 255, 0.15);
+  border-radius: 6px;
+  transition: border-color 0.4s;
+}
+
+.oxigen-card.critical {
+  border-color: rgba(255, 0, 60, 0.25);
+}
+
+.ring-wrapper {
+  position: relative;
+  width: clamp(48px, 6vw, 70px);
+  height: clamp(48px, 6vw, 70px);
+}
+
+.ring {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  transition: background 0.4s;
+}
+
+.ring-center {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.o2-label {
+  font-family: 'Courier New', 'Consolas', monospace;
+  font-size: clamp(8px, 0.8vw, 10px);
+  font-weight: 700;
+  color: rgba(0, 240, 255, 0.6);
+  line-height: 1;
+}
+
+.o2-value {
+  font-family: 'Courier New', 'Consolas', monospace;
+  font-size: clamp(10px, 1.2vw, 14px);
+  font-weight: 700;
+  color: #00f0ff;
+  line-height: 1;
+  transition: color 0.4s;
+}
+
+.o2-value.critical {
+  color: #ff003c;
+  animation: vitals-blink 0.5s ease-in-out infinite alternate;
+}
+
+.ai-text {
+  font-family: 'Courier New', 'Consolas', monospace;
+  font-size: clamp(7px, 0.65vw, 9px);
+  color: rgba(0, 240, 255, 0.3);
+  letter-spacing: 3px;
+}
+
+.current-task {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1px;
+}
+
+.task-label {
+  font-family: 'Segoe UI', sans-serif;
+  font-size: clamp(6px, 0.5vw, 7px);
+  color: rgba(200, 220, 240, 0.25);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.task-name {
+  font-family: 'Courier New', 'Consolas', monospace;
+  font-size: clamp(7px, 0.7vw, 9px);
+  color: rgba(200, 220, 240, 0.6);
+  letter-spacing: 1px;
+}
+
+/* Pressure Sensor */
+.pressure-card {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+}
+
+.pressure-title {
+  font-family: 'Courier New', 'Consolas', monospace;
+  font-size: clamp(6px, 0.6vw, 8px);
+  color: rgba(0, 240, 255, 0.4);
+  letter-spacing: 2px;
+}
+
+.pressure-bars {
+  display: flex;
+  gap: 1px;
+  height: clamp(24px, 3vh, 40px);
+  align-items: flex-end;
+}
+
+.bar-segment {
+  flex: 1 1 0;
+  min-width: 1px;
+  height: 100%;
+  background: rgba(0, 240, 255, 0.12);
+  border-radius: 1px 1px 0 0;
+  transition: background 0.15s, box-shadow 0.15s;
+}
+
+.bar-segment.lit {
+  background: #00f0ff;
+  box-shadow: 0 0 4px rgba(0, 240, 255, 0.3);
+}
+
+.bar-segment.lit.critical {
+  background: #ff003c;
+  box-shadow: 0 0 4px rgba(255, 0, 60, 0.3);
+}
+
+.pressure-footer {
+  display: flex;
+  justify-content: space-between;
+  font-family: 'Courier New', 'Consolas', monospace;
+  font-size: clamp(7px, 0.65vw, 9px);
+  color: rgba(0, 240, 255, 0.3);
+  letter-spacing: 1px;
+}
+
+/* ───────────── BOTTOM PANEL ───────────── */
+
+.bottom-panel {
+  grid-column: 1 / -1;
+  grid-row: 2;
+  border: 1px solid rgba(0, 240, 255, 0.4);
+  box-shadow: 0 0 10px rgba(0, 240, 255, 0.2) inset;
+  background: rgba(2, 14, 22, 0.85);
+  padding: clamp(4px, 0.6vh, 8px) clamp(8px, 1.2vw, 14px);
+  display: flex;
+  flex-direction: column;
+  gap: clamp(2px, 0.3vh, 4px);
+  position: relative;
+  z-index: 3;
+}
+
+/* Tick marks */
+.tick-track {
+  display: flex;
+  justify-content: space-between;
+  padding: 0 2px;
+}
+
+.tick {
+  font-family: 'Courier New', 'Consolas', monospace;
+  font-size: clamp(5px, 0.5vw, 7px);
+  color: rgba(0, 240, 255, 0.25);
+  letter-spacing: 0.5px;
+  position: relative;
+}
+
+.tick::before {
+  content: '';
+  position: absolute;
+  top: -6px;
+  left: 50%;
+  width: 1px;
+  height: 4px;
+  background: rgba(0, 240, 255, 0.15);
+  transform: translateX(-50%);
+}
+
+/* Slider row */
+.slider-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.depth-slider {
+  flex: 1;
+  -webkit-appearance: none;
+  appearance: none;
+  height: 2px;
+  background: linear-gradient(to right, rgba(0, 240, 255, 0.5), rgba(0, 240, 255, 0.5) var(--fill, 0%), rgba(0, 240, 255, 0.08) var(--fill, 0%));
+  border-radius: 1px;
+  outline: none;
+  cursor: pointer;
+  margin: 0;
+}
+
+.depth-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 0;
+  height: 0;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.depth-slider:hover::-webkit-slider-thumb {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #00f0ff;
+  box-shadow: 0 0 6px rgba(0, 240, 255, 0.5);
+  opacity: 1;
+}
+
+.depth-slider::-moz-range-thumb {
+  width: 0;
+  height: 0;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.depth-slider:hover::-moz-range-thumb {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #00f0ff;
+  box-shadow: 0 0 6px rgba(0, 240, 255, 0.5);
+  opacity: 1;
+}
+
+.depth-slider::-ms-thumb {
+  width: 0;
+  height: 0;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.depth-slider:hover::-ms-thumb {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #00f0ff;
+  box-shadow: 0 0 6px rgba(0, 240, 255, 0.5);
+  opacity: 1;
+}
+
+/* Depth info */
+.depth-info {
+  display: flex;
+  justify-content: space-between;
+  font-family: 'Courier New', 'Consolas', monospace;
+  font-size: clamp(6px, 0.55vw, 8px);
+  color: rgba(0, 240, 255, 0.3);
+  letter-spacing: 1px;
+}
+
+/* Reset button */
+.reset-btn {
+  font-family: 'Courier New', monospace;
+  font-size: 8px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  padding: 3px 10px;
+  border-radius: 3px;
+  border: 1px solid rgba(0, 240, 255, 0.2);
+  background: rgba(0, 240, 255, 0.06);
+  color: #00f0ff;
+  cursor: pointer;
+  transition: background 0.3s ease, box-shadow 0.3s ease;
+  flex-shrink: 0;
+}
+
+.reset-btn:hover {
+  background: rgba(0, 240, 255, 0.12);
+  box-shadow: 0 0 10px rgba(0, 240, 255, 0.12);
+}

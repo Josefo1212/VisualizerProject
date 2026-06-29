@@ -70,6 +70,12 @@
   display: flex;
 }
 
+.subnautica-view {
+  position: absolute;
+  inset: 0;
+  display: flex;
+}
+
 /* ============ POWERED-ON STATION ============ */
 
 .station {

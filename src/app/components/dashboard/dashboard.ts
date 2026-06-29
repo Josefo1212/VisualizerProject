@@ -3,11 +3,12 @@ import { SidebarComponent } from '../Sidebar/Sidebar';
 import { PowerScreenComponent } from '../PowerScreen/PowerScreen';
 import { GtaDesignComponent } from '../GtaDesign/GtaDesign';
 import { AmongUsDesignComponent } from '../AmongUsDesign/AmongUsDesign';
+import { SubnauticaDesignComponent } from '../SubnauticaDesign/SubnauticaDesign';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [SidebarComponent, PowerScreenComponent, GtaDesignComponent, AmongUsDesignComponent],
+  imports: [SidebarComponent, PowerScreenComponent, GtaDesignComponent, AmongUsDesignComponent, SubnauticaDesignComponent],
   templateUrl: './Dashboard.html',
   styleUrl: './Dashboard.css',
 })
