@@ -74,9 +74,57 @@ export class SubnauticaDesignComponent {
   readonly totalMinutes = computed(() => this.time.hours$() * 60 + this.time.minutes$());
   readonly sliderPercent = computed(() => (this.totalMinutes() / 1439) * 100);
 
-  onTimeChange(event: Event): void {
-    const value = (event.target as HTMLInputElement).value;
-    this.time.setHora(Number(value) / 60);
+  readonly arcPath = 'M -5,8 Q 50,-4 105,8';
+
+  private bezierPoint(t: number): { x: number; y: number } {
+    const t1 = 1 - t;
+    return {
+      x: t1 * t1 * -5 + 2 * t1 * t * 50 + t * t * 105,
+      y: t1 * t1 * 8 + 2 * t1 * t * -4 + t * t * 8,
+    };
+  }
+
+  readonly arcThumbPos = computed(() => {
+    const t = this.totalMinutes() / 1439;
+    return this.bezierPoint(t);
+  });
+
+  readonly arcTicks = computed(() => {
+    const pts = [0, 120, 240, 360, 480, 600, 720, 840, 960, 1080, 1200, 1320, 1439];
+    const labels = ['00', '02', '04', '06', '08', '10', '12', '14', '16', '18', '20', '22', '23:59'];
+    return pts.map((mins, i) => {
+      const t = mins / 1439;
+      const p = this.bezierPoint(t);
+      const dy = 2 * (1 - t) * (-12) + 2 * t * 12;
+      const len = Math.sqrt(12100 + dy * dy) || 1;
+      const nx = -dy / len;
+      const ny = 110 / len;
+      return {
+        x1: p.x, y1: p.y,
+        x2: p.x + nx * 4, y2: p.y + ny * 4,
+        lx: p.x + nx * 11, ly: p.y + ny * 11 + 1.5,
+        label: labels[i],
+      };
+    });
+  });
+
+  onArcClick(event: MouseEvent): void {
+    const svg = event.currentTarget as SVGSVGElement;
+    const rect = svg.getBoundingClientRect();
+    const vb = svg.viewBox.baseVal;
+    const sx = vb.width / rect.width;
+    const sy = vb.height / rect.height;
+    const cx = (event.clientX - rect.left) * sx;
+    const cy = (event.clientY - rect.top) * sy;
+    let bestT = 0;
+    let minDist = Infinity;
+    for (let i = 0; i <= 200; i++) {
+      const t = i / 200;
+      const p = this.bezierPoint(t);
+      const d = (p.x - cx) ** 2 + (p.y - cy) ** 2;
+      if (d < minDist) { minDist = d; bestT = t; }
+    }
+    this.time.setHora((bestT * 1439) / 60);
   }
 
   onResetTime(): void {
