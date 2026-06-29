@@ -6,7 +6,32 @@
       <div class="pda-main-bg">
         <div class="top-row">
         <div class="panel-left-clip" [class.critical]="isCritical()">
-        <section class="container-panel panel-left">
+          <svg class="panel-svg" viewBox="0 0 100 100" preserveAspectRatio="none">
+            <defs>
+              <linearGradient id="bg-left" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="rgba(6,24,43,0.92)" />
+                <stop offset="100%" stop-color="rgba(4,16,29,0.94)" />
+              </linearGradient>
+              <filter id="glow-left" x="-50%" y="-50%" width="200%" height="200%">
+                <feGaussianBlur in="SourceGraphic" stdDeviation="2" result="blur" />
+                <feMerge>
+                  <feMergeNode in="blur" />
+                  <feMergeNode in="blur" />
+                  <feMergeNode in="SourceGraphic" />
+                </feMerge>
+              </filter>
+              <clipPath id="clip-left" clipPathUnits="objectBoundingBox">
+                <path d="M 0,0.07 A 0.07,0.07 0 0,1 0.07,0 L 1,0 L 0.6,1 L 0,1 Z" />
+              </clipPath>
+            </defs>
+            <path d="M 0,7 A 7,7 0 0,1 7,0 L 100,0 L 60,100 L 0,100 Z"
+                  fill="url(#bg-left)"
+                  stroke="var(--panel-stroke)"
+                  stroke-width="2.5"
+                  vector-effect="non-scaling-stroke"
+                  filter="url(#glow-left)" />
+          </svg>
+          <section class="container-panel panel-left">
           <div class="panel-header">
             <span class="icon">⚡</span>
             <span>Energy Core Master Clock</span>
@@ -31,7 +56,32 @@
         </div>
 
         <div class="panel-center-clip" [class.critical]="isCritical()">
-        <section class="container-panel panel-center">
+          <svg class="panel-svg" viewBox="0 0 100 100" preserveAspectRatio="none">
+            <defs>
+              <linearGradient id="bg-center" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="rgba(6,24,43,0.92)" />
+                <stop offset="100%" stop-color="rgba(4,16,29,0.94)" />
+              </linearGradient>
+              <filter id="glow-center" x="-50%" y="-50%" width="200%" height="200%">
+                <feGaussianBlur in="SourceGraphic" stdDeviation="2" result="blur" />
+                <feMerge>
+                  <feMergeNode in="blur" />
+                  <feMergeNode in="blur" />
+                  <feMergeNode in="SourceGraphic" />
+                </feMerge>
+              </filter>
+              <clipPath id="clip-center" clipPathUnits="objectBoundingBox">
+                <path d="M 0.415,0 L 1,0 L 1,1 L 0,1 Z" />
+              </clipPath>
+            </defs>
+            <path d="M 41.5,0 L 100,0 L 100,100 L 0,100 Z"
+                  fill="url(#bg-center)"
+                  stroke="var(--panel-stroke)"
+                  stroke-width="1.5"
+                  vector-effect="non-scaling-stroke"
+                  filter="url(#glow-center)" />
+          </svg>
+          <section class="container-panel panel-center">
           <div class="panel-header">
             <span class="icon">🫁</span>
             <span>NÚCLEO DE OXÍGENO (O₂)</span>
@@ -58,7 +108,33 @@
         </section>
         </div>
 
-        <section class="container-panel panel-right">
+        <div class="panel-right-clip">
+          <svg class="panel-svg" viewBox="0 0 100 100" preserveAspectRatio="none">
+            <defs>
+              <linearGradient id="bg-right" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="rgba(6,24,43,0.92)" />
+                <stop offset="100%" stop-color="rgba(4,16,29,0.94)" />
+              </linearGradient>
+              <filter id="glow-right" x="-50%" y="-50%" width="200%" height="200%">
+                <feGaussianBlur in="SourceGraphic" stdDeviation="2" result="blur" />
+                <feMerge>
+                  <feMergeNode in="blur" />
+                  <feMergeNode in="blur" />
+                  <feMergeNode in="SourceGraphic" />
+                </feMerge>
+              </filter>
+              <clipPath id="clip-right" clipPathUnits="objectBoundingBox">
+                <path d="M 0,0 L 0.93,0 A 0.07,0.07 0 0,1 1,0.07 L 1,1 L 0,1 Z" />
+              </clipPath>
+            </defs>
+            <path d="M 0,0 L 93,0 A 7,7 0 0,1 100,7 L 100,100 L 0,100 Z"
+                  fill="url(#bg-right)"
+                  stroke="var(--panel-stroke)"
+                  stroke-width="2.5"
+                  vector-effect="non-scaling-stroke"
+                  filter="url(#glow-right)" />
+          </svg>
+          <section class="container-panel panel-right">
           <div class="panel-header">
             <span class="icon">📊</span>
             <span>SENSOR DE PRESIÓN</span>
@@ -94,7 +170,8 @@
               </div>
             </div>
           </div>
-        </section>
+          </section>
+        </div>
 
       </div>
 
