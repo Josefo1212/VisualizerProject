@@ -1,115 +1,138 @@
-<div class="pda-wrapper">
+<div class="pda-container">
+  <div class="pda-wrapper">
+    <img class="pda-image" src="/Subnautica/PdaSubnautica.png" alt="PDA Casing" />
 
-  <!-- Inner screen over the PDA physical shell -->
-  <div class="pda-screen">
+    <div class="pda-screen">
+      <div class="top-row">
+        <section class="container-panel panel-left" [class.critical]="isCritical()">
+          <div class="panel-header">
+            <span class="icon">⚡</span>
+            <span>Energy Core Master Clock</span>
+          </div>
 
-    <!-- LEFT: Biometric Diagnosis -->
-    <section class="left-panel" [class.critical]="isCritical()">
-
-      <div class="clock-section">
-        <div class="clock-display" [class.critical]="isCritical()">{{ clockDisplay() }}</div>
-        <svg class="pulse-svg" viewBox="0 0 200 40" [class.critical]="isCritical()">
-          <path class="pulse-path" d="M0,20 Q30,20 40,12 Q50,4 55,20 Q60,36 70,28 Q80,20 100,20 L120,20 L130,8 L140,32 L150,16 L160,24 L170,20 L200,20" />
-        </svg>
-      </div>
-
-      <div class="vitals-section">
-        <div class="date-label">{{ dateDisplay() }}</div>
-        <div class="vitals-label" [class.critical]="isCritical()">
-          @if (isCritical()) {
-            CRÍTICO / HIPOXIA
-          } @else {
-            SIGNOS VITALES
-          }
-        </div>
-      </div>
-
-      <div class="beacons-section">
-        <div class="beacons-title">BALIZAS DE RUTA</div>
-        <div class="beacons-list">
-          @for (day of daysList; track day.name) {
-            <div class="beacon-item">
-              <span class="beacon-dot" [style.background]="day.color"></span>
-              <span class="beacon-name">{{ day.name }}</span>
+          <div class="panel-body panel-left-body">
+            <div class="clock-display" [class.critical]="isCritical()">
+              [{{ clockDisplay() }}]
             </div>
-          }
-        </div>
+
+            <svg class="pulse-svg" viewBox="0 0 200 30" [class.critical]="isCritical()">
+              <path class="pulse-path" d="M0,15 L30,15 L40,5 L45,25 L55,10 L65,28 L75,2 L85,25 L95,15 L120,15 L130,5 L140,25 L150,15 L200,15" />
+            </svg>
+
+            <div class="date-label">[ {{ dateDisplay() }} ]</div>
+
+            <div class="vitals-label" [class.critical]="isCritical()">
+              [ 🧬 SIGNOS VITALES: @if (isCritical()) { CRÍTICO } @else { ESTABLE } ]
+            </div>
+          </div>
+        </section>
+
+        <section class="container-panel panel-center" [class.critical]="isCritical()">
+          <div class="panel-header">
+            <span class="icon">🫁</span>
+            <span>NÚCLEO DE OXÍGENO (O₂)</span>
+          </div>
+
+          <div class="panel-body panel-center-body">
+            <div class="sub-header">
+              ⏳ Oxígeno: {{ 60 - time.minutes$() }} minutos restantes
+            </div>
+
+            <div class="ring-wrapper">
+              <div class="ring" [style.background]="conicGradient()"></div>
+              <div class="ring-center">
+                <div class="o2-label">O₂</div>
+                <div class="o2-value" [class.critical]="isCritical()">{{ oxygenPercent() }}%</div>
+              </div>
+            </div>
+
+            <div class="current-task">
+              ▶ TAREA ACTUAL: <span class="highlight">{{ currentTaskName() }}</span>
+            </div>
+          </div>
+        </section>
+
+        <section class="container-panel panel-right">
+          <div class="panel-header">
+            <span class="icon">📊</span>
+            <span>SENSOR DE PRESIÓN</span>
+          </div>
+
+          <div class="panel-body panel-right-body">
+            <div class="pressure-globe-wrapper" [class.danger]="isPressureCritical()">
+              <div class="pressure-globe" [class.danger]="isPressureCritical()">
+                <div class="pressure-globe-aura"></div>
+                <div class="pressure-globe-sheen"></div>
+
+                <div class="pressure-globe-content">
+                  <div class="pressure-bar-value">{{ calculatedBar() }} BAR</div>
+                  <div class="pressure-depth-value">{{ depthDisplay() }}M</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="pressure-footer">
+              <span class="sec-count">ESTABILIDAD DEL CASCO</span>
+
+              <div class="integrity-track" [class.danger]="isPressureCritical()">
+                <div class="integrity-fill" [style.width.%]="integrityPercent()"></div>
+              </div>
+
+              <div class="pressure-footer-row">
+                <span class="sec-alert" [class.critical]="isPressureCritical()">
+                  {{ integrityPercent() }}% INTEGRIDAD
+                </span>
+                <span class="next-task" [class.critical]="isPressureCritical()">
+                  {{ isPressureCritical() ? 'RIESGO ESTRUCTURAL' : 'ESTRUCTURA ESTABLE' }}
+                </span>
+              </div>
+            </div>
+          </div>
+        </section>
+
       </div>
 
-    </section>
+      <div class="container-panel panel-bottom">
+        <div class="panel-header">
+          <span class="icon">🎚️</span>
+          <span>PROFUNDÍMETRO ARQUEADO</span>
+        </div>
 
-    <!-- RIGHT: Immersion Control -->
-    <section class="right-panel" [class.critical]="isCritical()">
+        <div class="panel-body panel-bottom-body">
+          <div class="tick-track">
+            <span class="tick">00</span>
+            <span class="tick">06</span>
+            <span class="tick">09</span>
+            <span class="tick">12</span>
+            <span class="tick">15</span>
+            <span class="tick">18</span>
+            <span class="tick">21</span>
+            <span class="tick">23:59</span>
+          </div>
 
-      <!-- OXYGEN CORE -->
-      <div class="oxigen-card" [class.critical]="isCritical()">
-        <div class="ring-wrapper">
-          <div class="ring" [style.background]="conicGradient()"></div>
-          <div class="ring-center">
-            <div class="o2-label">O2</div>
-            <div class="o2-value" [class.critical]="isCritical()">{{ oxygenPercent() }}%</div>
+          <input
+            type="range"
+            class="depth-slider"
+            min="0"
+            max="1439"
+            step="1"
+            [value]="totalMinutes()"
+            [style.--fill.%]="sliderPercent()"
+            (input)="onTimeChange($event)"
+          />
+
+          <div class="depth-info">
+            <span>🌊 PROFUNDIDAD: <span class="highlight">{{ depthDisplay() }} metros</span></span>
+            <span class="mode-toggle">
+              [ ] MODO: @if (time.manualMode$()) { SIMULACIÓN REVERSA } @else { TIEMPO REAL }
+              @if (time.manualMode$()) {
+                <button class="reset-btn" (click)="onResetTime()">↻ RESET</button>
+              }
+            </span>
           </div>
         </div>
-        <div class="ai-text">I.A. AURORA</div>
-        <div class="current-task">
-          <span class="task-label">TAREA ACTUAL</span>
-          <span class="task-name">{{ currentTaskName() }}</span>
-        </div>
       </div>
 
-      <!-- PRESSURE SENSOR -->
-      <div class="pressure-card">
-        <div class="pressure-title">SENSOR DE PRESIÓN</div>
-        <div class="pressure-bars">
-          @for (idx of barList; track idx) {
-            <div class="bar-segment" [class.lit]="barLit(idx)" [class.critical]="isCritical()"></div>
-          }
-        </div>
-        <div class="pressure-footer">
-          <span>{{ currentSecond().toString().padStart(2, '0') }}s</span>
-          <span>60 SEG</span>
-        </div>
-      </div>
-
-    </section>
-
-    <!-- BOTTOM: Depth-meter / Time slider -->
-    <section class="bottom-panel">
-
-      <div class="tick-track">
-        <div class="tick">00</div>
-        <div class="tick">06</div>
-        <div class="tick">09</div>
-        <div class="tick">12</div>
-        <div class="tick">15</div>
-        <div class="tick">18</div>
-        <div class="tick">21</div>
-        <div class="tick">23:59</div>
-      </div>
-
-      <div class="slider-row">
-        <input
-          type="range"
-          class="depth-slider"
-          min="0"
-          max="1439"
-          step="1"
-          [value]="totalMinutes()"
-          [style.--fill.%]="sliderPercent()"
-          (input)="onTimeChange($event)"
-        />
-        @if (time.manualMode$()) {
-          <button class="reset-btn" (click)="onResetTime()">⏱ REAL</button>
-        }
-      </div>
-
-      <div class="depth-info">
-        <span>PROFUNDIDAD: {{ depthDisplay() }}m</span>
-        <span>MODO: @if (time.manualMode$()) { SIMULACIÓN REVERSA } @else { TIEMPO REAL }</span>
-      </div>
-
-    </section>
-
+    </div>
   </div>
-
 </div>

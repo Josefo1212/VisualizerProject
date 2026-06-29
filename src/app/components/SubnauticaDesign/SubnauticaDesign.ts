@@ -1,44 +1,18 @@
 import { Component, computed, inject } from '@angular/core';
-import { GtaTimeEngineService } from '../../services/gtaTimeEngine';
+import { GtaTimeEngineService } from '../../services/gtaTimeEngine'; // Ajusta la ruta si es necesario
 
-const DAYS_SPANISH = ['LUN', 'MAR', 'MIÉ', 'JUE', 'VIE', 'SÁB', 'DOM'];
+const DAYS_SPANISH = ['DOMINGO', 'LUNES', 'MARTES', 'MIÉRCOLES', 'JUEVES', 'VIERNES', 'SÁBADO'];
 const MONTHS_SPANISH = ['ENERO', 'FEBRERO', 'MARZO', 'ABRIL', 'MAYO', 'JUNIO', 'JULIO', 'AGOSTO', 'SEPTIEMBRE', 'OCTUBRE', 'NOVIEMBRE', 'DICIEMBRE'];
-
-const BEACON_COLORS = [
-  '#00f0ff',
-  '#00ff88',
-  '#f4ca16',
-  '#ff6600',
-  '#ff003c',
-  '#aa44ff',
-  '#ff88cc',
-];
-
-const TASKS = [
-  'CALIBRAR ESCÁNER',
-  'REVISAR CASCOS',
-  'REPARAR TUBERÍAS',
-  'CARGAR BATERÍAS',
-  'ANALIZAR MUESTRAS',
-  'ACTUALIZAR MAPAS',
-  'MANTENER REACTOR',
-];
+const TASKS = ['Metal', 'Lithium', 'Titanium', 'Copper', 'Quartz', 'Gold'];
 
 @Component({
   selector: 'app-subnautica-design',
   standalone: true,
   templateUrl: './SubnauticaDesign.html',
-  styleUrl: './SubnauticaDesign.css',
+  styleUrls: ['./SubnauticaDesign.css']
 })
 export class SubnauticaDesignComponent {
   readonly time = inject(GtaTimeEngineService);
-
-  readonly barList = Array.from({ length: 60 }, (_, i) => i);
-
-  readonly daysList = DAYS_SPANISH.map((name, i) => ({
-    name,
-    color: BEACON_COLORS[i],
-  }));
 
   readonly currentSecond = this.time.seconds$;
 
@@ -64,12 +38,19 @@ export class SubnauticaDesignComponent {
 
   readonly oxygenPercent = computed(() => Math.round((1 - this.time.minutes$() / 60) * 100));
   readonly isCritical = computed(() => this.time.minutes$() > 50);
+  readonly isPressureCritical = computed(() => this.depthDisplay() > 600);
+
+  readonly calculatedBar = computed(() => Math.round(this.depthDisplay() / 10) + 1);
+  
   readonly depthDisplay = computed(() => {
     const mins = this.time.hours$() * 60 + this.time.minutes$();
-    return Math.round((mins / 1439) * 1000);
+    return Math.round((mins / 1439) * 1000); // 1000m max depth
   });
 
-  readonly barLit = (idx: number): boolean => this.time.seconds$() <= 59 - idx;
+  readonly integrityPercent = computed(() => {
+    const integrity = 100 - Math.round(this.depthDisplay() / 10);
+    return Math.max(0, integrity);
+  });
 
   readonly conicGradient = computed(() => {
     const deg = (this.oxygenPercent() / 100) * 360;
