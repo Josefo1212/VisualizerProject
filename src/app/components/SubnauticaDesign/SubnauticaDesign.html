@@ -3,8 +3,10 @@
     <img class="pda-image" src="/Subnautica/PdaSubnautica.png" alt="PDA Casing" />
 
     <div class="pda-screen">
-      <div class="top-row">
-        <section class="container-panel panel-left" [class.critical]="isCritical()">
+      <div class="pda-main-bg">
+        <div class="top-row">
+        <div class="panel-left-clip" [class.critical]="isCritical()">
+        <section class="container-panel panel-left">
           <div class="panel-header">
             <span class="icon">⚡</span>
             <span>Energy Core Master Clock</span>
@@ -15,8 +17,8 @@
               [{{ clockDisplay() }}]
             </div>
 
-            <svg class="pulse-svg" viewBox="0 0 200 30" [class.critical]="isCritical()">
-              <path class="pulse-path" d="M0,15 L30,15 L40,5 L45,25 L55,10 L65,28 L75,2 L85,25 L95,15 L120,15 L130,5 L140,25 L150,15 L200,15" />
+            <svg class="pulse-svg" viewBox="0 0 200 40" [class.critical]="isCritical()" preserveAspectRatio="xMidYMid meet">
+              <path class="pulse-path" d="M0,20 L30,20 L40,8 L45,32 L55,12 L65,36 L75,4 L85,34 L95,20 L120,20 L130,8 L140,32 L150,20 L200,20" />
             </svg>
 
             <div class="date-label">[ {{ dateDisplay() }} ]</div>
@@ -26,8 +28,10 @@
             </div>
           </div>
         </section>
+        </div>
 
-        <section class="container-panel panel-center" [class.critical]="isCritical()">
+        <div class="panel-center-clip" [class.critical]="isCritical()">
+        <section class="container-panel panel-center">
           <div class="panel-header">
             <span class="icon">🫁</span>
             <span>NÚCLEO DE OXÍGENO (O₂)</span>
@@ -38,11 +42,12 @@
               ⏳ Oxígeno: {{ 60 - time.minutes$() }} minutos restantes
             </div>
 
-            <div class="ring-wrapper">
-              <div class="ring" [style.background]="conicGradient()"></div>
-              <div class="ring-center">
-                <div class="o2-label">O₂</div>
-                <div class="o2-value" [class.critical]="isCritical()">{{ oxygenPercent() }}%</div>
+            <div class="ring-wrapper" [class.critical]="isCritical()">
+              <div class="ring" [style.background]="conicGradient()">
+                <div class="ring-center" [class.critical]="isCritical()">
+                  <div class="o2-label">O₂</div>
+                  <div class="o2-value" [class.critical]="isCritical()">{{ oxygenPercent() }}%</div>
+                </div>
               </div>
             </div>
 
@@ -51,6 +56,7 @@
             </div>
           </div>
         </section>
+        </div>
 
         <section class="container-panel panel-right">
           <div class="panel-header">
@@ -129,8 +135,9 @@
                 <button class="reset-btn" (click)="onResetTime()">↻ RESET</button>
               }
             </span>
-          </div>
-        </div>
+      </div>
+      </div>
+    </div>
       </div>
 
     </div>

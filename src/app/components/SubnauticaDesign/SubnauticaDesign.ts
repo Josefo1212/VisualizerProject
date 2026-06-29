@@ -54,10 +54,21 @@ export class SubnauticaDesignComponent {
 
   readonly conicGradient = computed(() => {
     const deg = (this.oxygenPercent() / 100) * 360;
+    const safe = Math.max(0, deg - 2);
     if (this.isCritical()) {
-      return `conic-gradient(#ff003c ${deg}deg, rgba(255,0,60,0.1) ${deg}deg)`;
+      return `conic-gradient(
+        #ff003c ${safe}deg,
+        #ff6070 ${deg}deg,
+        rgba(255,0,60,0.05) ${deg}deg
+      )`;
     }
-    return `conic-gradient(#00f0ff ${deg}deg, rgba(0,240,255,0.1) ${deg}deg)`;
+    return `conic-gradient(
+      rgba(0,240,255,0.02) 0deg,
+      #00f0ff ${Math.max(0, deg * 0.3)}deg,
+      #00c8d8 ${Math.max(0, deg * 0.65)}deg,
+      #00f0ff ${safe}deg,
+      rgba(0,240,255,0.05) ${deg}deg
+    )`;
   });
 
   readonly totalMinutes = computed(() => this.time.hours$() * 60 + this.time.minutes$());

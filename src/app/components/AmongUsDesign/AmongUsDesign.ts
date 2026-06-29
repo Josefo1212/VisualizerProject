@@ -28,9 +28,9 @@ export class AmongUsDesignComponent implements OnInit, OnDestroy {
 
   readonly dateDisplay = computed(() => {
     const now = new Date();
+    const days = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
     const months = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
-    const today = this.daysInfo().find(d => d.status === 'today');
-    return `${today?.name ?? 'MON'}, ${now.getDate()} ${months[now.getMonth()]}`;
+    return `${days[now.getDay()]}, ${now.getDate()} ${months[now.getMonth()]}`;
   });
 
   readonly tasks: Task[] = [
