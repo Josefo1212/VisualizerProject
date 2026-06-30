@@ -96,6 +96,35 @@
   50% { opacity: 0.88; }
 }
 
+/* ─── VAULT-BOY SPRITE ─── */
+.vault-sprite {
+  position: absolute;
+  top: 2.5%;
+  left: 4%;
+  width: 16%;
+  aspect-ratio: 1;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  image-rendering: pixelated;
+  z-index: 5;
+  pointer-events: none;
+  animation: vault-boy 1s infinite steps(10);
+}
+
+@keyframes vault-boy {
+  0%    { background-image: url('/Fallout/spriteFallout0.png'); }
+  10%   { background-image: url('/Fallout/spriteFallout1.png'); }
+  20%   { background-image: url('/Fallout/spriteFallout2.png'); }
+  30%   { background-image: url('/Fallout/spriteFallout3.png'); }
+  40%   { background-image: url('/Fallout/spriteFallout4.png'); }
+  50%   { background-image: url('/Fallout/spriteFallout5.png'); }
+  60%   { background-image: url('/Fallout/spriteFallout6.png'); }
+  70%   { background-image: url('/Fallout/spriteFallout7.png'); }
+  80%   { background-image: url('/Fallout/spriteFallout8.png'); }
+  90%   { background-image: url('/Fallout/spriteFallout9.png'); }
+}
+
 /* ─── TOP NAV ─── */
 .top-bar {
   display: flex;

@@ -17,10 +17,11 @@
           [class.active]="d.id === selectedDesign"
           (click)="selectDesign(d.id)"
           [coverImage]="d.cover ?? ''"
-          [disabled]="inactive"
+          [disabled]="inactive || collapsed()"
         >
           <span class="design-icon">{{ d.icon }}</span>
           <span class="design-name">{{ d.name }}</span>
+          <img [src]="d.svgIcon" [alt]="d.name" class="collapsed-svg" />
         </app-hover-reveal>
       }
   </div>

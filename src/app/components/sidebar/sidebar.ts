@@ -16,10 +16,10 @@ export class SidebarComponent {
   readonly collapsed = signal<boolean>(false);
 
   readonly designs = [
-    { id: 'gta', icon: '🌆', name: 'Los Santos', cover: '/GTA/botonGTA.jpg' },
-    { id: 'amongus', icon: '🚀', name: 'Among Us', cover: '/AmongUs/botonAmongUs.jpg' },
-    { id: 'subnautica', icon: '🌊', name: 'Subnautica', cover: '/Subnautica/botonSubnautica.jpg' },
-    { id: 'fallout', icon: '☢️', name: 'Fallout', cover: '/Fallout/botonFallout.jpg' },
+    { id: 'gta', icon: '🌆', name: 'Grand Theft Auto', cover: '/GTA/botonGTA.jpg', svgIcon: '/GTA/iconGta.svg' },
+    { id: 'amongus', icon: '🚀', name: 'Among Us', cover: '/AmongUs/botonAmongUs.jpg', svgIcon: '/AmongUs/iconAmongUs.svg' },
+    { id: 'subnautica', icon: '🌊', name: 'Subnautica', cover: '/Subnautica/botonSubnautica.jpg', svgIcon: '/Subnautica/iconSubnautica.svg' },
+    { id: 'fallout', icon: '☢️', name: 'Fallout', cover: '/Fallout/botonFallout.jpg', svgIcon: '/Fallout/iconFallout.svg' },
   ];
 
   toggle(): void {
