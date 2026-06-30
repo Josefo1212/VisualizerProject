@@ -111,7 +111,11 @@ export class FalloutDesignComponent {
 
   readonly apDisplay = computed(() => Math.round(100 - this.sliderPercent()));
 
+  readonly hpDisplay = computed(() => `${this.hpPercent()}/100`);
+
   readonly isCritical = computed(() => this.hpPercent() < 30 || this.radPercent() > 120);
+
+  readonly isRadCritical = computed(() => this.radPercent() > 120);
 
   onApChange(event: Event): void {
     const value = (event.target as HTMLInputElement).value;

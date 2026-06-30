@@ -1,92 +1,142 @@
 <div class="pipboy-wrapper">
-  <img class="pipboy-image" src="/Fallout/fondoPipBoy.png" alt="Pip-Boy Casing" />
+  <img class="pipboy-image" src="/Fallout/fondoPipBoy.png" alt="Pip-Boy casing" />
 
   <div class="pipboy-screen">
+    <!-- TOP NAV -->
     <div class="top-bar">
-      <span class="top-item active">🚀 STATUS</span>
-      <span class="top-item">🎒 INV</span>
-      <span class="top-item">🗺️ DATA</span>
-      <span class="top-item">📻 MAP</span>
+      <span class="top-item active">📡 STATUS</span>
+      <span class="top-item">INV</span>
+      <span class="top-item">DATA</span>
+      <span class="top-item">MAP</span>
       <span class="top-item">RADIO</span>
-      <span class="top-power">⚡ POWER: {{ powerPercent() }}%</span>
+      <span class="top-power">⚡ POWER: {{ powerPercent() }}</span>
     </div>
 
-    <div class="separator">▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬</div>
+    <div class="separator">
+      ▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬
+    </div>
 
+    <!-- TWO-COLUMN PANELS -->
     <div class="panels-row">
-      <div class="panel panel-vitals">
+      <!-- LEFT: VITAL SIGNS -->
+      <div class="panel">
         <div class="panel-title">[ VITAL SIGNS MONITOR ]</div>
-
+        <!-- HP -->
         <div class="stat-row">
           <span class="stat-label">HP</span>
-          <div class="bar-track" [class.critical]="isCritical()">
+          <div class="bar-track" [class.critical]="hpPercent() < 30">
             <div class="bar-fill hp-fill" [style.width.%]="hpPercent()"></div>
           </div>
-          <span class="stat-value">{{ hpPercent() }}/100</span>
+          <span class="stat-value">{{ hpDisplay() }}</span>
         </div>
-
+        <!-- RAD -->
         <div class="stat-row">
           <span class="stat-label">RAD</span>
-          <div class="bar-track rad-track" [class.critical]="radPercent() > 120">
-            <div class="bar-fill rad-fill" [style.width.%]="radPercent() / 2"></div>
+            <div class="bar-track rad-track" [class.critical]="isRadCritical()">
+            <div class="bar-fill rad-fill" [style.width.%]="radPercent()"></div>
           </div>
           <span class="stat-value">{{ radCount() }} RADs</span>
         </div>
-
-        <svg class="pulse-svg" viewBox="0 0 200 30" preserveAspectRatio="xMidYMid meet"
-             [class.critical]="isCritical()">
-          <path class="pulse-path" d="M 0,20 L 15,20 L 22,4 L 28,20 L 34,36 L 40,12 L 48,28 L 54,14 L 60,20 L 85,20 L 92,4 L 98,20 L 104,36 L 110,10 L 118,30 L 124,14 L 130,20 L 155,20 L 162,4 L 168,20 L 174,36 L 180,10 L 188,30 L 194,14 L 200,20" />
-        </svg>
-
-        <div class="pulse-label">[ PULSE: {{ 60 + (time.hours$() % 20) }} BPM ]</div>
+        <!-- OX2 -->
+        <div class="stat-row">
+          <span class="stat-label">OX2</span>
+          <div class="bar-track">
+            <div class="bar-fill hp-fill" [style.width.%]="70"></div>
+          </div>
+          <span class="stat-value">78%</span>
+        </div>
+        <!-- PULSE SVG -->
+        <div [class]="'pulse-svg' + (isCritical() ? ' critical' : '')">
+          <svg viewBox="0 0 240 40" preserveAspectRatio="xMidYMid meet">
+            <polyline
+              class="pulse-path"
+              points="
+                0,32
+                20,32
+                30,32
+                40,8
+                50,36
+                60,30
+                70,14
+                80,34
+                90,28
+                100,12
+                110,32
+                120,24
+                130,20
+                140,36
+                150,16
+                160,30
+                170,26
+                180,10
+                190,34
+                200,28
+                210,36
+                220,32
+                230,32
+                240,32
+              "
+            ></polyline>
+          </svg>
+        </div>
+        <div class="pulse-label">PULSE: {{ apDisplay() }}</div>
       </div>
 
-      <div class="panel panel-data">
+      <!-- RIGHT: EXCURSION DATA -->
+      <div class="panel">
         <div class="panel-title">[ CURRENT EXCURSION DATA ]</div>
-
         <div class="data-line">
           <span class="data-icon">📌</span>
-          <span class="data-key">LOCAL OUTPOST:</span>
+          <span class="data-key">LOCAL OUTPOST</span>
           <span class="data-val">{{ currentLocation() }}</span>
         </div>
         <div class="data-line">
           <span class="data-icon">⏱️</span>
-          <span class="data-key">TIME LAPSED:</span>
+          <span class="data-key">TIME LAPSED</span>
           <span class="data-val">{{ timeLapsed() }}</span>
         </div>
         <div class="data-line">
           <span class="data-icon">🌡️</span>
-          <span class="data-key">CORE TEMP:</span>
-          <span class="data-val">{{ coreTemp() }} °C</span>
+          <span class="data-key">CORE TEMP</span>
+          <span class="data-val">{{ coreTemp() }}</span>
         </div>
         <div class="data-line">
           <span class="data-icon">🛰️</span>
-          <span class="data-key">SAT LINK:</span>
-          <span class="data-val" [class.offline]="satLink() === 'SIN SEÑAL'">{{ satLink() }}</span>
+          <span class="data-key">SAT LINK</span>
+          <span class="data-val" [class.offline]="!satLink()">{{ satLink() }}</span>
         </div>
-        <div class="data-line system-line">
-          <span class="prompt">&gt;</span>
-          <span class="system-status" [class.warning]="isCritical()">SYSTEM STATUS: {{ systemStatus() }}</span>
+        <div class="system-line">
+          <span class="prompt">&gt; </span>
+          <span class="system-status" [class.warning]="systemStatus() !== 'NOMINAL'">
+            SYSTEM STATUS: {{ systemStatus() }}
+          </span>
         </div>
       </div>
     </div>
 
+    <!-- QUEST LOG -->
     <div class="quest-panel">
-      <div class="panel-title">[ ACTIVE QUEST ] {{ activeQuest().title }}</div>
-      @for (task of activeQuest().tasks; track task.text) {
-        <div class="quest-task">
-          <span class="quest-bullet">{{ task.done ? '█' : '░' }}</span>
-          <span class="quest-text" [class.done]="task.done">{{ task.text }}</span>
-        </div>
-      }
+      <div class="panel-title" style="border-bottom: none; margin-bottom: 0;">[ ACTIVE QUEST ]</div>
+      <div class="quest-task">
+        <span class="quest-bullet">█</span>
+        <span class="quest-text">{{ activeQuest() }}</span>
+      </div>
+      <div class="quest-task">
+        <span class="quest-bullet">░</span>
+        <span class="quest-text done">Regresar con el registrador de tiempo real al refugio</span>
+      </div>
     </div>
 
-    <div class="separator">▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬</div>
+    <div class="separator">
+      ▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬
+    </div>
 
+    <!-- AP SLIDER -->
     <div class="ap-section">
       <div class="ap-header">
-        <span>☢️ AP-METRIC SLIDER</span>
-        <span class="ap-value">AP: {{ apDisplay() }}</span>
+        <span class="ap-bracket">☢️ AP-METRIC</span>
+        <span class="ap-value">{{ apDisplay() }}</span>
+        <button class="ap-reset" (click)="onResetTime()">🛠️ REPAIR V2</button>
       </div>
       <div class="ap-scale">
         <span class="ap-tick">00</span>
@@ -103,20 +153,14 @@
         type="range"
         class="ap-slider"
         min="0"
-        max="1439"
+        max="24"
         step="1"
-        [value]="totalMinutes()"
+        [value]="sliderPercent()"
         (input)="onApChange($event)"
       />
       <div class="ap-footer">
-        <span class="ap-mode">
-          <span class="ap-bracket">[</span>
-          MODO: {{ time.manualMode$() ? 'SIMULACIÓN' : 'TIEMPO REAL' }}
-          <span class="ap-bracket">]</span>
-        </span>
-        @if (time.manualMode$()) {
-          <button class="ap-reset" (click)="onResetTime()">↻ RESET</button>
-        }
+        <span class="ap-mode">[ MODE: SURVIVAL ]</span>
+        <span class="ap-mode">{{ clockDisplay() }}</span>
       </div>
     </div>
   </div>
