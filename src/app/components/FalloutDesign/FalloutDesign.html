@@ -1,6 +1,14 @@
 <div class="pipboy-wrapper">
   <img class="pipboy-image" src="/Fallout/fondoPipBoy.png" alt="Pip-Boy casing" />
 
+  <svg width="0" height="0" style="position: absolute;">
+    <defs>
+      <clipPath id="crt-clip" clipPathUnits="objectBoundingBox">
+        <path d="M0.08,0.03 C0.32,0.005 0.68,0.005 0.92,0.03 C0.975,0.05 0.985,0.12 0.985,0.5 C0.985,0.88 0.975,0.95 0.92,0.97 C0.68,0.995 0.32,0.995 0.08,0.97 C0.025,0.95 0.015,0.88 0.015,0.5 C0.015,0.12 0.025,0.05 0.08,0.03 Z"/>
+      </clipPath>
+    </defs>
+  </svg>
+
   <div class="pipboy-screen">
     <!-- TOP NAV -->
     <div class="top-bar">
@@ -119,7 +127,7 @@
       <div class="panel-title" style="border-bottom: none; margin-bottom: 0;">[ ACTIVE QUEST ]</div>
       <div class="quest-task">
         <span class="quest-bullet">█</span>
-        <span class="quest-text">{{ activeQuest() }}</span>
+        <span class="quest-text">{{ activeQuest().title }}</span>
       </div>
       <div class="quest-task">
         <span class="quest-bullet">░</span>
