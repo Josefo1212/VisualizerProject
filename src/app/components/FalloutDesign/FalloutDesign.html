@@ -1,0 +1,123 @@
+<div class="pipboy-wrapper">
+  <img class="pipboy-image" src="/Fallout/fondoPipBoy.png" alt="Pip-Boy Casing" />
+
+  <div class="pipboy-screen">
+    <div class="top-bar">
+      <span class="top-item active">🚀 STATUS</span>
+      <span class="top-item">🎒 INV</span>
+      <span class="top-item">🗺️ DATA</span>
+      <span class="top-item">📻 MAP</span>
+      <span class="top-item">RADIO</span>
+      <span class="top-power">⚡ POWER: {{ powerPercent() }}%</span>
+    </div>
+
+    <div class="separator">▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬</div>
+
+    <div class="panels-row">
+      <div class="panel panel-vitals">
+        <div class="panel-title">[ VITAL SIGNS MONITOR ]</div>
+
+        <div class="stat-row">
+          <span class="stat-label">HP</span>
+          <div class="bar-track" [class.critical]="isCritical()">
+            <div class="bar-fill hp-fill" [style.width.%]="hpPercent()"></div>
+          </div>
+          <span class="stat-value">{{ hpPercent() }}/100</span>
+        </div>
+
+        <div class="stat-row">
+          <span class="stat-label">RAD</span>
+          <div class="bar-track rad-track" [class.critical]="radPercent() > 120">
+            <div class="bar-fill rad-fill" [style.width.%]="radPercent() / 2"></div>
+          </div>
+          <span class="stat-value">{{ radCount() }} RADs</span>
+        </div>
+
+        <svg class="pulse-svg" viewBox="0 0 200 30" preserveAspectRatio="xMidYMid meet"
+             [class.critical]="isCritical()">
+          <path class="pulse-path" d="M 0,20 L 15,20 L 22,4 L 28,20 L 34,36 L 40,12 L 48,28 L 54,14 L 60,20 L 85,20 L 92,4 L 98,20 L 104,36 L 110,10 L 118,30 L 124,14 L 130,20 L 155,20 L 162,4 L 168,20 L 174,36 L 180,10 L 188,30 L 194,14 L 200,20" />
+        </svg>
+
+        <div class="pulse-label">[ PULSE: {{ 60 + (time.hours$() % 20) }} BPM ]</div>
+      </div>
+
+      <div class="panel panel-data">
+        <div class="panel-title">[ CURRENT EXCURSION DATA ]</div>
+
+        <div class="data-line">
+          <span class="data-icon">📌</span>
+          <span class="data-key">LOCAL OUTPOST:</span>
+          <span class="data-val">{{ currentLocation() }}</span>
+        </div>
+        <div class="data-line">
+          <span class="data-icon">⏱️</span>
+          <span class="data-key">TIME LAPSED:</span>
+          <span class="data-val">{{ timeLapsed() }}</span>
+        </div>
+        <div class="data-line">
+          <span class="data-icon">🌡️</span>
+          <span class="data-key">CORE TEMP:</span>
+          <span class="data-val">{{ coreTemp() }} °C</span>
+        </div>
+        <div class="data-line">
+          <span class="data-icon">🛰️</span>
+          <span class="data-key">SAT LINK:</span>
+          <span class="data-val" [class.offline]="satLink() === 'SIN SEÑAL'">{{ satLink() }}</span>
+        </div>
+        <div class="data-line system-line">
+          <span class="prompt">&gt;</span>
+          <span class="system-status" [class.warning]="isCritical()">SYSTEM STATUS: {{ systemStatus() }}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="quest-panel">
+      <div class="panel-title">[ ACTIVE QUEST ] {{ activeQuest().title }}</div>
+      @for (task of activeQuest().tasks; track task.text) {
+        <div class="quest-task">
+          <span class="quest-bullet">{{ task.done ? '█' : '░' }}</span>
+          <span class="quest-text" [class.done]="task.done">{{ task.text }}</span>
+        </div>
+      }
+    </div>
+
+    <div class="separator">▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬</div>
+
+    <div class="ap-section">
+      <div class="ap-header">
+        <span>☢️ AP-METRIC SLIDER</span>
+        <span class="ap-value">AP: {{ apDisplay() }}</span>
+      </div>
+      <div class="ap-scale">
+        <span class="ap-tick">00</span>
+        <span class="ap-tick">03</span>
+        <span class="ap-tick">06</span>
+        <span class="ap-tick">09</span>
+        <span class="ap-tick">12</span>
+        <span class="ap-tick">15</span>
+        <span class="ap-tick">18</span>
+        <span class="ap-tick">21</span>
+        <span class="ap-tick">24</span>
+      </div>
+      <input
+        type="range"
+        class="ap-slider"
+        min="0"
+        max="1439"
+        step="1"
+        [value]="totalMinutes()"
+        (input)="onApChange($event)"
+      />
+      <div class="ap-footer">
+        <span class="ap-mode">
+          <span class="ap-bracket">[</span>
+          MODO: {{ time.manualMode$() ? 'SIMULACIÓN' : 'TIEMPO REAL' }}
+          <span class="ap-bracket">]</span>
+        </span>
+        @if (time.manualMode$()) {
+          <button class="ap-reset" (click)="onResetTime()">↻ RESET</button>
+        }
+      </div>
+    </div>
+  </div>
+</div>

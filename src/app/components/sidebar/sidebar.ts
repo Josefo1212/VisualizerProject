@@ -19,6 +19,7 @@ export class SidebarComponent {
     { id: 'gta', icon: '🌆', name: 'Los Santos', cover: '/GTA/botonGTA.jpg' },
     { id: 'amongus', icon: '🚀', name: 'Among Us', cover: '/AmongUs/botonAmongUs.jpg' },
     { id: 'subnautica', icon: '🌊', name: 'Subnautica', cover: '/Subnautica/botonSubnautica.jpg' },
+    { id: 'fallout', icon: '☢️', name: 'Fallout', cover: '/Fallout/botonFallout.jpg' },
   ];
 
   toggle(): void {

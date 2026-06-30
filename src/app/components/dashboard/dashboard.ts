@@ -4,11 +4,12 @@ import { PowerScreenComponent } from '../PowerScreen/PowerScreen';
 import { GtaDesignComponent } from '../GtaDesign/GtaDesign';
 import { AmongUsDesignComponent } from '../AmongUsDesign/AmongUsDesign';
 import { SubnauticaDesignComponent } from '../SubnauticaDesign/SubnauticaDesign';
+import { FalloutDesignComponent } from '../FalloutDesign/FalloutDesign';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [SidebarComponent, PowerScreenComponent, GtaDesignComponent, AmongUsDesignComponent, SubnauticaDesignComponent],
+  imports: [SidebarComponent, PowerScreenComponent, GtaDesignComponent, AmongUsDesignComponent, SubnauticaDesignComponent, FalloutDesignComponent],
   templateUrl: './Dashboard.html',
   styleUrl: './Dashboard.css',
 })
