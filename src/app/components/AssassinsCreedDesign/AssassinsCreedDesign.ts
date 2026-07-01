@@ -31,13 +31,12 @@ export class AssassinsCreedDesignComponent implements OnDestroy {
   private readonly _clockInterval: ReturnType<typeof setInterval>;
 
   readonly clockDisplay = computed(() => {
-    const raw = this.time.currentHour$();
-    const cyclic = ((raw % 24) + 24) % 24;
-    const h = Math.floor(cyclic);
-    const m = Math.floor((cyclic - h) * 60);
-    const s = Math.floor(((cyclic - h) * 60 - m) * 60);
+    const h = this.time.hours$();
+    const m = this.time.minutes$();
+    const s = this.time.seconds$();
     const ms = this._now().getMilliseconds().toString().padStart(3, '0');
-    return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}.${ms}`;
+    const cyclic = ((h % 24) + 24) % 24;
+    return `${cyclic.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}.${ms}`;
   });
 
   /* ─── Genetic timeline ─── */
@@ -52,8 +51,8 @@ export class AssassinsCreedDesignComponent implements OnDestroy {
   ];
 
   readonly timeProgress = computed(() => {
-    const raw = this.time.currentHour$();
-    return (((raw % 24) + 24) % 24) / 24;
+    const h = this.time.hours$();
+    return (((h % 24) + 24) % 24) / 24;
   });
 
   readonly nodeStates = computed<NodeState[]>(() => {
@@ -66,32 +65,33 @@ export class AssassinsCreedDesignComponent implements OnDestroy {
   });
 
   /* ─── Sync slider ─── */
-  readonly syncProgress = signal(0);
+  readonly sliderValue = signal<number>(0);
   readonly isDragging = signal(false);
-  private readonly _syncInterval: ReturnType<typeof setInterval>;
 
-  readonly syncIndex = computed(() => (70 + this.syncProgress() * 0.28).toFixed(1));
+  readonly syncIndex = computed(() => {
+    const v = this.sliderValue();
+    return (70 + v * 0.28).toFixed(1);
+  });
 
-  readonly mappedHours = computed(() => (this.syncProgress() / 100) * 240);
+  readonly mappedHours = computed(() => (this.sliderValue() / 100) * 240);
 
   constructor() {
+    this.syncFromTime();
     this._clockInterval = setInterval(() => this._now.set(new Date()), 50);
-    this._syncInterval = setInterval(() => {
-      this.syncProgress.update(v => {
-        const next = Math.min(100, v + 1);
-        this.time.setHora((next / 100) * 240);
-        return next;
-      });
-    }, 1000);
   }
 
   ngOnDestroy(): void {
     clearInterval(this._clockInterval);
-    clearInterval(this._syncInterval);
+  }
+
+  private syncFromTime(): void {
+    const h = this.time.hours$();
+    const pct = Math.max(0, Math.min(100, (h / 240) * 100));
+    this.sliderValue.set(pct);
   }
 
   onSliderChange(v: number): void {
-    this.syncProgress.set(v);
+    this.sliderValue.set(v);
     this.time.setHora((v / 100) * 240);
   }
 
@@ -105,6 +105,6 @@ export class AssassinsCreedDesignComponent implements OnDestroy {
 
   onResetTime(): void {
     this.time.resetToRealTime();
-    this.syncProgress.set(0);
+    this.syncFromTime();
   }
 }

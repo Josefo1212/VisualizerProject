@@ -83,13 +83,14 @@
     <div class="travel-header">
       <span class="travel-label">MEMORY TRAVEL</span>
       <span class="travel-time">{{ mappedHours().toFixed(1) }}h</span>
+      <button class="reset-btn" (click)="onResetTime()">REAL TIME</button>
     </div>
     <input
       type="range"
       min="0"
       max="100"
       step="0.1"
-      [ngModel]="syncProgress()"
+      [ngModel]="sliderValue()"
       (ngModelChange)="onSliderChange($event)"
       (pointerdown)="onDragStart()"
       (pointerup)="onDragEnd()"

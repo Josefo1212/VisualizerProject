@@ -324,15 +324,36 @@
 }
 .travel-header {
   display: flex;
-  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
   font-size: 10px;
   letter-spacing: 2px;
   text-transform: uppercase;
   color: rgba(0,229,255,0.5);
   margin-bottom: 8px;
 }
+.travel-label {
+  flex: 1;
+}
 .travel-time {
   color: #f0f4f8;
+}
+.reset-btn {
+  background: transparent;
+  border: 1px solid rgba(0,229,255,0.3);
+  color: #00e5ff;
+  font-family: inherit;
+  font-size: 9px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  padding: 4px 10px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.reset-btn:hover {
+  background: rgba(0,229,255,0.1);
+  border-color: #00e5ff;
+  box-shadow: 0 0 8px rgba(0,229,255,0.2);
 }
 .memory-slider {
   -webkit-appearance: none;
