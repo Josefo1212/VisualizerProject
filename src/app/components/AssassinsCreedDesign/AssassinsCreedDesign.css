@@ -255,22 +255,22 @@
   width: 60px;
   height: 72px;
   display: block;
-  filter: drop-shadow(0 0 12px rgba(223,177,91,0.5)) drop-shadow(0 0 30px rgba(223,177,91,0.2));
+  filter: drop-shadow(0 0 6px rgba(223,177,91,0.3));
 }
-.eden-core {
-  animation: pulse-eden 3s ease-in-out infinite;
-}
-.eden-ring {
-  animation: spin-ring 6s linear infinite;
+.pulse-ring-1,
+.pulse-ring-2 {
+  transform-box: fill-box;
   transform-origin: center;
 }
-@keyframes pulse-eden {
-  0%, 100% { opacity: 0.6; r: 4; }
-  50% { opacity: 1; r: 5; }
+.pulse-ring-1 {
+  animation: isu-pulse 1s ease-out infinite;
 }
-@keyframes spin-ring {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+.pulse-ring-2 {
+  animation: isu-pulse 1s ease-out 0.5s infinite;
+}
+@keyframes isu-pulse {
+  0%   { transform: scale(1); opacity: 0.55; }
+  100% { transform: scale(1.8); opacity: 0; }
 }
 .clock-section {
   text-align: center;
@@ -297,25 +297,66 @@
   margin-top: 2px;
 }
 .sync-index-section {
-  text-align: right;
   flex-shrink: 0;
+  border-top: 1px solid rgba(0,229,255,0.15);
+  border-bottom: 1px solid rgba(0,229,255,0.15);
+  padding: 8px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.sync-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
 }
 .sync-title {
-  font-size: 9px;
+  font-size: 11px;
   letter-spacing: 2px;
   text-transform: uppercase;
-  color: rgba(0,229,255,0.4);
+  color: rgba(0,229,255,0.5);
 }
 .sync-value {
-  font-size: 28px;
+  font-size: 12px;
   letter-spacing: 2px;
   color: #f0f4f8;
-  text-shadow: 0 0 8px rgba(0,229,255,0.3);
+  text-shadow: 0 0 6px rgba(0,229,255,0.3);
+}
+.sync-segments {
+  display: flex;
+  gap: 4px;
+  justify-content: flex-end;
+}
+.sync-seg {
+  width: 16px;
+  height: 16px;
+  border: 1px solid rgba(0,229,255,0.2);
+  background: rgba(0,229,255,0.05);
+  transform: rotate(45deg) scale(0.7);
+  transition: all 0.2s;
+}
+.sync-seg.active {
+  background: #00e5ff;
+  border-color: #00e5ff;
+  box-shadow: 0 0 4px rgba(0,229,255,0.4);
+}
+.sync-seg.glitch {
+  background: #ff005c;
+  border-color: #ff005c;
+  box-shadow: 0 0 6px rgba(255,0,92,0.5);
+  animation: seg-blink 0.15s ease-in-out infinite alternate;
+}
+@keyframes seg-blink {
+  0%   { opacity: 1; }
+  50%  { opacity: 0.3; }
+  100% { opacity: 1; }
 }
 .sync-sub {
   font-size: 9px;
   letter-spacing: 1px;
   color: rgba(0,229,255,0.3);
+  text-transform: uppercase;
 }
 
 /* ─── Memory Travel slider ─── */

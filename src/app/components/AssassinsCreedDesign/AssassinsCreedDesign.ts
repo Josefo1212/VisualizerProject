@@ -15,6 +15,11 @@ interface NodeState extends TimelineNode {
   glitching: boolean;
 }
 
+interface SyncSegment {
+  active: boolean;
+  glitch: boolean;
+}
+
 @Component({
   selector: 'app-assassins-creed-design',
   standalone: true,
@@ -71,6 +76,17 @@ export class AssassinsCreedDesignComponent implements OnDestroy {
   readonly syncIndex = computed(() => {
     const v = this.sliderValue();
     return (70 + v * 0.28).toFixed(1);
+  });
+
+  readonly syncSegments = computed<SyncSegment[]>(() => {
+    const rawIndex = 70 + this.sliderValue() * 0.28;
+    const total = 10;
+    const activeCount = Math.round((rawIndex / 100) * total);
+    const dragging = this.isDragging();
+    return Array.from({ length: total }, (_, i) => ({
+      active: i < activeCount,
+      glitch: dragging && i >= activeCount,
+    }));
   });
 
   readonly mappedHours = computed(() => (this.sliderValue() / 100) * 240);

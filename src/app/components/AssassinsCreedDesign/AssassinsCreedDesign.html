@@ -53,17 +53,67 @@
     <div class="apple-section">
       <svg class="apple-eden" viewBox="0 0 100 120" xmlns="http://www.w3.org/2000/svg">
         <defs>
-          <radialGradient id="eden-glow" cx="50%" cy="40%" r="50%">
-            <stop offset="0%" stop-color="#fff8e1" stop-opacity="0.9"/>
-            <stop offset="40%" stop-color="#dfb15b" stop-opacity="0.6"/>
-            <stop offset="100%" stop-color="#dfb15b" stop-opacity="0"/>
+          <radialGradient id="metal-sphere" cx="38%" cy="32%" r="65%">
+            <stop offset="0%" stop-color="#fff3cc" />
+            <stop offset="15%" stop-color="#efc966" />
+            <stop offset="40%" stop-color="#c9942e" />
+            <stop offset="70%" stop-color="#8a6f27" />
+            <stop offset="100%" stop-color="#4a3a10" />
           </radialGradient>
+          <filter id="isu-glow" x="-50%" y="-50%" width="200%" height="200%">
+            <feGaussianBlur stdDeviation="2" result="blur" />
+            <feMerge>
+              <feMergeNode in="blur" />
+              <feMergeNode in="SourceGraphic" />
+            </feMerge>
+          </filter>
+          <filter id="isu-glow-soft" x="-50%" y="-50%" width="200%" height="200%">
+            <feGaussianBlur stdDeviation="1.2" result="blur" />
+            <feMerge>
+              <feMergeNode in="blur" />
+              <feMergeNode in="SourceGraphic" />
+            </feMerge>
+          </filter>
         </defs>
-        <circle cx="50" cy="50" r="40" fill="url(#eden-glow)" class="eden-glow"/>
-        <path d="M50 15 Q65 30 68 48 Q70 55 68 60 Q72 58 76 52 Q80 48 78 42 Q76 36 70 34 Q72 28 68 22 Q64 16 58 15 Z" fill="#dfb15b" opacity="0.3"/>
-        <circle cx="50" cy="50" r="4" fill="#fff8e1" opacity="0.6" class="eden-core"/>
-        <circle cx="50" cy="50" r="12" fill="none" stroke="#dfb15b" stroke-width="0.5" opacity="0.4" class="eden-ring"/>
-        <circle cx="50" cy="50" r="24" fill="none" stroke="#dfb15b" stroke-width="0.3" opacity="0.2" class="eden-ring"/>
+
+        <circle cx="50" cy="50" r="38" fill="none" stroke="#ffdf6d" stroke-width="0.6" opacity="0" class="pulse-ring-1" />
+        <circle cx="50" cy="50" r="38" fill="none" stroke="#ffdf6d" stroke-width="0.4" opacity="0" class="pulse-ring-2" />
+
+        <circle cx="50" cy="50" r="35" fill="url(#metal-sphere)" />
+
+        <path d="M47 15 Q54 16 56 20 Q60 28 58 34 Q56 38 52 40 Q48 38 46 34 Q44 28 46 22 Z" fill="#efc966" opacity="0.7" />
+        <path d="M48 17 Q52 18 54 22 Q55 28 53 32 Q50 34 48 32 Q46 28 47 22 Z" fill="#fff3cc" opacity="0.4" />
+
+        <circle cx="50" cy="50" r="28" fill="none" stroke="#ffdf6d" stroke-width="1" opacity="0.55" filter="url(#isu-glow)" />
+        <circle cx="50" cy="50" r="19" fill="none" stroke="#ffdf6d" stroke-width="0.8" opacity="0.45" filter="url(#isu-glow-soft)" />
+        <circle cx="50" cy="50" r="10" fill="none" stroke="#ffdf6d" stroke-width="0.6" opacity="0.35" filter="url(#isu-glow-soft)" />
+
+        <path d="M 24 28 Q 35 35 50 50 Q 65 65 76 72" fill="none" stroke="#ffdf6d" stroke-width="1" opacity="0.5" filter="url(#isu-glow)" />
+        <path d="M 76 28 Q 65 35 50 50 Q 35 65 24 72" fill="none" stroke="#ffdf6d" stroke-width="1" opacity="0.5" filter="url(#isu-glow)" />
+
+        <path d="M 18 50 Q 32 40 50 40 Q 68 40 82 50" fill="none" stroke="#ffdf6d" stroke-width="0.7" opacity="0.35" filter="url(#isu-glow-soft)" />
+        <path d="M 18 50 Q 32 60 50 60 Q 68 60 82 50" fill="none" stroke="#ffdf6d" stroke-width="0.7" opacity="0.35" filter="url(#isu-glow-soft)" />
+
+        <path d="M 50 22 A 28 28 0 0 1 70 34" fill="none" stroke="#ffdf6d" stroke-width="0.6" opacity="0.4" filter="url(#isu-glow-soft)" />
+        <path d="M 30 34 A 19 19 0 0 1 50 31" fill="none" stroke="#ffdf6d" stroke-width="0.6" opacity="0.4" filter="url(#isu-glow-soft)" />
+        <path d="M 70 66 A 19 19 0 0 0 50 69" fill="none" stroke="#ffdf6d" stroke-width="0.6" opacity="0.4" filter="url(#isu-glow-soft)" />
+        <path d="M 70 34 A 28 28 0 0 0 78 50" fill="none" stroke="#ffdf6d" stroke-width="0.6" opacity="0.4" filter="url(#isu-glow-soft)" />
+
+        <circle cx="50" cy="50" r="1.8" fill="#fff3cc" filter="url(#isu-glow)" />
+        <circle cx="50" cy="22" r="1.5" fill="#ffdf6d" opacity="0.8" filter="url(#isu-glow)" />
+        <circle cx="50" cy="78" r="1.5" fill="#ffdf6d" opacity="0.8" filter="url(#isu-glow)" />
+        <circle cx="22" cy="50" r="1.5" fill="#ffdf6d" opacity="0.8" filter="url(#isu-glow)" />
+        <circle cx="78" cy="50" r="1.5" fill="#ffdf6d" opacity="0.8" filter="url(#isu-glow)" />
+        <circle cx="31" cy="31" r="1.2" fill="#ffdf6d" opacity="0.6" filter="url(#isu-glow-soft)" />
+        <circle cx="69" cy="31" r="1.2" fill="#ffdf6d" opacity="0.6" filter="url(#isu-glow-soft)" />
+        <circle cx="31" cy="69" r="1.2" fill="#ffdf6d" opacity="0.6" filter="url(#isu-glow-soft)" />
+        <circle cx="69" cy="69" r="1.2" fill="#ffdf6d" opacity="0.6" filter="url(#isu-glow-soft)" />
+        <circle cx="40" cy="40" r="1" fill="#ffdf6d" opacity="0.5" filter="url(#isu-glow-soft)" />
+        <circle cx="60" cy="40" r="1" fill="#ffdf6d" opacity="0.5" filter="url(#isu-glow-soft)" />
+        <circle cx="40" cy="60" r="1" fill="#ffdf6d" opacity="0.5" filter="url(#isu-glow-soft)" />
+        <circle cx="60" cy="60" r="1" fill="#ffdf6d" opacity="0.5" filter="url(#isu-glow-soft)" />
+
+        <polygon points="50,47 53,50 50,53 47,50" fill="#fff3cc" filter="url(#isu-glow)" opacity="0.9" />
       </svg>
     </div>
     <div class="clock-section">
@@ -72,8 +122,19 @@
       <div class="clock-sub">SYNC CYCLE</div>
     </div>
     <div class="sync-index-section">
-      <div class="sync-title">SYNC INDEX</div>
-      <div class="sync-value">{{ syncIndex() }}%</div>
+      <div class="sync-header">
+        <span class="sync-title">SYNC INDEX</span>
+        <span class="sync-value">{{ syncIndex() }}%</span>
+      </div>
+      <div class="sync-segments">
+        @for (seg of syncSegments(); track $index) {
+          <div
+            class="sync-seg"
+            [class.active]="seg.active"
+            [class.glitch]="seg.glitch"
+          ></div>
+        }
+      </div>
       <div class="sync-sub">MEMORY STABILITY</div>
     </div>
   </div>
