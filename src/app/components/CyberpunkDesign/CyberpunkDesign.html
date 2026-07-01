@@ -1,0 +1,119 @@
+<div class="hud-container">
+  <div class="hud-frame">
+    <div class="hud-topbar">
+      <span class="top-left">&#9650; RETINAL HUD v2.07 // KIPOSHI NET</span>
+      <span class="top-right">[ SYSTEM STATUS: {{ systemStatus() }} ]</span>
+    </div>
+
+    <div class="hud-grid">
+      <div class="hud-col col-stats">
+        <div class="col-header">[ VITAL STATS ]</div>
+
+        <div class="stat-section">
+          <div class="stat-label">HP</div>
+          <div class="stat-bar">
+            <div class="bar-track">
+              <div class="bar-fill hp-fill" [style.width.%]="hpPercent()"></div>
+            </div>
+            <span class="stat-value">{{ hpPercent() }}%</span>
+          </div>
+        </div>
+
+        <div class="stat-section">
+          <div class="stat-label">RAM</div>
+          <div class="stat-bar">
+            <div class="bar-track">
+              <div class="bar-fill ram-fill" [style.width.%]="ramPercent()"></div>
+            </div>
+            <span class="stat-value">{{ ramUsed() }}/10</span>
+          </div>
+        </div>
+
+        <svg class="body-svg" viewBox="0 0 200 400" xmlns="http://www.w3.org/2000/svg">
+          <polygon id="part-head"
+            [class.stable]="bodyParts().head === 'stable'"
+            [class.warning]="bodyParts().head === 'warning'"
+            [class.critical]="bodyParts().head === 'critical'"
+            points="75,15 125,15 140,45 135,75 65,75 60,45" />
+          <polygon id="part-chest"
+            [class.stable]="bodyParts().chest === 'stable'"
+            [class.warning]="bodyParts().chest === 'warning'"
+            [class.critical]="bodyParts().chest === 'critical'"
+            points="65,85 135,85 145,160 120,185 80,185 55,160" />
+          <polygon id="part-larm"
+            [class.stable]="bodyParts().lArm === 'stable'"
+            [class.warning]="bodyParts().lArm === 'warning'"
+            [class.critical]="bodyParts().lArm === 'critical'"
+            points="55,95 25,160 15,220 35,230 45,175 60,135" />
+          <polygon id="part-rarm"
+            [class.stable]="bodyParts().rArm === 'stable'"
+            [class.warning]="bodyParts().rArm === 'warning'"
+            [class.critical]="bodyParts().rArm === 'critical'"
+            points="145,95 175,160 185,220 165,230 155,175 140,135" />
+          <polygon id="part-lleg"
+            [class.stable]="bodyParts().lLeg === 'stable'"
+            [class.warning]="bodyParts().lLeg === 'warning'"
+            [class.critical]="bodyParts().lLeg === 'critical'"
+            points="80,195 60,295 55,365 70,385 90,385 85,295 90,195" />
+          <polygon id="part-rleg"
+            [class.stable]="bodyParts().rLeg === 'stable'"
+            [class.warning]="bodyParts().rLeg === 'warning'"
+            [class.critical]="bodyParts().rLeg === 'critical'"
+            points="120,195 115,295 110,385 130,385 145,365 140,295 160,195" />
+        </svg>
+      </div>
+
+      <div class="hud-col col-cyberware">
+        <div class="col-header">[ CYBERWARE INTERFACE ]</div>
+
+        @for (ware of cyberwareList; track ware.name; let i = $index) {
+          <div class="cyber-item" [class.active]="i === activeCyberIdx()">
+            <span class="cyber-bullet">{{ i === activeCyberIdx() ? '&#9655;' : '&#9654;' }}</span>
+            <div class="cyber-body">
+              <span class="cyber-category">{{ ware.category }}:</span>
+              <span class="cyber-name">{{ ware.name }}</span>
+              <span class="cyber-status" [class.online]="i === activeCyberIdx()">{{ ware.status }}</span>
+            </div>
+          </div>
+        }
+      </div>
+
+      <div class="hud-col col-net">
+        <div class="col-header">[ NET RUNLOG ]</div>
+
+        <div class="net-console">
+          @for (line of logEntries(); track $index) {
+            <div class="net-line" [class.active]="$index === logEntries().length - 1">
+              {{ line }}@if ($index === logEntries().length - 1) {<span class="net-cursor">&#9612;</span>}
+            </div>
+          }
+        </div>
+
+        <div class="clock-widget">
+          <span class="clock-label">TIME:</span>
+          <span class="clock-value">{{ clockMs() }}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="hud-bottomslider">
+      <span class="slider-label">&#9664; NEURAL LINK</span>
+      <div class="slider-wrapper">
+        <div class="slider-ticks">
+          @for (t of sliderTicks; track t) {
+            <span class="slider-tick" [class.active]="syncFreq >= t && syncFreq < t + 10"></span>
+          }
+        </div>
+        <input
+          type="range"
+          class="slider-input"
+          min="0"
+          max="100"
+          step="1"
+          [(ngModel)]="syncFreq"
+        />
+      </div>
+      <span class="slider-value">SYNC FREQ: {{ syncFreq }}% &#9654;</span>
+    </div>
+  </div>
+</div>
