@@ -1,6 +1,6 @@
 import { Component, computed, signal, OnInit, OnDestroy, inject } from '@angular/core';
-import { AmongUsTimeEngineService } from '../../services/amongUsTimeEngine';
-import { Task } from '../../interfaces/amongUs';
+import { TimeEngineService } from '../../services/timeEngine';
+import { Task, DayInfo, DAY_NAMES } from '../../interfaces/amongUs';
 
 @Component({
   selector: 'app-among-us-design',
@@ -9,16 +9,30 @@ import { Task } from '../../interfaces/amongUs';
   styleUrl: './AmongUsDesign.css',
 })
 export class AmongUsDesignComponent implements OnInit, OnDestroy {
-  readonly timeEngine = inject(AmongUsTimeEngineService);
+  readonly timeEngine = inject(TimeEngineService);
+
+  readonly cycleMinutes = computed(() => {
+    const ch = ((this.timeEngine.hours$() % 24) + 24) % 24;
+    return ch * 60 + this.timeEngine.minutes$();
+  });
+
+  readonly totalDays = computed(() => Math.floor(Math.abs(this.timeEngine.hours$()) / 24));
+
+  readonly daysInfo = computed<DayInfo[]>(() => {
+    const today = this.totalDays() % 7;
+    return DAY_NAMES.map((name, i) => ({
+      name,
+      status: i < today ? 'past' : i === today ? 'today' : 'future'
+    }));
+  });
 
   readonly totalTime = computed(() => this.timeEngine.hours$() * 60 + this.timeEngine.minutes$());
   readonly scannerSegments = Array.from({ length: 60 }, (_, i) => i);
-  readonly sliderPercentage = computed(() => (this.totalTime() / 1439) * 100);
+  readonly sliderPercentage = computed(() => (this.cycleMinutes() / 1439) * 100);
 
   readonly currentHour = this.timeEngine.hours$;
   readonly currentMinute = this.timeEngine.minutes$;
   readonly currentSecond = this.timeEngine.seconds$;
-  readonly daysInfo = this.timeEngine.daysInfo;
 
   readonly clockDisplay = computed(() => {
     const h = this.currentHour().toString().padStart(2, '0');

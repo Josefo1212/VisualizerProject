@@ -1,5 +1,5 @@
 import { Component, inject, computed, Signal } from '@angular/core';
-import { GtaTimeEngineService } from '../../services/gtaTimeEngine';
+import { TimeEngineService } from '../../services/timeEngine';
 import { SliderComponent } from '../Slider/Slider';
 import { Rgb, SkyPt, SKY_PTS } from '../../interfaces/gta';
 
@@ -31,12 +31,14 @@ const findSegment = <T extends { h: number }>(pts: T[], h: number): [T, T, numbe
   styleUrl: './GtaDesign.css',
 })
 export class GtaDesignComponent {
-  readonly time = inject(GtaTimeEngineService);
+  readonly time = inject(TimeEngineService);
 
   readonly currentHour: Signal<number> = this.time.currentHour$;
 
+  readonly cycleHour: Signal<number> = computed(() => ((this.currentHour() % 24) + 24) % 24);
+
   readonly angle: Signal<number> = computed((): number => {
-    const h = this.currentHour();
+    const h = this.cycleHour();
     return ((h - 6) / 24) * 2 * Math.PI + Math.PI;
   });
 
@@ -61,7 +63,7 @@ export class GtaDesignComponent {
   });
 
   readonly skyGradient: Signal<string> = computed((): string => {
-    const h = this.currentHour();
+    const h = this.cycleHour();
     const [a, b, t] = findSegment(SKY_PTS, h);
     const top = lerpRgb(a.top, b.top, t);
     const mid = lerpRgb(a.mid, b.mid, t);
@@ -79,7 +81,7 @@ export class GtaDesignComponent {
   /* ── Crossfade opacities for day / sunset / night images ── */
 
   readonly img1Opacity: Signal<number> = computed((): number => {
-    const h = this.currentHour();
+    const h = this.cycleHour();
     if (h < 5) return 0;
     if (h < 6) return h - 5;
     if (h < 17) return 1;
@@ -88,7 +90,7 @@ export class GtaDesignComponent {
   });
 
   readonly img2Opacity: Signal<number> = computed((): number => {
-    const h = this.currentHour();
+    const h = this.cycleHour();
     if (h < 17) return 0;
     if (h < 18) return h - 17;
     if (h < 19) return 19 - h;
@@ -96,7 +98,7 @@ export class GtaDesignComponent {
   });
 
   readonly img3Opacity: Signal<number> = computed((): number => {
-    const h = this.currentHour();
+    const h = this.cycleHour();
     if (h < 5) return 1;
     if (h < 6) return 6 - h;
     if (h < 18) return 0;
@@ -105,7 +107,7 @@ export class GtaDesignComponent {
   });
 
   readonly isDaytime: Signal<boolean> = computed((): boolean => {
-    const h = this.currentHour();
+    const h = this.cycleHour();
     return h >= 6 && h < 18;
   });
 

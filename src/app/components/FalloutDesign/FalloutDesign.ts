@@ -1,5 +1,7 @@
 import { Component, computed, inject } from '@angular/core';
-import { GtaTimeEngineService } from '../../services/gtaTimeEngine';
+import { TimeEngineService } from '../../services/timeEngine';
+
+const CYCLE = (n: number) => ((n % 24) + 24) % 24;
 
 const LOCATIONS = [
   'CONCORD', 'DIAMOND CITY', 'GOODNEIGHBOR', 'SANCTUARY HILLS',
@@ -46,7 +48,7 @@ const QUESTS = [
   styleUrls: ['./FalloutDesign.css']
 })
 export class FalloutDesignComponent {
-  readonly time = inject(GtaTimeEngineService);
+  readonly time = inject(TimeEngineService);
 
   readonly clockDisplay = computed(() => {
     const h = this.time.hours$().toString().padStart(2, '0');
@@ -56,7 +58,7 @@ export class FalloutDesignComponent {
   });
 
   readonly timeLapsed = computed(() => {
-    const totalMin = this.time.hours$() * 60 + this.time.minutes$();
+    const totalMin = Math.abs(this.time.hours$() * 60 + this.time.minutes$());
     const h = Math.floor(totalMin / 60).toString().padStart(2, '0');
     const m = (totalMin % 60).toString().padStart(2, '0');
     const s = this.time.seconds$().toString().padStart(2, '0');
@@ -64,62 +66,65 @@ export class FalloutDesignComponent {
   });
 
   readonly powerPercent = computed(() => {
-    const drain = Math.floor(this.time.hours$() * 0.15);
-    return Math.max(50, 100 - drain);
+    const drain = Math.floor(Math.abs(this.time.hours$()) * 0.15);
+    return Math.max(10, 100 - drain);
   });
 
   readonly hpPercent = computed(() => {
-    const base = 100;
-    const damage = Math.floor((this.time.hours$() * 0.8 + this.time.minutes$() * 0.05) % 30);
-    return base - damage;
+    const damage = Math.floor(Math.abs(this.time.hours$()) * 0.8 + this.time.minutes$() * 0.05);
+    return Math.max(0, 100 - damage);
   });
 
-  readonly radPercent = computed(() => {
-    const rads = (this.time.minutes$() + this.time.hours$() * 2) % 200;
-    return Math.min(200, rads);
-  });
+  readonly rawRad = computed(() => Math.abs(this.time.minutes$() + this.time.hours$() * 2));
 
-  readonly radCount = computed(() => Math.round(this.radPercent() / 16.67).toString().padStart(3, '0'));
+  readonly radPercent = computed(() => Math.min(100, this.rawRad()));
+
+  readonly radCount = computed(() => Math.round(this.rawRad() / 16.67).toString().padStart(3, '0'));
 
   readonly currentLocation = computed(() => {
-    const idx = (this.time.hours$() + Math.floor(this.time.minutes$() / 30)) % LOCATIONS.length;
+    const ch = CYCLE(this.time.hours$());
+    const idx = (ch + Math.floor(this.time.minutes$() / 30)) % LOCATIONS.length;
     return LOCATIONS[idx];
   });
 
   readonly coreTemp = computed(() => {
-    const base = 22.0 + (this.time.hours$() % 8) * 0.6;
+    const ch = CYCLE(this.time.hours$());
+    const base = 22.0 + (ch % 8) * 0.6;
     return base.toFixed(1);
   });
 
   readonly satLink = computed(() => {
-    return this.time.hours$() >= 6 && this.time.hours$() < 22 ? 'CONECTADO' : 'SIN SEÑAL';
+    const ch = CYCLE(this.time.hours$());
+    return ch >= 6 && ch < 22 ? 'CONECTADO' : 'SIN SEÑAL';
   });
 
   readonly systemStatus = computed(() => {
+    if (this.hpPercent() <= 0) return '☠ FALLECIDO — SIGUE ADELANTE, VALIENTE';
+    if (this.hpPercent() < 30) return '⚠ INTEGRIDAD CRÍTICA';
     if (this.time.minutes$() > 50) return '⚠ ADVERTENCIA: RADIACIÓN ELEVADA';
-    if (this.hpPercent() < 40) return '⚠ INTEGRIDAD CRÍTICA';
     return 'NOMINAL';
   });
 
   readonly activeQuest = computed(() => {
-    const idx = this.time.hours$() % QUESTS.length;
+    const idx = Math.abs(this.time.hours$()) % QUESTS.length;
     return QUESTS[idx];
   });
 
   readonly totalMinutes = computed(() => this.time.hours$() * 60 + this.time.minutes$());
-  readonly sliderPercent = computed(() => (this.totalMinutes() / 1439) * 100);
 
-  readonly apDisplay = computed(() => Math.round(100 - this.sliderPercent()));
+  readonly apDisplay = computed(() => {
+    const totalH = Math.abs(this.time.hours$());
+    return `${Math.floor(totalH)}h`;  });
 
   readonly hpDisplay = computed(() => `${this.hpPercent()}/100`);
 
   readonly isCritical = computed(() => this.hpPercent() < 30 || this.radPercent() > 120);
 
-  readonly isRadCritical = computed(() => this.radPercent() > 120);
+  readonly isRadCritical = computed(() => this.rawRad() > 120);
 
   onApChange(event: Event): void {
     const value = (event.target as HTMLInputElement).value;
-    this.time.setHora(Number(value) / 60);
+    this.time.setHora(Number(value));
   }
 
   onResetTime(): void {

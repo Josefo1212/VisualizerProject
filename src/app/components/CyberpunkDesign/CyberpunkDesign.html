@@ -82,9 +82,9 @@
         <div class="col-header">[ NET RUNLOG ]</div>
 
         <div class="net-console">
-          @for (line of logEntries(); track $index) {
-            <div class="net-line" [class.active]="$index === logEntries().length - 1">
-              {{ line }}@if ($index === logEntries().length - 1) {<span class="net-cursor">&#9612;</span>}
+          @for (line of netLogs(); track $index) {
+            <div class="net-line" [class.active]="$index === netLogs().length - 1">
+              {{ line }}@if ($index === netLogs().length - 1) {<span class="net-cursor">&#9612;</span>}
             </div>
           }
         </div>
@@ -97,23 +97,25 @@
     </div>
 
     <div class="hud-bottomslider">
-      <span class="slider-label">&#9664; NEURAL LINK</span>
+      <span class="slider-label">&#9664; CHRONO SYNC</span>
       <div class="slider-wrapper">
         <div class="slider-ticks">
           @for (t of sliderTicks; track t) {
-            <span class="slider-tick" [class.active]="syncFreq >= t && syncFreq < t + 10"></span>
+            <span class="slider-tick" [class.active]="time.hours$() >= t - 12 && time.hours$() < t + 12"></span>
           }
         </div>
         <input
           type="range"
           class="slider-input"
-          min="0"
-          max="100"
+          min="-72"
+          max="240"
           step="1"
-          [(ngModel)]="syncFreq"
+          [ngModel]="sliderValue()"
+          (ngModelChange)="onSliderChange($event)"
         />
       </div>
-      <span class="slider-value">SYNC FREQ: {{ syncFreq }}% &#9654;</span>
+      <span class="slider-value">CHRONO: {{ hoursDisplay() }} &#9654;</span>
+      <button class="reset-btn" (click)="onResetTime()">&#9654; REAL TIME</button>
     </div>
   </div>
 </div>

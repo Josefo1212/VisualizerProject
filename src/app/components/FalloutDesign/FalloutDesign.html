@@ -151,24 +151,13 @@
         <span class="ap-value">{{ apDisplay() }}</span>
         <button class="ap-reset" (click)="onResetTime()">🛠️ REPAIR V2</button>
       </div>
-      <div class="ap-scale">
-        <span class="ap-tick">00</span>
-        <span class="ap-tick">03</span>
-        <span class="ap-tick">06</span>
-        <span class="ap-tick">09</span>
-        <span class="ap-tick">12</span>
-        <span class="ap-tick">15</span>
-        <span class="ap-tick">18</span>
-        <span class="ap-tick">21</span>
-        <span class="ap-tick">24</span>
-      </div>
       <input
         type="range"
         class="ap-slider"
-        min="0"
-        max="24"
+        min="-72"
+        max="240"
         step="1"
-        [value]="sliderPercent()"
+        [value]="time.hours$()"
         (input)="onApChange($event)"
       />
       <div class="ap-footer">

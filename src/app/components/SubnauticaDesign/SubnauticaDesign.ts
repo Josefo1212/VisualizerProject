@@ -1,5 +1,5 @@
 import { Component, computed, inject } from '@angular/core';
-import { GtaTimeEngineService } from '../../services/gtaTimeEngine'; // Ajusta la ruta si es necesario
+import { TimeEngineService } from '../../services/timeEngine'; // Ajusta la ruta si es necesario
 
 const DAYS_SPANISH = ['DOMINGO', 'LUNES', 'MARTES', 'MIÉRCOLES', 'JUEVES', 'VIERNES', 'SÁBADO'];
 const MONTHS_SPANISH = ['ENERO', 'FEBRERO', 'MARZO', 'ABRIL', 'MAYO', 'JUNIO', 'JULIO', 'AGOSTO', 'SEPTIEMBRE', 'OCTUBRE', 'NOVIEMBRE', 'DICIEMBRE'];
@@ -12,7 +12,7 @@ const TASKS = ['Metal', 'Lithium', 'Titanium', 'Copper', 'Quartz', 'Gold'];
   styleUrls: ['./SubnauticaDesign.css']
 })
 export class SubnauticaDesignComponent {
-  readonly time = inject(GtaTimeEngineService);
+  readonly time = inject(TimeEngineService);
 
   readonly currentSecond = this.time.seconds$;
 
@@ -42,9 +42,14 @@ export class SubnauticaDesignComponent {
 
   readonly calculatedBar = computed(() => Math.round(this.depthDisplay() / 10) + 1);
   
+  readonly cycleMinutes = computed(() => {
+    const h = ((this.time.hours$() % 24) + 24) % 24;
+    return h * 60 + this.time.minutes$();
+  });
+
   readonly depthDisplay = computed(() => {
     const mins = this.time.hours$() * 60 + this.time.minutes$();
-    return Math.round((mins / 1439) * 1000); // 1000m max depth
+    return Math.round((mins / 1439) * 1000);
   });
 
   readonly integrityPercent = computed(() => {
@@ -72,7 +77,7 @@ export class SubnauticaDesignComponent {
   });
 
   readonly totalMinutes = computed(() => this.time.hours$() * 60 + this.time.minutes$());
-  readonly sliderPercent = computed(() => (this.totalMinutes() / 1439) * 100);
+  readonly sliderPercent = computed(() => (this.cycleMinutes() / 1439) * 100);
 
   readonly arcPath = 'M -5,8 Q 50,-4 105,8';
 
@@ -85,7 +90,7 @@ export class SubnauticaDesignComponent {
   }
 
   readonly arcThumbPos = computed(() => {
-    const t = this.totalMinutes() / 1439;
+    const t = this.cycleMinutes() / 1439;
     return this.bezierPoint(t);
   });
 
@@ -124,7 +129,7 @@ export class SubnauticaDesignComponent {
       const d = (p.x - cx) ** 2 + (p.y - cy) ** 2;
       if (d < minDist) { minDist = d; bestT = t; }
     }
-    this.time.setHora((bestT * 1439) / 60);
+    this.time.setHora(bestT * 24);
   }
 
   onResetTime(): void {
