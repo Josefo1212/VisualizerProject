@@ -97,6 +97,11 @@
   inset: 0;
 }
 
+.fortnite-view {
+  position: absolute;
+  inset: 0;
+}
+
 /* ============ POWERED-ON STATION ============ */
 
 .station {

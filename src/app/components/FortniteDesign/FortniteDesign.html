@@ -1,0 +1,132 @@
+<div class="fortnite-container" [class.critical]="isCritical()">
+  <div class="bg-grid"></div>
+  <div class="bg-cloud cloud-1"></div>
+  <div class="bg-cloud cloud-2"></div>
+
+  <div class="top-bar">
+    <div class="squad-block skew-box">
+      <div class="skew-fix">
+        <div class="squad-header">
+          <span class="squad-icon">👤</span>
+          <span class="squad-name">JOSEFO_URU</span>
+          <span class="squad-tag">[LIDER]</span>
+        </div>
+        <div class="bar-row">
+          <span class="bar-icon">🛡️</span>
+          <div class="bar-track">
+            <div class="bar-fill shield-fill" [style.width.%]="shieldPercent()"></div>
+          </div>
+          <span class="bar-value shield-value">{{ shieldPercent() }}%</span>
+        </div>
+        <div class="bar-row">
+          <span class="bar-icon">❤️</span>
+          <div class="bar-track">
+            <div class="bar-fill health-fill" [style.width.%]="healthPercent()"></div>
+          </div>
+          <span class="bar-value health-value">{{ healthPercent() }}%</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="storm-block skew-box">
+      <div class="skew-fix">
+        <div class="storm-header">
+          <span class="storm-icon">🌀</span>
+          <span class="storm-title">TORMENTA</span>
+          <span class="storm-phase">{{ stormPhase() }}</span>
+        </div>
+        <div class="storm-info">
+          <span class="storm-label">OJO SE CIERRA EN:</span>
+          <span class="storm-timer">{{ stormCountdown() }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="mid-section">
+    <div class="minimap-block">
+      <div class="minimap-title">MAPA DE SUPERVIVENCIA</div>
+      <div class="minimap-stage">
+        <div class="minimap-overlay"></div>
+        <svg class="minimap-svg" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <filter id="storm-glow" x="-50%" y="-50%" width="200%" height="200%">
+              <feGaussianBlur stdDeviation="3" result="blur" />
+              <feMerge>
+                <feMergeNode in="blur" />
+                <feMergeNode in="SourceGraphic" />
+              </feMerge>
+            </filter>
+            <radialGradient id="safe-zone" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stop-color="#00bcff" stop-opacity="0.15" />
+              <stop offset="100%" stop-color="#00bcff" stop-opacity="0" />
+            </radialGradient>
+          </defs>
+
+          <circle cx="100" cy="100" [attr.r]="stormRadius()" fill="none" stroke="#bf00ff" stroke-width="2.5" filter="url(#storm-glow)" opacity="0.85" />
+          <circle cx="100" cy="100" [attr.r]="stormRadius()" fill="rgba(191,0,255,0.1)" />
+
+          <circle cx="100" cy="100" r="28" fill="url(#safe-zone)" stroke="#00bcff" stroke-width="1.5" opacity="0.9" />
+          <circle cx="100" cy="100" r="28" fill="none" stroke="#00ff66" stroke-width="0.5" opacity="0.4" />
+
+          <circle cx="100" cy="100" r="2.5" fill="#00ff66" opacity="0.9" filter="url(#storm-glow)" />
+
+          <rect x="88" [attr.y]="busY()" width="24" height="10" rx="2" fill="#ffaa00" stroke="#fff" stroke-width="0.8" opacity="0.95" filter="url(#storm-glow)" />
+          <rect x="92" [attr.y]="busY()" width="16" height="4" rx="1" fill="#fff" opacity="0.4" />
+        </svg>
+      </div>
+    </div>
+
+    <div class="logs-block">
+      <div class="logs-header skew-box">
+        <div class="skew-fix">
+          <span class="logs-header-icon">👥</span>
+          <span class="logs-header-text">JUGADORES RESTANTES:</span>
+          <strong class="logs-header-count">{{ playersRemaining() }}</strong>
+        </div>
+      </div>
+      <div class="logs-feed">
+        <div class="logs-list">
+          @for (entry of matchLogs(); track $index) {
+            <div class="log-entry">
+              <span class="log-icon">{{ entry.icon }}</span>
+              <span class="log-text">{{ entry.killer }} <span class="log-slay">SLAYED</span> {{ entry.victim }}</span>
+            </div>
+          }
+          @if (matchLogs().length === 0) {
+            <div class="log-entry log-empty">ESPERANDO ENFRENTAMIENTOS...</div>
+          }
+        </div>
+        <div class="logs-status-wrap">
+          <div class="logs-status">{{ matchStatus() }}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="bottom-bar">
+    <div class="slider-section">
+      <div class="slider-header">
+        <span class="slider-label-left">INICIO</span>
+        <span class="slider-status">{{ matchStatus() }}</span>
+        <span class="slider-label-right">TORMENTA FINAL</span>
+      </div>
+      <div class="slider-wrapper">
+        <input
+          type="range"
+          min="0"
+          max="100"
+          step="0.5"
+          [ngModel]="sliderValue()"
+          (ngModelChange)="onSliderChange($event)"
+          (pointerdown)="onDragStart()"
+          (pointerup)="onDragEnd()"
+          class="match-slider"
+          [style.--fill.%]="sliderValue()"
+        />
+      </div>
+      <div class="slider-pct">{{ sliderValue().toFixed(1) }}%</div>
+      <button class="reset-btn" (click)="onResetTime()">REINICIAR</button>
+    </div>
+  </div>
+</div>

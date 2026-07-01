@@ -22,6 +22,7 @@ export class SidebarComponent {
     { id: 'fallout', icon: '☢️', name: 'Fallout', cover: '/Fallout/botonFallout.jpg', svgIcon: '/Fallout/iconFallout.svg' },
     { id: 'cyberpunk', icon: '🖥️', name: 'Cyberpunk 2077', cover: '/CyberPunk/botonCyberPunk.jpg', svgIcon: '/CyberPunk/iconCyberpunk.png' },
     { id: 'assassins-creed', icon: '🦅', name: "Assassin's Creed", cover: "/Assassin'sCreed/botonAssassin'sCreed.jpg", svgIcon: "/Assassin'sCreed/iconAssassin'sCreed.png" },
+    { id: 'fortnite', icon: '🌀', name: 'Fortnite', cover: '/Fortnite/botonFortnite.jpg', svgIcon: '/Fortnite/iconFortnite.png' },
   ];
 
   toggle(): void {
