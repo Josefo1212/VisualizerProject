@@ -6,7 +6,7 @@ import { Component, Input, HostBinding } from '@angular/core';
   template: `
     <div
       class="hover-reveal-bg"
-      [style.background-image]="coverImage ? 'url(' + coverImage + ')' : 'none'"
+      [style.background-image]="bgStyle"
     ></div>
     <ng-content></ng-content>
   `,
@@ -15,6 +15,10 @@ import { Component, Input, HostBinding } from '@angular/core';
 export class HoverRevealComponent {
   @Input({ required: true }) coverImage = '';
   @Input() disabled = false;
+
+  get bgStyle(): string {
+    return this.coverImage ? `url("${this.coverImage}")` : 'none';
+  }
 
   @HostBinding('attr.data-disabled')
   get disabledAttr() {

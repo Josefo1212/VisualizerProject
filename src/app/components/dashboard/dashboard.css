@@ -92,6 +92,11 @@
   justify-content: center;
 }
 
+.assassins-creed-view {
+  position: absolute;
+  inset: 0;
+}
+
 /* ============ POWERED-ON STATION ============ */
 
 .station {

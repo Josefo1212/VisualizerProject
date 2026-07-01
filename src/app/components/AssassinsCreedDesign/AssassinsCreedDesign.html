@@ -1,0 +1,111 @@
+<div class="animus-container" [class.interference]="isDragging()">
+  <!-- Row 1: Status bar -->
+  <div class="status-bar">
+    <span class="status-tag">ANIMUS 2.0</span>
+    <span class="status-sep">|</span>
+    <span class="status-tag">SYNC INDEX: {{ syncIndex() }}%</span>
+    <span class="status-sep">|</span>
+    <span class="status-tag">MEMORY TRAVEL</span>
+    <span class="status-pulse">●</span>
+  </div>
+
+  <!-- Row 2: Genetic timeline -->
+  <div class="timeline-section">
+    <div class="timeline-title">GENETIC MEMORY TIMELINE</div>
+    <div class="timeline-track-container">
+      <!-- Guia lines -->
+      <div class="timeline-guides">
+        @for (node of nodeStates(); track node.id) {
+          <div class="guide-line" [class.active]="node.active" [style.left.%]="node.pos * 100"></div>
+        }
+      </div>
+      <!-- Progress rail -->
+      <div class="timeline-rail">
+        <div class="rail-fill" [style.width.%]="timeProgress() * 100"></div>
+      </div>
+      <!-- Nodes -->
+      <div class="timeline-nodes">
+        @for (node of nodeStates(); track node.id) {
+          <div class="node-wrapper" [style.left.%]="node.pos * 100">
+            <div
+              class="timeline-node"
+              [class.active]="node.active"
+              [class.glitching]="node.glitching"
+            >
+              <span class="node-bracket">[</span>
+              <span class="node-icon"></span>
+              <span class="node-bracket">]</span>
+            </div>
+            <div class="node-label">{{ node.label }}</div>
+            <div class="node-sub">{{ node.sub }}</div>
+          </div>
+        }
+      </div>
+      <!-- Cursor -->
+      <div class="cursor-line" [style.left.%]="timeProgress() * 100">
+        <div class="cursor-dot"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Row 3: Sync panel -->
+  <div class="sync-panel">
+    <div class="apple-section">
+      <svg class="apple-eden" viewBox="0 0 100 120" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <radialGradient id="eden-glow" cx="50%" cy="40%" r="50%">
+            <stop offset="0%" stop-color="#fff8e1" stop-opacity="0.9"/>
+            <stop offset="40%" stop-color="#dfb15b" stop-opacity="0.6"/>
+            <stop offset="100%" stop-color="#dfb15b" stop-opacity="0"/>
+          </radialGradient>
+        </defs>
+        <circle cx="50" cy="50" r="40" fill="url(#eden-glow)" class="eden-glow"/>
+        <path d="M50 15 Q65 30 68 48 Q70 55 68 60 Q72 58 76 52 Q80 48 78 42 Q76 36 70 34 Q72 28 68 22 Q64 16 58 15 Z" fill="#dfb15b" opacity="0.3"/>
+        <circle cx="50" cy="50" r="4" fill="#fff8e1" opacity="0.6" class="eden-core"/>
+        <circle cx="50" cy="50" r="12" fill="none" stroke="#dfb15b" stroke-width="0.5" opacity="0.4" class="eden-ring"/>
+        <circle cx="50" cy="50" r="24" fill="none" stroke="#dfb15b" stroke-width="0.3" opacity="0.2" class="eden-ring"/>
+      </svg>
+    </div>
+    <div class="clock-section">
+      <div class="clock-title">CICRAS  •  ANIMUS</div>
+      <div class="clock-value">{{ clockDisplay() }}</div>
+      <div class="clock-sub">SYNC CYCLE</div>
+    </div>
+    <div class="sync-index-section">
+      <div class="sync-title">SYNC INDEX</div>
+      <div class="sync-value">{{ syncIndex() }}%</div>
+      <div class="sync-sub">MEMORY STABILITY</div>
+    </div>
+  </div>
+
+  <!-- Row 4: Memory Travel slider -->
+  <div class="memory-travel">
+    <div class="travel-header">
+      <span class="travel-label">MEMORY TRAVEL</span>
+      <span class="travel-time">{{ mappedHours().toFixed(1) }}h</span>
+    </div>
+    <input
+      type="range"
+      min="0"
+      max="100"
+      step="0.1"
+      [ngModel]="syncProgress()"
+      (ngModelChange)="onSliderChange($event)"
+      (pointerdown)="onDragStart()"
+      (pointerup)="onDragEnd()"
+      class="memory-slider"
+    />
+    <div class="travel-marks">
+      @for (mark of [0,25,50,75,100]; track mark) {
+        <span>{{ mark }}%</span>
+      }
+    </div>
+  </div>
+
+  <!-- Background particles -->
+  <div class="particles">
+    @for (p of [1,2,3,4,5,6,7,8]; track p) {
+      <div class="particle" [style.animation-delay.s]="p * 0.4" [style.left.%]="p * 12.5"></div>
+    }
+  </div>
+</div>

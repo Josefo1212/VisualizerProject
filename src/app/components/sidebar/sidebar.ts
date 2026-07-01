@@ -21,6 +21,7 @@ export class SidebarComponent {
     { id: 'subnautica', icon: '🌊', name: 'Subnautica', cover: '/Subnautica/botonSubnautica.jpg', svgIcon: '/Subnautica/iconSubnautica.svg' },
     { id: 'fallout', icon: '☢️', name: 'Fallout', cover: '/Fallout/botonFallout.jpg', svgIcon: '/Fallout/iconFallout.svg' },
     { id: 'cyberpunk', icon: '🖥️', name: 'Cyberpunk 2077', cover: '/CyberPunk/botonCyberPunk.jpg', svgIcon: '/CyberPunk/iconCyberPunk.svg' },
+    { id: 'assassins-creed', icon: '🗝️', name: "Assassin's Creed", cover: "/Assassin'sCreed/botonAssassin'sCreed.jpg", svgIcon: "/Assassin'sCreed/iconAssassin'sCreed.png" },
   ];
 
   toggle(): void {
