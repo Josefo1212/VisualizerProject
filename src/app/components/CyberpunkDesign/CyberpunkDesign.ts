@@ -17,12 +17,12 @@ export class CyberpunkDesignComponent implements OnDestroy {
   private readonly _clockInterval: ReturnType<typeof setInterval>;
 
   readonly clockMs = computed(() => {
-    const d = this._now();
-    const h = d.getHours().toString().padStart(2, '0');
-    const m = d.getMinutes().toString().padStart(2, '0');
-    const s = d.getSeconds().toString().padStart(2, '0');
-    const ms = d.getMilliseconds().toString().padStart(3, '0');
-    return `${h}:${m}:${s}.${ms}`;
+    const h = this.time.hours$();
+    const m = this.time.minutes$();
+    const s = this.time.seconds$();
+    const ms = this._now().getMilliseconds().toString().padStart(3, '0');
+    const sign = h >= 0 ? '+' : '-';
+    return `${sign}${Math.abs(h).toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}.${ms}`;
   });
 
   readonly cycleHour = computed(() => ((this.time.hours$() % 24) + 24) % 24);
@@ -91,7 +91,16 @@ export class CyberpunkDesignComponent implements OnDestroy {
 
   readonly sliderTicks = [-72, -48, -24, 0, 24, 48, 72, 96, 120, 144, 168, 192, 216, 240];
 
+  readonly isDragging = signal(false);
+
   readonly sliderValue = signal<number>(0);
+
+  readonly scanColor = computed(() => {
+    const h = Math.max(0, this.time.hours$());
+    const t = Math.min(1, h / 240);
+    const hue = 330 - t * 190;
+    return `hsl(${hue}, 100%, 50%)`;
+  });
 
   private syncFromTime(): void {
     this.sliderValue.set(this.time.hours$());
@@ -109,6 +118,14 @@ export class CyberpunkDesignComponent implements OnDestroy {
   onSliderChange(v: number): void {
     this.sliderValue.set(v);
     this.time.setHora(v);
+  }
+
+  onDragStart(): void {
+    this.isDragging.set(true);
+  }
+
+  onDragEnd(): void {
+    this.isDragging.set(false);
   }
 
   onResetTime(): void {

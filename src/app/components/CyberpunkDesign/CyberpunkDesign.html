@@ -29,38 +29,41 @@
           </div>
         </div>
 
-        <svg class="body-svg" viewBox="0 0 200 400" xmlns="http://www.w3.org/2000/svg">
-          <polygon id="part-head"
-            [class.stable]="bodyParts().head === 'stable'"
-            [class.warning]="bodyParts().head === 'warning'"
-            [class.critical]="bodyParts().head === 'critical'"
-            points="75,15 125,15 140,45 135,75 65,75 60,45" />
-          <polygon id="part-chest"
-            [class.stable]="bodyParts().chest === 'stable'"
-            [class.warning]="bodyParts().chest === 'warning'"
-            [class.critical]="bodyParts().chest === 'critical'"
-            points="65,85 135,85 145,160 120,185 80,185 55,160" />
-          <polygon id="part-larm"
-            [class.stable]="bodyParts().lArm === 'stable'"
-            [class.warning]="bodyParts().lArm === 'warning'"
-            [class.critical]="bodyParts().lArm === 'critical'"
-            points="55,95 25,160 15,220 35,230 45,175 60,135" />
-          <polygon id="part-rarm"
-            [class.stable]="bodyParts().rArm === 'stable'"
-            [class.warning]="bodyParts().rArm === 'warning'"
-            [class.critical]="bodyParts().rArm === 'critical'"
-            points="145,95 175,160 185,220 165,230 155,175 140,135" />
-          <polygon id="part-lleg"
-            [class.stable]="bodyParts().lLeg === 'stable'"
-            [class.warning]="bodyParts().lLeg === 'warning'"
-            [class.critical]="bodyParts().lLeg === 'critical'"
-            points="80,195 60,295 55,365 70,385 90,385 85,295 90,195" />
-          <polygon id="part-rleg"
-            [class.stable]="bodyParts().rLeg === 'stable'"
-            [class.warning]="bodyParts().rLeg === 'warning'"
-            [class.critical]="bodyParts().rLeg === 'critical'"
-            points="120,195 115,295 110,385 130,385 145,365 140,295 160,195" />
-        </svg>
+        <div class="svg-viewport" [class.glitch-active]="isDragging()">
+          <div class="scan-laser-line" [style.--scan-color]="scanColor()"></div>
+          <svg class="body-svg" viewBox="0 0 200 400" xmlns="http://www.w3.org/2000/svg">
+            <polygon id="part-head"
+              [class.stable]="bodyParts().head === 'stable'"
+              [class.warning]="bodyParts().head === 'warning'"
+              [class.critical]="bodyParts().head === 'critical'"
+              points="75,15 125,15 140,45 135,75 65,75 60,45" />
+            <polygon id="part-chest"
+              [class.stable]="bodyParts().chest === 'stable'"
+              [class.warning]="bodyParts().chest === 'warning'"
+              [class.critical]="bodyParts().chest === 'critical'"
+              points="65,85 135,85 145,160 120,185 80,185 55,160" />
+            <polygon id="part-larm"
+              [class.stable]="bodyParts().lArm === 'stable'"
+              [class.warning]="bodyParts().lArm === 'warning'"
+              [class.critical]="bodyParts().lArm === 'critical'"
+              points="55,95 25,160 15,220 35,230 45,175 60,135" />
+            <polygon id="part-rarm"
+              [class.stable]="bodyParts().rArm === 'stable'"
+              [class.warning]="bodyParts().rArm === 'warning'"
+              [class.critical]="bodyParts().rArm === 'critical'"
+              points="145,95 175,160 185,220 165,230 155,175 140,135" />
+            <polygon id="part-lleg"
+              [class.stable]="bodyParts().lLeg === 'stable'"
+              [class.warning]="bodyParts().lLeg === 'warning'"
+              [class.critical]="bodyParts().lLeg === 'critical'"
+              points="80,195 60,295 55,365 70,385 90,385 85,295 90,195" />
+            <polygon id="part-rleg"
+              [class.stable]="bodyParts().rLeg === 'stable'"
+              [class.warning]="bodyParts().rLeg === 'warning'"
+              [class.critical]="bodyParts().rLeg === 'critical'"
+              points="120,195 115,295 110,385 130,385 145,365 140,295 160,195" />
+          </svg>
+        </div>
       </div>
 
       <div class="hud-col col-cyberware">
@@ -112,6 +115,8 @@
           step="1"
           [ngModel]="sliderValue()"
           (ngModelChange)="onSliderChange($event)"
+          (pointerdown)="onDragStart()"
+          (pointerup)="onDragEnd()"
         />
       </div>
       <span class="slider-value">CHRONO: {{ hoursDisplay() }} &#9654;</span>
