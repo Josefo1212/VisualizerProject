@@ -23,6 +23,7 @@ export class SidebarComponent {
     { id: 'cyberpunk', icon: '🖥️', name: 'Cyberpunk 2077', cover: '/CyberPunk/botonCyberPunk.jpg', svgIcon: '/CyberPunk/iconCyberpunk.png' },
     { id: 'assassins-creed', icon: '🦅', name: "Assassin's Creed", cover: "/Assassin'sCreed/botonAssassin'sCreed.jpg", svgIcon: "/Assassin'sCreed/iconAssassin'sCreed.png" },
     { id: 'fortnite', icon: '🌀', name: 'Fortnite', cover: '/Fortnite/botonFortnite.jpg', svgIcon: '/Fortnite/iconFortnite.png' },
+    { id: 'dark-souls', icon: '🔥', name: 'Dark Souls', cover: '/DarkSouls/botonDarkSouls.jpg', svgIcon: '/DarkSouls/iconDarkSouls.png' },
   ];
 
   toggle(): void {

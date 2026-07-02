@@ -1,0 +1,86 @@
+<div class="ds-shell" [class.phase-dawn]="worldPhase() === 'dawn'" [class.phase-day]="worldPhase() === 'day'" [class.phase-dusk]="worldPhase() === 'dusk'" [class.phase-night]="worldPhase() === 'night'">
+
+  <div class="ds-bg-overlay"></div>
+
+  <aside class="ds-left-panel">
+    <div class="lore-brand">DARK SOULS</div>
+    <div class="lore-sub">Remastered</div>
+    <div class="lore-divider"></div>
+    <div class="lore-line">Hours &rarr; World Cycle</div>
+    <div class="lore-line">Minutes &rarr; Flame Intensity</div>
+    <div class="lore-line">Seconds &rarr; Ember Ring</div>
+    <div class="lore-divider"></div>
+    <div class="lore-status">{{ statusText() }}</div>
+  </aside>
+
+  <main class="ds-center-stage">
+    <img class="bg-ruins" src="/DarkSouls/fondoDarkSouls.png" alt="" />
+
+    <svg class="hour-ring-svg" viewBox="-200 -200 400 400" xmlns="http://www.w3.org/2000/svg">
+      @for (mark of hourMarks; track mark.index) {
+        @let active = mark.index <= cycleHour();
+        @let current = mark.index === cycleHour();
+        <g class="hour-mark" [class.active]="active" [class.current]="current">
+          <line
+            x1="0" y1="-145"
+            x2="0" y2="-130"
+            [attr.transform]="'rotate(' + mark.angle + ')'"
+          />
+          @if (current) {
+            <circle cx="0" cy="-170" r="5" class="hour-glow" />
+          }
+        </g>
+      }
+    </svg>
+
+    <svg class="ember-ring-svg" viewBox="-200 -200 400 400" xmlns="http://www.w3.org/2000/svg">
+      @for (mark of emberMarks; track mark.index) {
+        @let active = mark.index <= second();
+        @let current = mark.index === second();
+        <circle
+          class="ember-dot"
+          [class.active]="active"
+          [class.current]="current"
+          cx="0" cy="-90" r="2.5"
+          [attr.transform]="'rotate(' + mark.angle + ')'"
+        />
+      }
+    </svg>
+
+    <img class="altar-base" src="/DarkSouls/altar.png" alt="" />
+
+    <div class="bonfire-wrap" [style.--flame-scale]="flameScale()">
+      <div class="flame-outer"></div>
+      <div class="flame-core"></div>
+      <div class="flame-glow"></div>
+      <div class="flame-embers"></div>
+    </div>
+  </main>
+
+  <aside class="ds-right-panel">
+    <div class="info-time">{{ timeDisplay() }}</div>
+    <div class="info-date">{{ dateDisplay() }}</div>
+    <div class="info-divider"></div>
+    <div class="info-row"><span class="info-label">H</span><span class="info-desc">Hour Ring</span></div>
+    <div class="info-row"><span class="info-label">M</span><span class="info-desc">Flame Intensity</span></div>
+    <div class="info-row"><span class="info-label">S</span><span class="info-desc">Ember Ring</span></div>
+    <div class="info-divider"></div>
+    <button class="ds-btn" (click)="onResetTime()">LINK THE FIRE</button>
+  </aside>
+
+  <footer class="ds-footer">
+    <div class="slider-track">
+      <span class="slider-label">00:00</span>
+      <input
+        type="range"
+        min="0"
+        max="240"
+        step="0.1"
+        [ngModel]="sliderValue()"
+        (ngModelChange)="onSliderChange($event)"
+        class="ds-slider"
+      />
+      <span class="slider-label">24:00</span>
+    </div>
+  </footer>
+</div>
