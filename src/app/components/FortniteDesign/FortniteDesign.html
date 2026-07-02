@@ -33,11 +33,22 @@
         <div class="storm-header">
           <span class="storm-icon">🌀</span>
           <span class="storm-title">TORMENTA</span>
+          <svg class="storm-ring" viewBox="0 0 36 36">
+            <circle class="ring-bg" cx="18" cy="18" r="15" fill="none" stroke-width="3" />
+            <circle class="ring-fg" cx="18" cy="18" r="15" fill="none" stroke-width="3"
+              stroke-dasharray="94.25"
+              [attr.stroke-dashoffset]="ringOffset()" />
+          </svg>
           <span class="storm-phase">{{ stormPhase() }}</span>
         </div>
         <div class="storm-info">
-          <span class="storm-label">OJO SE CIERRA EN:</span>
-          <span class="storm-timer">{{ stormCountdown() }}</span>
+          <span class="storm-timer">{{ realTime() }}</span>
+        </div>
+        <div class="storm-status"
+          [class.status-search]="stormStatusClass() === 'search'"
+          [class.status-alert]="stormStatusClass() === 'alert'"
+          [class.status-danger]="stormStatusClass() === 'danger'">
+          {{ stormStatusText() }}
         </div>
       </div>
     </div>
@@ -48,7 +59,7 @@
       <div class="minimap-title">MAPA DE SUPERVIVENCIA</div>
       <div class="minimap-stage">
         <div class="minimap-overlay"></div>
-        <svg class="minimap-svg" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+        <svg class="minimap-svg" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
           <defs>
             <filter id="storm-glow" x="-50%" y="-50%" width="200%" height="200%">
               <feGaussianBlur stdDeviation="3" result="blur" />
@@ -61,10 +72,19 @@
               <stop offset="0%" stop-color="#00bcff" stop-opacity="0.15" />
               <stop offset="100%" stop-color="#00bcff" stop-opacity="0" />
             </radialGradient>
+            <mask id="storm-mask">
+              <rect x="-30" y="0" width="260" height="200" fill="white" />
+              <circle cx="100" cy="100" [attr.r]="stormRadius()" fill="black" />
+            </mask>
+            <clipPath id="viewbox-clip">
+              <rect x="0" y="0" width="200" height="200" />
+            </clipPath>
           </defs>
 
-          <circle cx="100" cy="100" [attr.r]="stormRadius()" fill="none" stroke="#bf00ff" stroke-width="2.5" filter="url(#storm-glow)" opacity="0.85" />
-          <circle cx="100" cy="100" [attr.r]="stormRadius()" fill="rgba(191,0,255,0.1)" />
+          <image href="/Fortnite/mapaFortnite.webp" x="-10" y="-10" width="220" height="220" preserveAspectRatio="xMidYMid slice" clip-path="url(#viewbox-clip)" />
+          <rect x="-10" y="-10" width="220" height="220" fill="rgba(0,0,0,0.3)" clip-path="url(#viewbox-clip)" />
+          <rect x="-30" y="0" width="260" height="200" fill="rgba(191,0,255,0.35)" mask="url(#storm-mask)" filter="url(#storm-glow)" clip-path="url(#viewbox-clip)" />
+          <circle cx="100" cy="100" [attr.r]="stormRadius()" fill="none" stroke="#bf00ff" stroke-width="2.5" opacity="0.85" filter="url(#storm-glow)" />
 
           <circle cx="100" cy="100" r="28" fill="url(#safe-zone)" stroke="#00bcff" stroke-width="1.5" opacity="0.9" />
           <circle cx="100" cy="100" r="28" fill="none" stroke="#00ff66" stroke-width="0.5" opacity="0.4" />
@@ -117,8 +137,8 @@
           min="0"
           max="100"
           step="0.5"
-          [ngModel]="sliderValue()"
-          (ngModelChange)="onSliderChange($event)"
+          [value]="sliderValue()"
+          (input)="onSliderChange($any($event.target).value)"
           (pointerdown)="onDragStart()"
           (pointerup)="onDragEnd()"
           class="match-slider"

@@ -1,4 +1,4 @@
-import { Component, computed, inject, signal, ChangeDetectionStrategy, OnDestroy } from '@angular/core';
+import { Component, computed, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TimeEngineService } from '../../services/timeEngine';
 
@@ -16,13 +16,13 @@ interface MatchLogEntry {
   styleUrl: './FortniteDesign.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class FortniteDesignComponent implements OnDestroy {
+export class FortniteDesignComponent {
   readonly time = inject(TimeEngineService);
 
-  private readonly _now = signal<Date>(new Date());
-  private readonly _clockInterval: ReturnType<typeof setInterval>;
-
-  readonly sliderValue = signal<number>(0);
+  readonly sliderValue = computed(() => {
+    const hour = this.time.currentHour$();
+    return Math.max(0, Math.min(100, (hour / 24) * 100));
+  });
   readonly isDragging = signal(false);
 
   readonly matchProgress = computed(() => this.sliderValue());
@@ -30,7 +30,7 @@ export class FortniteDesignComponent implements OnDestroy {
 
   readonly shieldPercent = computed(() => {
     const h = this.time.hours$();
-    return Math.max(0, Math.min(100, 100 - Math.abs(h) * 1.2));
+    return Math.max(0, Math.min(100, 100 - Math.abs(h % 24) * 4));
   });
 
   readonly healthPercent = computed(() => {
@@ -39,18 +39,32 @@ export class FortniteDesignComponent implements OnDestroy {
   });
 
   readonly stormRadius = computed(() => {
-    const s = this.time.seconds$();
-    return 25 + (1 - s / 59) * 70;
+    return 150 * (1 - this.matchProgress() / 100);
   });
 
-  readonly stormCountdown = computed(() => {
+  readonly realTime = computed(() => {
+    const h = this.time.hours$() % 24;
+    const m = this.time.minutes$();
+    return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}`;
+  });
+
+  readonly stormStatusText = computed(() => {
     const pct = this.matchProgress();
-    const totalMs = 20 * 60 * 1000;
-    const remaining = Math.max(0, totalMs * (1 - pct / 100));
-    const mins = Math.floor(remaining / 60000);
-    const secs = Math.floor((remaining % 60000) / 1000);
-    const ms = this._now().getMilliseconds();
-    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}.${ms.toString().padStart(3, '0')}`;
+    if (pct <= 40) return 'ESTADO: BUSCANDO ZONA';
+    if (pct <= 85) return 'ALERTA: TORMENTA EN MOVIMIENTO';
+    return 'PELIGRO: COLAPSO TOTAL';
+  });
+
+  readonly stormStatusClass = computed(() => {
+    const pct = this.matchProgress();
+    if (pct <= 40) return 'search';
+    if (pct <= 85) return 'alert';
+    return 'danger';
+  });
+
+  readonly ringOffset = computed(() => {
+    const circumference = 2 * Math.PI * 15;
+    return circumference * (1 - this.matchProgress() / 100);
   });
 
   readonly stormPhase = computed(() => {
@@ -95,24 +109,9 @@ export class FortniteDesignComponent implements OnDestroy {
     return '🔥 ZONA REDUCIDA';
   });
 
-  private syncFromTime(): void {
-    const h = this.time.hours$();
-    const pct = Math.max(0, Math.min(100, (h / 240) * 100));
-    this.sliderValue.set(pct);
-  }
-
-  constructor() {
-    this.syncFromTime();
-    this._clockInterval = setInterval(() => this._now.set(new Date()), 50);
-  }
-
-  ngOnDestroy(): void {
-    clearInterval(this._clockInterval);
-  }
-
-  onSliderChange(v: number): void {
-    this.sliderValue.set(v);
-    this.time.setHora((v / 100) * 240);
+  onSliderChange(v: any): void {
+    const val = typeof v === 'string' ? parseFloat(v) : v;
+    this.time.setHora((val / 100) * 24);
   }
 
   onDragStart(): void {
@@ -125,6 +124,5 @@ export class FortniteDesignComponent implements OnDestroy {
 
   onResetTime(): void {
     this.time.resetToRealTime();
-    this.syncFromTime();
   }
 }
