@@ -3,84 +3,166 @@
   <div class="ds-bg-overlay"></div>
 
   <aside class="ds-left-panel">
-    <div class="lore-brand">DARK SOULS</div>
-    <div class="lore-sub">Remastered</div>
-    <div class="lore-divider"></div>
-    <div class="lore-line">Hours &rarr; World Cycle</div>
-    <div class="lore-line">Minutes &rarr; Flame Intensity</div>
-    <div class="lore-line">Seconds &rarr; Ember Ring</div>
-    <div class="lore-divider"></div>
-    <div class="lore-status">{{ statusText() }}</div>
+    <div class="lp-brand">DARK SOULS</div>
+    <div class="lp-sub">Remastered</div>
+    <div class="lp-divider"></div>
+
+    <div class="lp-section">
+      <div class="lp-section-title">World Status</div>
+      <div class="lp-stat">
+        <span class="lp-stat-label">Hour</span>
+        <span class="lp-stat-value">{{ cycleHour() }}</span>
+      </div>
+      <div class="lp-stat-desc">{{ hourDesc() }}</div>
+      <div class="lp-stat">
+        <span class="lp-stat-label">Minute</span>
+        <span class="lp-stat-value">{{ minute() }}</span>
+      </div>
+      <div class="lp-stat-desc">{{ minuteDesc() }}</div>
+      <div class="lp-stat">
+        <span class="lp-stat-label">Second</span>
+        <span class="lp-stat-value">{{ second() }}</span>
+      </div>
+      <div class="lp-stat-desc">{{ secondDesc() }}</div>
+    </div>
+
+    <div class="lp-divider"></div>
+
+    <div class="lp-section">
+      <div class="lp-section-title">Day Progress</div>
+      <div class="lp-progress-pct">{{ dayProgress() }}%</div>
+      <div class="lp-progress-bar">
+        <div class="lp-progress-fill" [style.width.%]="dayProgress()"></div>
+      </div>
+    </div>
+
+    <div class="lp-divider"></div>
+
+    <div class="lp-section">
+      <div class="lp-section-title">Current Phase</div>
+      <div class="lp-phase-row">
+        <span class="lp-phase-icon">{{ phaseIcon() }}</span>
+        <span class="lp-phase-name">{{ worldPhaseLabel() }}</span>
+      </div>
+    </div>
+
+    <div class="lp-divider"></div>
+
+    <div class="lp-section">
+      <div class="lp-section-title">Time Representation</div>
+      <div class="lp-repr-row"><span class="lp-repr-icon">◯</span><span class="lp-repr-label">Hours</span><span class="lp-repr-desc">Outer Ring</span></div>
+      <div class="lp-repr-row"><span class="lp-repr-icon">🔥</span><span class="lp-repr-label">Minutes</span><span class="lp-repr-desc">Bonfire</span></div>
+      <div class="lp-repr-row"><span class="lp-repr-icon">✦</span><span class="lp-repr-label">Seconds</span><span class="lp-repr-desc">Embers</span></div>
+    </div>
   </aside>
 
   <main class="ds-center-stage">
     <img class="bg-ruins" src="/DarkSouls/fondoDarkSouls.png" alt="" />
 
     <svg class="hour-ring-svg" viewBox="-200 -200 400 400" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <filter id="hr-glow">
+          <feGaussianBlur stdDeviation="2" result="b" />
+          <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+        <filter id="hr-glow-big">
+          <feGaussianBlur stdDeviation="4" result="b" />
+          <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+      </defs>
       @for (mark of hourMarks; track mark.index) {
         @let active = mark.index <= cycleHour();
         @let current = mark.index === cycleHour();
         <g class="hour-mark" [class.active]="active" [class.current]="current">
-          <line
-            x1="0" y1="-145"
-            x2="0" y2="-130"
-            [attr.transform]="'rotate(' + mark.angle + ')'"
-          />
+          <line x1="0" y1="-148" x2="0" y2="-130"
+            [attr.transform]="'rotate(' + mark.angle + ')'" />
           @if (current) {
-            <circle cx="0" cy="-170" r="5" class="hour-glow" />
+            <circle cx="0" cy="-165" r="6" class="hour-glow-spot" />
+            <circle cx="0" cy="-165" r="14" class="hour-glow-halo" />
           }
         </g>
       }
     </svg>
 
     <svg class="ember-ring-svg" viewBox="-200 -200 400 400" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <filter id="ember-glow">
+          <feGaussianBlur stdDeviation="1.5" result="b" />
+          <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+      </defs>
       @for (mark of emberMarks; track mark.index) {
         @let active = mark.index <= second();
         @let current = mark.index === second();
-        <circle
-          class="ember-dot"
-          [class.active]="active"
-          [class.current]="current"
-          cx="0" cy="-90" r="2.5"
-          [attr.transform]="'rotate(' + mark.angle + ')'"
-        />
+        <g class="ember-group" [class.active]="active" [class.current]="current">
+          <circle class="ember-dot" cx="0" cy="-92" r="2"
+            [attr.transform]="'rotate(' + mark.angle + ')'" />
+          @if (current) {
+            <circle cx="0" cy="-92" r="5" class="ember-halo"
+              [attr.transform]="'rotate(' + mark.angle + ')'" />
+          }
+        </g>
       }
     </svg>
 
-    <img class="altar-base" src="/DarkSouls/altar.png" alt="" />
-
-    <div class="bonfire-wrap" [style.--flame-scale]="flameScale()">
-      <div class="flame-outer"></div>
-      <div class="flame-core"></div>
-      <div class="flame-glow"></div>
-      <div class="flame-embers"></div>
+    <div class="bonfire-stage">
+      <div class="bf-glow-floor"></div>
+      <div class="bf-glows">
+        <div class="bf-glow bf-glow-outer"></div>
+        <div class="bf-glow bf-glow-mid"></div>
+        <div class="bf-glow bf-glow-inner"></div>
+      </div>
+      <div class="bf-flames" [style.--bf-scale]="flameScale()">
+        <div class="bf-smoke-layer"></div>
+        <div class="bf-particle p1"></div>
+        <div class="bf-particle p2"></div>
+        <div class="bf-particle p3"></div>
+        <div class="bf-particle p4"></div>
+        <div class="bf-particle p5"></div>
+        <div class="bf-particle p6"></div>
+        <div class="bf-layer bf-layer-back"></div>
+        <div class="bf-layer bf-layer-mid-1"></div>
+        <div class="bf-layer bf-layer-mid-2"></div>
+        <div class="bf-layer bf-layer-front"></div>
+        <div class="bf-layer bf-core"></div>
+        <div class="bf-ember bf-ember-1"></div>
+        <div class="bf-ember bf-ember-2"></div>
+        <div class="bf-ember bf-ember-3"></div>
+        <div class="bf-ember bf-ember-4"></div>
+        <div class="bf-spark s1"></div>
+        <div class="bf-spark s2"></div>
+        <div class="bf-spark s3"></div>
+        <div class="bf-spark s4"></div>
+        <div class="bf-spark s5"></div>
+        <div class="bf-spark s6"></div>
+      </div>
     </div>
   </main>
 
   <aside class="ds-right-panel">
-    <div class="info-time">{{ timeDisplay() }}</div>
-    <div class="info-date">{{ dateDisplay() }}</div>
-    <div class="info-divider"></div>
-    <div class="info-row"><span class="info-label">H</span><span class="info-desc">Hour Ring</span></div>
-    <div class="info-row"><span class="info-label">M</span><span class="info-desc">Flame Intensity</span></div>
-    <div class="info-row"><span class="info-label">S</span><span class="info-desc">Ember Ring</span></div>
-    <div class="info-divider"></div>
-    <button class="ds-btn" (click)="onResetTime()">LINK THE FIRE</button>
+    <div class="rp-time">{{ timeDisplay() }}</div>
+    <div class="rp-date">{{ dateDisplay() }}</div>
+    <div class="rp-divider"></div>
+    <div class="rp-row"><span class="rp-label">H</span><span class="rp-desc">Hours &mdash; Outer Ring</span></div>
+    <div class="rp-row"><span class="rp-label">M</span><span class="rp-desc">Minutes &mdash; Bonfire</span></div>
+    <div class="rp-row"><span class="rp-label">S</span><span class="rp-desc">Seconds &mdash; Embers</span></div>
+    <div class="rp-divider"></div>
+    <div class="rp-phase-row">
+      <span class="rp-phase-icon">{{ phaseIcon() }}</span>
+      <span class="rp-phase-text">{{ worldPhaseLabel() }}</span>
+    </div>
+    <div class="rp-divider"></div>
+    <button class="rp-btn" (click)="onResetTime()">LINK THE FIRE</button>
   </aside>
 
   <footer class="ds-footer">
     <div class="slider-track">
       <span class="slider-label">00:00</span>
-      <input
-        type="range"
-        min="0"
-        max="240"
-        step="0.1"
-        [ngModel]="sliderValue()"
-        (ngModelChange)="onSliderChange($event)"
-        class="ds-slider"
-      />
+      <input type="range" min="0" max="240" step="0.1"
+        [ngModel]="sliderValue()" (ngModelChange)="onSliderChange($event)"
+        class="ds-slider" />
       <span class="slider-label">24:00</span>
     </div>
   </footer>
+
 </div>

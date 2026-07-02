@@ -115,6 +115,10 @@
   opacity: 0;
 }
 
+.sidebar:not(.disabled) .design-item.ds-btn:hover .design-name {
+  opacity: 0;
+}
+
 .sidebar:not(.disabled) .design-item:hover .design-name {
   color: #000;
 }

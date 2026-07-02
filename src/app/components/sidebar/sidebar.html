@@ -15,6 +15,7 @@
         <app-hover-reveal
           class="design-item"
           [class.active]="d.id === selectedDesign"
+          [class.ds-btn]="d.id === 'dark-souls'"
           (click)="selectDesign(d.id)"
           [coverImage]="d.cover ?? ''"
           [disabled]="inactive || collapsed()"

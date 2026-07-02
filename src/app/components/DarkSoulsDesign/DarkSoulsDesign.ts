@@ -41,7 +41,7 @@ export class DarkSoulsDesignComponent {
     return Math.max(0.2, m / 59);
   });
 
-  readonly flameScale = computed(() => 0.6 + this.flameIntensity() * 0.8);
+  readonly flameScale = computed(() => 0.8 + this.flameIntensity() * 1.2);
 
   readonly worldPhase = computed(() => {
     const h = this.cycleHour();
@@ -49,6 +49,56 @@ export class DarkSoulsDesignComponent {
     if (h >= 7 && h < 18) return 'day';
     if (h >= 18 && h < 20) return 'dusk';
     return 'night';
+  });
+
+  readonly worldPhaseLabel = computed(() => {
+    const p = this.worldPhase();
+    switch (p) {
+      case 'dawn': return 'Dawn';
+      case 'day': return 'Day';
+      case 'dusk': return 'Evening';
+      case 'night': return 'Night';
+    }
+  });
+
+  readonly phaseIcon = computed(() => {
+    const p = this.worldPhase();
+    switch (p) {
+      case 'dawn': return '🌅';
+      case 'day': return '☀️';
+      case 'dusk': return '🌆';
+      case 'night': return '🌙';
+    }
+  });
+
+  readonly dayProgress = computed(() => {
+    const h = this.cycleHour();
+    return ((h / 24) * 100).toFixed(2);
+  });
+
+  readonly hourDesc = computed(() => {
+    const h = this.cycleHour();
+    const p = this.worldPhase();
+    if (p === 'dawn') return 'The First Flame Flickers';
+    if (p === 'day') return 'Age of Fire';
+    if (p === 'dusk') return 'The Fire Fades';
+    return 'Age of Dark';
+  });
+
+  readonly minuteDesc = computed(() => {
+    const m = this.minute();
+    if (m < 20) return 'Dormant Flame';
+    if (m < 40) return 'Kindling';
+    if (m < 55) return 'Bonfire Lit';
+    return 'Inferno';
+  });
+
+  readonly secondDesc = computed(() => {
+    const s = this.second();
+    if (s < 20) return 'Low Ember';
+    if (s < 40) return 'Ember Glow';
+    if (s < 55) return 'Ember Dance';
+    return 'Ember Storm';
   });
 
   readonly timeDisplay = computed(() => {
@@ -61,16 +111,6 @@ export class DarkSoulsDesignComponent {
   readonly dateDisplay = computed(() => {
     const now = new Date();
     return `${(now.getMonth() + 1).toString().padStart(2, '0')}/${now.getDate().toString().padStart(2, '0')}/${now.getFullYear()}`;
-  });
-
-  readonly statusText = computed(() => {
-    const p = this.worldPhase();
-    switch (p) {
-      case 'dawn': return 'The First Flame Flickers';
-      case 'day': return 'The Age of Fire';
-      case 'dusk': return 'The Fire Fades';
-      case 'night': return 'The Age of Dark';
-    }
   });
 
   onSliderChange(h: number): void {
