@@ -10,11 +10,12 @@ import { AssassinsCreedDesignComponent } from '../AssassinsCreedDesign/Assassins
 import { FortniteDesignComponent } from '../FortniteDesign/FortniteDesign';
 import { DarkSoulsDesignComponent } from '../DarkSoulsDesign/DarkSoulsDesign';
 import { NoMansSkyDesignComponent } from '../NoMansSkyDesign/NoMansSkyDesign';
+import { GodOfWarDesignComponent } from '../GodOfWarDesign/GodOfWarDesign';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [SidebarComponent, PowerScreenComponent, GtaDesignComponent, AmongUsDesignComponent, SubnauticaDesignComponent, FalloutDesignComponent, CyberpunkDesignComponent, AssassinsCreedDesignComponent, FortniteDesignComponent, DarkSoulsDesignComponent, NoMansSkyDesignComponent],
+  imports: [SidebarComponent, PowerScreenComponent, GtaDesignComponent, AmongUsDesignComponent, SubnauticaDesignComponent, FalloutDesignComponent, CyberpunkDesignComponent, AssassinsCreedDesignComponent, FortniteDesignComponent, DarkSoulsDesignComponent, NoMansSkyDesignComponent, GodOfWarDesignComponent],
   templateUrl: './Dashboard.html',
   styleUrl: './Dashboard.css',
 })

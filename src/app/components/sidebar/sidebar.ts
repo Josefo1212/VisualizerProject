@@ -25,6 +25,7 @@ export class SidebarComponent {
     { id: 'fortnite', icon: '🌀', name: 'Fortnite', cover: '/Fortnite/botonFortnite.jpg', svgIcon: '/Fortnite/iconFortnite.png' },
     { id: 'dark-souls', icon: '🔥', name: 'Dark Souls', cover: '/DarkSouls/botonDarkSouls.jpg', svgIcon: '/DarkSouls/iconDarkSouls.png' },
     { id: 'no-mans-sky', icon: '🌌', name: "No Man's Sky", cover: "/NoMan'sSky/botonNoMan'sSky.jpg", svgIcon: "/NoMan'sSky/iconNoMan'sSky.png" },
+    { id: 'god-of-war', icon: '🪓', name: 'God of War', cover: '/GodOfWar/botonGodOfWar.jpg', svgIcon: '/GodOfWar/iconGodOfWar.png' },
   ];
 
   toggle(): void {

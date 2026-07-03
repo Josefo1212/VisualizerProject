@@ -91,11 +91,17 @@
             [attr.stroke]="active ? 'rgba(0,240,255,0.25)' : 'rgba(0,240,255,0.05)'"
             stroke-width="1.5" stroke-linecap="round"/>
           <!-- Major node dot -->
-          @if (mark.index % 3 === 0) {
+          @if (mark.isMajor) {
             <circle cx="300" cy="72" r="3"
               [attr.transform]="'rotate(' + mark.angle + ' 300 300)'"
               [attr.fill]="current ? '#00f0ff' : active ? 'rgba(0,240,255,0.3)' : 'rgba(0,240,255,0.05)'"
               [attr.filter]="current ? 'url(#nms-glow)' : 'none'"/>
+            <!-- Roman numeral -->
+            <text [attr.x]="mark.nx" [attr.y]="mark.ny"
+              text-anchor="middle" dominant-baseline="central"
+              font-family="'Courier New', monospace" font-size="9"
+              [attr.fill]="active ? 'rgba(0,240,255,0.3)' : 'rgba(0,240,255,0.06)'"
+              letter-spacing="1">{{ mark.roman }}</text>
           }
         </g>
       }

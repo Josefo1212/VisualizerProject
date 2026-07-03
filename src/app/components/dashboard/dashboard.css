@@ -112,6 +112,11 @@
   inset: 0;
 }
 
+.god-of-war-view {
+  position: absolute;
+  inset: 0;
+}
+
 /* ============ POWERED-ON STATION ============ */
 
 .station {

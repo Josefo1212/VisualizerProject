@@ -5,6 +5,10 @@ import { TimeEngineService } from '../../services/timeEngine';
 interface OrbitMark {
   index: number;
   angle: number;
+  roman: string;
+  isMajor: boolean;
+  nx: number;
+  ny: number;
 }
 
 interface PulseDot {
@@ -32,6 +36,12 @@ const MINUTE_R = 120;
 const MINUTE_CIRC = 2 * Math.PI * MINUTE_R;
 const HOUR_R = 215;
 const SECOND_R = 170;
+const NUMERAL_R = 245;
+
+const ROMAN: Record<number, string> = {
+  0: 'XII', 1: 'I', 2: 'II', 3: 'III', 4: 'IV', 5: 'V',
+  6: 'VI', 7: 'VII', 8: 'VIII', 9: 'IX', 10: 'X', 11: 'XI',
+};
 
 @Component({
   selector: 'app-no-mans-sky-design',
@@ -109,10 +119,19 @@ export class NoMansSkyDesignComponent {
   readonly yearNum = computed(() => new Date().getFullYear());
 
   /* ─── ORBITAL HOUR RING ─── */
-  readonly hourMarks: OrbitMark[] = Array.from({ length: 24 }, (_, i) => ({
-    index: i,
-    angle: (i / 24) * 360,
-  }));
+  readonly hourMarks: OrbitMark[] = Array.from({ length: 24 }, (_, i) => {
+    const angle = (i / 24) * 360;
+    const isMajor = i % 3 === 0;
+    const angleRad = ((angle - 90) * Math.PI) / 180;
+    return {
+      index: i,
+      angle,
+      roman: ROMAN[i % 12],
+      isMajor,
+      nx: CX + NUMERAL_R * Math.cos(angleRad),
+      ny: CY + NUMERAL_R * Math.sin(angleRad),
+    };
+  });
 
   /* ─── PULSE SECOND RING ─── */
   readonly pulseDots: PulseDot[] = Array.from({ length: 60 }, (_, i) => ({

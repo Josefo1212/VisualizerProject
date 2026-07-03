@@ -1,0 +1,274 @@
+<div class="gow-shell" [class.phase-dawn]="worldPhase() === 'dawn'" [class.phase-day]="worldPhase() === 'day'" [class.phase-dusk]="worldPhase() === 'dusk'" [class.phase-night]="worldPhase() === 'night'">
+
+  <!-- ═══════ HEADER ═══════ -->
+  <header class="gow-header">
+    <span class="hdr-brand">GOD OF WAR</span>
+    <span class="hdr-sep"></span>
+    <span class="hdr-label">Realm</span>
+    <span class="hdr-val">Midgard</span>
+    <span class="hdr-sep"></span>
+    <span class="hdr-label">Phase</span>
+    <span class="hdr-val hdr-phase">{{ worldPhaseLabel() }}</span>
+    <span class="hdr-sep"></span>
+    <span class="hdr-label">Day Progress</span>
+    <span class="hdr-val">{{ dayProgress() }}%</span>
+    <span class="hdr-fill"></span>
+    <span class="hdr-val hdr-date">{{ dateDisplay() }}</span>
+  </header>
+
+  <!-- ═══════ MAIN SCENE ═══════ -->
+  <main class="gow-scene">
+
+    <!-- Phase atmosphere overlay -->
+    <div class="phase-atmo"></div>
+
+    <!-- Background panorama -->
+    <img class="bg-landscape" src="/GodOfWar/fondoGodOfWar.png" alt="" />
+
+    <!-- ─── CELESTIAL SVG (arc + sun + moon + wolves) ─── -->
+    <svg class="celestial-svg" viewBox="0 0 1200 600" xmlns="http://www.w3.org/2000/svg">
+
+      <defs>
+        <!-- Sun glow -->
+        <filter id="sun-glow" x="-50%" y="-50%" width="200%" height="200%">
+          <feGaussianBlur stdDeviation="8" result="b"/>
+          <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+        <!-- Sun soft glow -->
+        <filter id="sun-soft" x="-100%" y="-100%" width="300%" height="300%">
+          <feGaussianBlur stdDeviation="20" result="b"/>
+          <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+        <!-- Moon glow -->
+        <filter id="moon-glow" x="-50%" y="-50%" width="200%" height="200%">
+          <feGaussianBlur stdDeviation="6" result="b"/>
+          <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+        <!-- Moon crescent mask -->
+        <mask id="moon-mask">
+          <rect x="-20" y="-20" width="40" height="40" fill="white"/>
+          <circle cx="5" cy="-2" r="11" fill="black"/>
+        </mask>
+        <!-- Sun gradient -->
+        <radialGradient id="sun-grad" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="#fff8e0"/>
+          <stop offset="40%" stop-color="#ffd044"/>
+          <stop offset="80%" stop-color="#ff8822"/>
+          <stop offset="100%" stop-color="#cc4400"/>
+        </radialGradient>
+        <!-- Rune fragment glow -->
+        <filter id="rune-glow">
+          <feGaussianBlur stdDeviation="2" result="b"/>
+          <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+      </defs>
+
+      <!-- Celestial arc path -->
+      <path d="M 320 360 A 280 280 0 0 0 880 360"
+        fill="none" stroke="rgba(180,200,220,0.08)" stroke-width="2" stroke-dasharray="2 6"/>
+
+      <!-- 24 hour marks -->
+      @for (m of arcMarks; track m.index) {
+        @let active = m.index <= cycleHour();
+        @let current = m.index === cycleHour();
+        <g class="arc-mark">
+          <line [attr.x1]="m.itx" [attr.y1]="m.ity" [attr.x2]="m.otx" [attr.y2]="m.oty"
+            [attr.stroke]="current ? '#b8d8ff' : active ? 'rgba(180,200,220,0.3)' : 'rgba(180,200,220,0.06)'"
+            [attr.stroke-width]="current ? 3 : m.isMajor ? 2 : 1"
+            stroke-linecap="round"/>
+          @if (m.isMajor) {
+            <circle [attr.cx]="m.x" [attr.cy]="m.y" r="2.5"
+              [attr.fill]="active ? 'rgba(180,200,220,0.2)' : 'rgba(180,200,220,0.04)'"/>
+          }
+        </g>
+      }
+
+      <!-- ─── SUN ─── -->
+      <g [attr.transform]="'translate(' + sunPos().x + ',' + sunPos().y + ')'"
+        [style.opacity]="sunOpacity()">
+        <!-- Outer glow -->
+        <circle cx="0" cy="0" r="40" fill="rgba(255,200,80,0.06)" filter="url(#sun-soft)"/>
+        <!-- Mid glow -->
+        <circle cx="0" cy="0" r="22" fill="rgba(255,200,80,0.1)" filter="url(#sun-glow)"/>
+        <!-- Rays -->
+        @for (ra of [0,30,60,90,120,150,180,210,240,270,300,330]; track ra) {
+          <line x1="0" y1="-18" x2="0" y2="-30"
+            stroke="rgba(255,200,80,0.2)" stroke-width="2" stroke-linecap="round"
+            [attr.transform]="'rotate(' + ra + ')'"/>
+        }
+        <!-- Core disk -->
+        <circle cx="0" cy="0" r="16" fill="url(#sun-grad)" filter="url(#sun-glow)"/>
+        <!-- Bright core -->
+        <circle cx="0" cy="0" r="8" fill="#fff8e0"/>
+        <circle cx="-2" cy="-2" r="3" fill="rgba(255,255,255,0.6)"/>
+      </g>
+
+      <!-- ─── MOON ─── -->
+      <g [attr.transform]="'translate(' + moonPos().x + ',' + moonPos().y + ')'"
+        [style.opacity]="moonOpacity()">
+        <!-- Outer glow -->
+        <circle cx="0" cy="0" r="30" fill="rgba(200,224,255,0.04)" filter="url(#moon-glow)"/>
+        <!-- Crescent -->
+        <circle cx="0" cy="0" r="13" fill="#d0e4ff" mask="url(#moon-mask)" filter="url(#moon-glow)"/>
+        <circle cx="0" cy="0" r="13" fill="none" stroke="rgba(200,224,255,0.15)" stroke-width="0.5"/>
+        <!-- Stars near moon -->
+        <circle cx="18" cy="-8" r="0.8" fill="rgba(200,224,255,0.3)"/>
+        <circle cx="-15" cy="12" r="0.6" fill="rgba(200,224,255,0.2)"/>
+        <circle cx="22" cy="10" r="0.5" fill="rgba(200,224,255,0.15)"/>
+      </g>
+
+      <!-- ─── SKÖLL ─── -->
+      <g [attr.transform]="'translate(' + skollPos().x + ',' + skollPos().y + ')'"
+        [style.opacity]="skollOpacity()">
+        <path d="M 0 -12 L 4 -8 L 9 -10 L 7 -3 L 12 3 L 6 2 L 2 8 L 0 5 L -2 8 L -6 2 L -12 3 L -7 -3 L -9 -10 L -4 -8 Z"
+          fill="rgba(180,200,220,0.35)" stroke="rgba(180,200,220,0.08)" stroke-width="0.5"/>
+        <!-- Eye -->
+        <circle cx="0" cy="-3" r="1.5" fill="rgba(180,200,220,0.4)"/>
+        <!-- Label -->
+        <text x="0" y="18" text-anchor="middle" fill="rgba(180,200,220,0.08)"
+          font-family="'Cinzel','Times New Roman',serif" font-size="7" letter-spacing="2">SKÖLL</text>
+      </g>
+
+      <!-- ─── HATI ─── -->
+      <g [attr.transform]="'translate(' + hatiPos().x + ',' + hatiPos().y + ')'"
+        [style.opacity]="hatiOpacity()">
+        <path d="M 0 -12 L 4 -8 L 9 -10 L 7 -3 L 12 3 L 6 2 L 2 8 L 0 5 L -2 8 L -6 2 L -12 3 L -7 -3 L -9 -10 L -4 -8 Z"
+          fill="rgba(180,200,220,0.35)" stroke="rgba(180,200,220,0.08)" stroke-width="0.5"/>
+        <circle cx="0" cy="-3" r="1.5" fill="rgba(180,200,220,0.4)"/>
+        <text x="0" y="18" text-anchor="middle" fill="rgba(180,200,220,0.08)"
+          font-family="'Cinzel','Times New Roman',serif" font-size="7" letter-spacing="2">HATI</text>
+      </g>
+
+      <!-- Subtle rune decorators along arc -->
+      <text x="310" y="375" fill="rgba(180,200,220,0.04)" font-family="'Cinzel',serif" font-size="10">ᛉ</text>
+      <text x="590" y="75" fill="rgba(180,200,220,0.04)" font-family="'Cinzel',serif" font-size="10">ᚨ</text>
+      <text x="880" y="375" fill="rgba(180,200,220,0.04)" font-family="'Cinzel',serif" font-size="10">ᚦ</text>
+    </svg>
+
+    <!-- ─── ALTAR ─── -->
+    <div class="altar-wrap">
+      <img class="altar-img" src="/GodOfWar/altarGodOfWar.png" alt="" />
+
+      <!-- Rune Wheel (minutes) + Frost Sparks (seconds) -->
+      <svg class="altar-svg" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <filter id="altar-glow">
+            <feGaussianBlur stdDeviation="2" result="b"/>
+            <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+          </filter>
+          <linearGradient id="rune-grad" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%" stop-color="rgba(180,200,220,0.3)"/>
+            <stop offset="50%" stop-color="rgba(200,224,255,0.5)"/>
+            <stop offset="100%" stop-color="rgba(180,200,220,0.3)"/>
+          </linearGradient>
+        </defs>
+
+        <!-- Minute ring background -->
+        <circle cx="100" cy="100" r="72" fill="none" stroke="rgba(180,200,220,0.04)" stroke-width="1"/>
+
+        <!-- Minute marks (60) -->
+        @for (mk of minuteMarks; track mk.index) {
+          @let active = mk.index <= minute();
+          @let cur = mk.index === minute();
+          <g [attr.transform]="'rotate(' + mk.angle + ' 100 100)'">
+            <line x1="100" y1="22" x2="100" y2="30"
+              [attr.stroke]="cur ? '#b8d8ff' : active ? 'rgba(180,200,220,0.25)' : 'rgba(180,200,220,0.03)'"
+              [attr.stroke-width]="cur ? 3 : active ? 1.5 : 0.8"
+              stroke-linecap="round"
+              [attr.filter]="cur ? 'url(#altar-glow)' : 'none'"/>
+          </g>
+        }
+
+        <!-- Second ring background -->
+        <circle cx="100" cy="100" r="58" fill="none" stroke="rgba(180,200,220,0.02)" stroke-width="0.5"/>
+
+        <!-- Frost sparks (60 dots for seconds) -->
+        @for (mk of minuteMarks; track 's'+mk.index) {
+          @let active = mk.index <= second();
+          @let cur = mk.index === second();
+          <circle cx="100" cy="42" r="1.5"
+            [attr.transform]="'rotate(' + mk.angle + ' 100 100)'"
+            [attr.fill]="cur ? '#e0f0ff' : active ? 'rgba(200,224,255,0.2)' : 'rgba(180,200,220,0.02)'"
+            [attr.filter]="cur ? 'url(#altar-glow)' : 'none'"/>
+        }
+
+        <!-- Center gem -->
+        <circle cx="100" cy="100" r="6" fill="rgba(180,200,220,0.04)"/>
+        <circle cx="100" cy="100" r="3" fill="rgba(200,224,255,0.08)" filter="url(#altar-glow)"/>
+      </svg>
+    </div>
+
+  </main>
+
+  <!-- ═══════ BOTTOM RUNIC PANEL ═══════ -->
+  <footer class="gow-bottom">
+
+    <!-- Left: World State -->
+    <section class="bp-mod bp-left">
+      <div class="bp-title">WORLD STATE</div>
+      <div class="bp-div"></div>
+      <div class="bp-row">
+        <span class="bp-l">Current Phase</span>
+        <span class="bp-v">{{ worldPhaseLabel() }}</span>
+      </div>
+      <div class="bp-row">
+        <span class="bp-l">Day Progress</span>
+        <span class="bp-v">{{ dayProgress() }}%</span>
+      </div>
+      <div class="bp-row">
+        <span class="bp-l">Celestial Hunt</span>
+        <span class="bp-v">ACTIVE</span>
+      </div>
+      <div class="bp-lore">{{ loreText() }}</div>
+    </section>
+
+    <!-- Center: Rune Time Legend -->
+    <section class="bp-mod bp-center">
+      <div class="bp-title">RUNE TIME</div>
+      <div class="bp-div"></div>
+      <div class="bp-row">
+        <span class="bp-l">H · Celestial Arc</span>
+        <span class="bp-v">Sköll &amp; Sun cycle</span>
+      </div>
+      <div class="bp-row">
+        <span class="bp-l">M · Rune Wheel</span>
+        <span class="bp-v">Altar progression</span>
+      </div>
+      <div class="bp-row">
+        <span class="bp-l">S · Frost Sparks</span>
+        <span class="bp-v">Second pulse</span>
+      </div>
+      <div class="bp-row">
+        <span class="bp-l">Hunters</span>
+        <span class="bp-v">Sköll · Hati</span>
+      </div>
+    </section>
+
+    <!-- Right: Digital Readout -->
+    <section class="bp-mod bp-right">
+      <div class="bp-time">{{ timeDisplay() }}</div>
+      <div class="bp-date">{{ dateDisplay() }}</div>
+      <div class="bp-div"></div>
+      <div class="bp-row">
+        <span class="bp-l">Phase</span>
+        <span class="bp-v bp-v-phase">{{ worldPhaseLabel() }}</span>
+      </div>
+      <div class="bp-row">
+        <span class="bp-l">Progress</span>
+        <span class="bp-v">{{ dayProgress() }}%</span>
+      </div>
+    </section>
+
+  </footer>
+
+  <!-- ═══════ SLIDER BAR ═══════ -->
+  <div class="gow-slider-bar">
+    <span class="sl-label">00:00</span>
+    <input type="range" min="0" max="1440" step="1"
+      [ngModel]="sliderValue()" (ngModelChange)="onSliderChange($event)"
+      class="gow-slider" />
+    <span class="sl-label">24:00</span>
+    <button class="sl-btn" (click)="onResetTime()">REAL TIME</button>
+  </div>
+
+</div>
