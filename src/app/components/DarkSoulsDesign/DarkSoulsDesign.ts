@@ -2,9 +2,44 @@ import { Component, computed, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TimeEngineService } from '../../services/timeEngine';
 
-interface RingMark {
+interface ArcHour {
+  index: number;
+  angleDeg: number;
+  x: number;
+  y: number;
+  x1: number;
+  y1: number;
+  x2: number;
+  y2: number;
+  nx: number;
+  ny: number;
+  roman: string;
+  isMajor: boolean;
+}
+
+interface AshParticle {
+  id: number;
+  left: number;
+  top: number;
+  delay: number;
+  duration: number;
+  size: number;
+  drift: number;
+  opacity: number;
+}
+
+interface EmberMark {
   index: number;
   angle: number;
+}
+
+const ROMAN: Record<number, string> = {
+  0: 'XII', 1: 'I', 2: 'II', 3: 'III', 4: 'IV', 5: 'V',
+  6: 'VI', 7: 'VII', 8: 'VIII', 9: 'IX', 10: 'X', 11: 'XI',
+};
+
+function seededMod(i: number, base: number, offset: number): number {
+  return ((i * offset * 1.7) % base + base) % base;
 }
 
 @Component({
@@ -26,22 +61,12 @@ export class DarkSoulsDesignComponent {
   readonly minute = this.time.minutes$;
   readonly second = this.time.seconds$;
 
-  readonly hourMarks: RingMark[] = Array.from({ length: 24 }, (_, i) => ({
-    index: i,
-    angle: (i / 24) * 360,
-  }));
-
-  readonly emberMarks: RingMark[] = Array.from({ length: 60 }, (_, i) => ({
-    index: i,
-    angle: (i / 60) * 360,
-  }));
-
   readonly flameIntensity = computed(() => {
     const m = this.minute();
     return Math.max(0.2, m / 59);
   });
 
-  readonly flameScale = computed(() => 0.8 + this.flameIntensity() * 1.2);
+  readonly flameScale = computed(() => 0.8 + this.flameIntensity() * 1.4);
 
   readonly worldPhase = computed(() => {
     const h = this.cycleHour();
@@ -113,6 +138,82 @@ export class DarkSoulsDesignComponent {
     return `${(now.getMonth() + 1).toString().padStart(2, '0')}/${now.getDate().toString().padStart(2, '0')}/${now.getFullYear()}`;
   });
 
+  readonly dayName = computed(() => {
+    const days = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
+    return days[new Date().getDay()];
+  });
+
+  readonly monthName = computed(() => {
+    const months = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
+    return months[new Date().getMonth()];
+  });
+
+  readonly dayOfMonth = computed(() => new Date().getDate());
+
+  readonly yearNum = computed(() => new Date().getFullYear());
+
+  /* ─── ARC HOURS (180° semi-circle at top) ─── */
+  private readonly ARC_CX = 300;
+  private readonly ARC_CY = 290;
+  private readonly ARC_R = 230;
+
+  readonly arcHours = computed<ArcHour[]>(() => {
+    const { ARC_CX: cx, ARC_CY: cy, ARC_R: r } = this;
+    return Array.from({ length: 24 }, (_, i) => {
+      const angleDeg = -180 + i * 7.5;
+      const rad = (angleDeg * Math.PI) / 180;
+      const isMajor = i % 3 === 0;
+      const innerR = isMajor ? r - 16 : r - 8;
+      const outerR = isMajor ? r + 18 : r + 10;
+      return {
+        index: i,
+        angleDeg,
+        x: cx + r * Math.cos(rad),
+        y: cy + r * Math.sin(rad),
+        x1: cx + innerR * Math.cos(rad),
+        y1: cy + innerR * Math.sin(rad),
+        x2: cx + outerR * Math.cos(rad),
+        y2: cy + outerR * Math.sin(rad),
+        nx: cx + (r + 26) * Math.cos(rad),
+        ny: cy + (r + 26) * Math.sin(rad),
+        roman: ROMAN[i % 12],
+        isMajor,
+      };
+    });
+  });
+
+  readonly solarAngle = computed(() => -180 + this.cycleHour() * 7.5);
+
+  readonly solarPos = computed(() => {
+    const rad = (this.solarAngle() * Math.PI) / 180;
+    return {
+      x: this.ARC_CX + this.ARC_R * Math.cos(rad),
+      y: this.ARC_CY + this.ARC_R * Math.sin(rad),
+    };
+  });
+
+  /* ─── EMBER RING (seconds) ─── */
+  readonly emberMarks: EmberMark[] = Array.from({ length: 60 }, (_, i) => ({
+    index: i,
+    angle: (i / 60) * 360,
+  }));
+
+  /* ─── ASH PARTICLES (ambient scene) ─── */
+  readonly ashParticles: AshParticle[] = Array.from({ length: 30 }, (_, i) => ({
+    id: i,
+    left: seededMod(i, 100, 3),
+    top: 20 + seededMod(i, 60, 7),
+    delay: seededMod(i, 15, 2),
+    duration: 8 + (i % 6) * 2,
+    size: 1.5 + (i % 3),
+    drift: -30 + (i % 7) * 10,
+    opacity: 0.08 + (i % 5) * 0.04,
+  }));
+
+  /* ─── SOLAR RAY ANGLES ─── */
+  readonly rayAngles = [0, 45, 90, 135, 180, 225, 270, 315];
+
+  /* ─── METHODS ─── */
   onSliderChange(h: number): void {
     this.time.setHora(h);
   }

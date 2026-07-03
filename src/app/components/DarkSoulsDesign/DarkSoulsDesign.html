@@ -1,7 +1,5 @@
 <div class="ds-shell" [class.phase-dawn]="worldPhase() === 'dawn'" [class.phase-day]="worldPhase() === 'day'" [class.phase-dusk]="worldPhase() === 'dusk'" [class.phase-night]="worldPhase() === 'night'">
 
-  <div class="ds-bg-overlay"></div>
-
   <aside class="ds-left-panel">
     <div class="lp-brand">DARK SOULS</div>
     <div class="lp-sub">Remastered</div>
@@ -36,54 +34,138 @@
       </div>
     </div>
 
-    <div class="lp-divider"></div>
-
-    <div class="lp-section">
-      <div class="lp-section-title">Current Phase</div>
-      <div class="lp-phase-row">
-        <span class="lp-phase-icon">{{ phaseIcon() }}</span>
-        <span class="lp-phase-name">{{ worldPhaseLabel() }}</span>
-      </div>
-    </div>
-
-    <div class="lp-divider"></div>
-
-    <div class="lp-section">
-      <div class="lp-section-title">Time Representation</div>
-      <div class="lp-repr-row"><span class="lp-repr-icon">◯</span><span class="lp-repr-label">Hours</span><span class="lp-repr-desc">Outer Ring</span></div>
-      <div class="lp-repr-row"><span class="lp-repr-icon">🔥</span><span class="lp-repr-label">Minutes</span><span class="lp-repr-desc">Bonfire</span></div>
-      <div class="lp-repr-row"><span class="lp-repr-icon">✦</span><span class="lp-repr-label">Seconds</span><span class="lp-repr-desc">Embers</span></div>
-    </div>
   </aside>
 
   <main class="ds-center-stage">
+
     <img class="bg-ruins" src="/DarkSouls/fondoDarkSouls.png" alt="" />
 
-    <svg class="hour-ring-svg" viewBox="-200 -200 400 400" xmlns="http://www.w3.org/2000/svg">
+    <!-- ─── FOG LAYERS ─── -->
+    <div class="fog-layer fog-layer-1"></div>
+    <div class="fog-layer fog-layer-2"></div>
+    <div class="fog-layer fog-layer-3"></div>
+
+    <!-- ─── AMBIENT ASH PARTICLES ─── -->
+    @for (p of ashParticles; track p.id) {
+      <div class="ash-particle"
+        [style.left.%]="p.left"
+        [style.top.%]="p.top"
+        [style.--ash-dur.s]="p.duration"
+        [style.--ash-delay.s]="p.delay"
+        [style.--ash-size.px]="p.size"
+        [style.--ash-opacity]="p.opacity"
+        [style.--ash-drift.px]="p.drift"
+      ></div>
+    }
+
+    <!-- ─── HOUR ARC SVG ─── -->
+    <svg class="hour-arc-svg" viewBox="0 0 600 320" xmlns="http://www.w3.org/2000/svg"
+      [class.phase-dawn]="worldPhase() === 'dawn'"
+      [class.phase-day]="worldPhase() === 'day'"
+      [class.phase-dusk]="worldPhase() === 'dusk'"
+      [class.phase-night]="worldPhase() === 'night'">
+
       <defs>
-        <filter id="hr-glow">
-          <feGaussianBlur stdDeviation="2" result="b" />
+        <filter id="arc-glow">
+          <feGaussianBlur stdDeviation="3" result="b" />
           <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
         </filter>
-        <filter id="hr-glow-big">
-          <feGaussianBlur stdDeviation="4" result="b" />
+        <filter id="arc-glow-strong">
+          <feGaussianBlur stdDeviation="5" result="b" />
           <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
         </filter>
+        <radialGradient id="sun-grad" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="#ffe8b0"/>
+          <stop offset="40%" stop-color="#f0b030"/>
+          <stop offset="100%" stop-color="#d07020"/>
+        </radialGradient>
+        <linearGradient id="arc-grad" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stop-color="rgba(212,201,179,0.04)"/>
+          <stop offset="15%" stop-color="rgba(212,201,179,0.12)"/>
+          <stop offset="50%" stop-color="rgba(212,201,179,0.20)"/>
+          <stop offset="85%" stop-color="rgba(212,201,179,0.12)"/>
+          <stop offset="100%" stop-color="rgba(212,201,179,0.04)"/>
+        </linearGradient>
       </defs>
-      @for (mark of hourMarks; track mark.index) {
-        @let active = mark.index <= cycleHour();
-        @let current = mark.index === cycleHour();
-        <g class="hour-mark" [class.active]="active" [class.current]="current">
-          <line x1="0" y1="-148" x2="0" y2="-130"
-            [attr.transform]="'rotate(' + mark.angle + ')'" />
-          @if (current) {
-            <circle cx="0" cy="-165" r="6" class="hour-glow-spot" />
-            <circle cx="0" cy="-165" r="14" class="hour-glow-halo" />
-          }
-        </g>
+
+      <!-- Outer decorative arc -->
+      <path d="M 45 290 A 255 255 0 0 1 555 290" fill="none" stroke="rgba(212,201,179,0.05)" stroke-width="1" stroke-dasharray="3 6"/>
+
+      <!-- Main arc -->
+      <path d="M 65 290 A 235 235 0 0 1 535 290" fill="none" stroke="url(#arc-grad)" stroke-width="2.5"/>
+
+      <!-- Inner arc -->
+      <path d="M 95 290 A 205 205 0 0 1 505 290" fill="none" stroke="rgba(212,201,179,0.04)" stroke-width="1"/>
+
+      <!-- Ornamental arc dots -->
+      @for (dot of [0, 30, 60, 90, 120, 150, 180, 210, 240, 270, 300, 330]; track dot) {
+        <circle cx="300" cy="290" r="255" fill="none" stroke="rgba(212,201,179,0.06)" stroke-width="1"
+          stroke-dasharray="1 10" [attr.transform]="'rotate(' + dot + ' 300 290)'"/>
       }
+
+      <!-- Hour marks and numerals -->
+      @for (ah of arcHours(); track ah.index) {
+        @let isActive = ah.index <= cycleHour();
+        @let isCurrent = ah.index === cycleHour();
+
+        <!-- Background mark (always visible) -->
+        <line [attr.x1]="ah.x1" [attr.y1]="ah.y1" [attr.x2]="ah.x2" [attr.y2]="ah.y2"
+          stroke="rgba(212,201,179,0.08)" stroke-width="1.5" stroke-linecap="round"/>
+
+        <!-- Active mark (lit up to current hour) -->
+        @if (isActive || isCurrent) {
+          <line [attr.x1]="ah.x1" [attr.y1]="ah.y1" [attr.x2]="ah.x2" [attr.y2]="ah.y2"
+            [attr.stroke]="isCurrent ? '#f09030' : 'rgba(240,144,48,0.4)'"
+            [attr.stroke-width]="isCurrent ? 3.5 : ah.isMajor ? 2.5 : 2"
+            stroke-linecap="round"
+            [class.current-mark]="isCurrent"
+            [style.filter]="isCurrent ? 'url(#arc-glow)' : 'none'"/>
+        }
+
+        <!-- Roman numeral for major marks -->
+        @if (ah.isMajor) {
+          <text [attr.x]="ah.nx" [attr.y]="ah.ny"
+            text-anchor="middle" dominant-baseline="central"
+            font-family="Cinzel, Georgia, serif"
+            [attr.font-size]="isCurrent ? 12 : 10"
+            [attr.fill]="isCurrent ? '#f09030' : isActive ? 'rgba(212,201,179,0.4)' : 'rgba(212,201,179,0.15)'"
+            [style.font-weight]="isCurrent ? '700' : '400'"
+            [style.filter]="isCurrent ? 'url(#arc-glow)' : 'none'"
+          >{{ ah.roman }}</text>
+        }
+
+        <!-- Decorative dot at major positions -->
+        @if (ah.isMajor) {
+          <circle [attr.cx]="ah.x" [attr.cy]="ah.y" r="2"
+            [attr.fill]="isCurrent ? '#f09030' : isActive ? 'rgba(240,144,48,0.3)' : 'rgba(212,201,179,0.06)'"/>
+        }
+      }
+
+      <!-- ─── SOLAR INDICATOR ─── -->
+      <g class="solar-indicator" [attr.transform]="'translate(' + solarPos().x + ',' + solarPos().y + ')'">
+        <!-- Outer ambient glow -->
+        <circle cx="0" cy="0" r="22" fill="rgba(240,144,48,0.06)" filter="url(#arc-glow-strong)"/>
+        <!-- Mid glow -->
+        <circle cx="0" cy="0" r="14" fill="rgba(240,144,48,0.12)" filter="url(#arc-glow)"/>
+        <!-- Halo ring -->
+        <circle cx="0" cy="0" r="10" fill="none" stroke="rgba(240,144,48,0.25)" stroke-width="1.5"/>
+        <!-- Main disk -->
+        <circle cx="0" cy="0" r="7" fill="url(#sun-grad)"/>
+        <!-- Bright core -->
+        <circle cx="0" cy="0" r="3" fill="#fff5e0" filter="url(#arc-glow)"/>
+        <!-- Rays -->
+        @for (ra of rayAngles; track ra) {
+          <line x1="0" y1="-12" x2="0" y2="-17"
+            stroke="rgba(240,144,48,0.25)" stroke-width="1.5" stroke-linecap="round"
+            [attr.transform]="'rotate(' + ra + ')'"/>
+          <line x1="0" y1="-13" x2="0" y2="-15"
+            stroke="rgba(255,200,100,0.15)" stroke-width="1" stroke-linecap="round"
+            [attr.transform]="'rotate(' + (ra + 22.5) + ')'"/>
+        }
+      </g>
     </svg>
 
+    <!-- ─── EMBER RING SVG ─── -->
     <svg class="ember-ring-svg" viewBox="-200 -200 400 400" xmlns="http://www.w3.org/2000/svg">
       <defs>
         <filter id="ember-glow">
@@ -105,47 +187,44 @@
       }
     </svg>
 
-    <div class="bonfire-stage">
-      <div class="bf-glow-floor"></div>
+    <!-- ─── BONFIRE ─── -->
+    <div class="bonfire-anchor">
+      <div class="bf-floor-glow"></div>
       <div class="bf-glows">
         <div class="bf-glow bf-glow-outer"></div>
         <div class="bf-glow bf-glow-mid"></div>
         <div class="bf-glow bf-glow-inner"></div>
       </div>
       <div class="bf-flames" [style.--bf-scale]="flameScale()">
-        <div class="bf-smoke-layer"></div>
-        <div class="bf-particle p1"></div>
-        <div class="bf-particle p2"></div>
-        <div class="bf-particle p3"></div>
-        <div class="bf-particle p4"></div>
-        <div class="bf-particle p5"></div>
-        <div class="bf-particle p6"></div>
-        <div class="bf-layer bf-layer-back"></div>
-        <div class="bf-layer bf-layer-mid-1"></div>
-        <div class="bf-layer bf-layer-mid-2"></div>
-        <div class="bf-layer bf-layer-front"></div>
-        <div class="bf-layer bf-core"></div>
-        <div class="bf-ember bf-ember-1"></div>
-        <div class="bf-ember bf-ember-2"></div>
-        <div class="bf-ember bf-ember-3"></div>
-        <div class="bf-ember bf-ember-4"></div>
-        <div class="bf-spark s1"></div>
-        <div class="bf-spark s2"></div>
-        <div class="bf-spark s3"></div>
-        <div class="bf-spark s4"></div>
-        <div class="bf-spark s5"></div>
-        <div class="bf-spark s6"></div>
+        <div class="bf-smoke s1"></div>
+        <div class="bf-smoke s2"></div>
+        <div class="bf-smoke s3"></div>
+        <div class="bf-flame bf-flame-outer"></div>
+        <div class="bf-flame bf-flame-mid"></div>
+        <div class="bf-flame bf-flame-inner"></div>
+        <div class="bf-flame bf-flame-core"></div>
+        <div class="bf-flame bf-flame-glow"></div>
+        <div class="bf-embers">
+          <span class="be be-1"></span>
+          <span class="be be-2"></span>
+          <span class="be be-3"></span>
+          <span class="be be-4"></span>
+          <span class="be be-5"></span>
+          <span class="be be-6"></span>
+          <span class="be be-7"></span>
+          <span class="be be-8"></span>
+        </div>
       </div>
     </div>
+
   </main>
 
   <aside class="ds-right-panel">
     <div class="rp-time">{{ timeDisplay() }}</div>
-    <div class="rp-date">{{ dateDisplay() }}</div>
     <div class="rp-divider"></div>
-    <div class="rp-row"><span class="rp-label">H</span><span class="rp-desc">Hours &mdash; Outer Ring</span></div>
-    <div class="rp-row"><span class="rp-label">M</span><span class="rp-desc">Minutes &mdash; Bonfire</span></div>
-    <div class="rp-row"><span class="rp-label">S</span><span class="rp-desc">Seconds &mdash; Embers</span></div>
+    <div class="rp-date-row">{{ dayName() }}</div>
+    <div class="rp-date-row">{{ monthName() }} {{ dayOfMonth() }}</div>
+    <div class="rp-date-row">{{ yearNum() }}</div>
     <div class="rp-divider"></div>
     <div class="rp-phase-row">
       <span class="rp-phase-icon">{{ phaseIcon() }}</span>
