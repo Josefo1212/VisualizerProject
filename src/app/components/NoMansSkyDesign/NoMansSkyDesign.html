@@ -1,0 +1,296 @@
+<div class="nms-shell">
+
+  <!-- ═══════ TOP TELEMETRY BAR ═══════ -->
+  <header class="top-bar">
+    <span class="tb-brand">NO MAN'S SKY</span>
+    <span class="tb-sep"></span>
+    <span class="tb-label">Traveller Link</span>
+    <span class="tb-value">ONLINE</span>
+    <span class="tb-sep"></span>
+    <span class="tb-label">System</span>
+    <span class="tb-value">EUCLID</span>
+    <span class="tb-sep"></span>
+    <span class="tb-label">Phase</span>
+    <span class="tb-value" [class.phase-dawn]="worldPhase() === 'dawn'"
+      [class.phase-day]="worldPhase() === 'day'"
+      [class.phase-dusk]="worldPhase() === 'dusk'"
+      [class.phase-night]="worldPhase() === 'night'">{{ worldPhaseLabel() }}</span>
+    <span class="tb-sep"></span>
+    <span class="tb-label">Day Progress</span>
+    <span class="tb-value">{{ dayProgress() }}%</span>
+    <span class="tb-fill"></span>
+    <span class="tb-pulse">◉ SYNC</span>
+  </header>
+
+  <!-- ═══════ MAIN HOLOGRAPHIC FIELD ═══════ -->
+  <main class="main-field">
+
+    <img class="bg-space" src="/NoMan'sSky/fondoNoMan'sSky.png" alt="" />
+
+    <!-- SIGNAL PARTICLES -->
+    @for (p of signalParticles; track p.id) {
+      <div class="signal-particle"
+        [style.left.%]="p.x"
+        [style.top.%]="p.y"
+        [style.--sp-dur.s]="p.duration"
+        [style.--sp-delay.s]="p.delay"
+        [style.--sp-size.px]="p.size"
+        [style.--sp-opacity]="p.opacity">
+      </div>
+    }
+
+    <!-- MAIN SVG: RINGS + STAR NODE + HUD -->
+    <svg class="rings-svg" viewBox="0 0 600 600" xmlns="http://www.w3.org/2000/svg">
+
+      <defs>
+        <filter id="nms-glow">
+          <feGaussianBlur stdDeviation="2.5" result="b"/>
+          <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+        <filter id="nms-glow-strong">
+          <feGaussianBlur stdDeviation="5" result="b"/>
+          <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+        <filter id="nms-glow-soft">
+          <feGaussianBlur stdDeviation="1.5" result="b"/>
+          <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+        <linearGradient id="minute-grad" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stop-color="#00f0ff"/>
+          <stop offset="100%" stop-color="#0070ff"/>
+        </linearGradient>
+        <radialGradient id="star-grad" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="#ffffff"/>
+          <stop offset="30%" stop-color="#80f0ff"/>
+          <stop offset="70%" stop-color="#00c0ff"/>
+          <stop offset="100%" stop-color="#0060c0"/>
+        </radialGradient>
+      </defs>
+
+      <!-- Decorative outer orbit ring -->
+      <circle cx="300" cy="300" r="240" fill="none" stroke="rgba(0,240,255,0.03)" stroke-width="1" stroke-dasharray="4 8"/>
+
+      <!-- ─── HOUR ORBIT RING (24 marks) ─── -->
+      @for (mark of hourMarks; track mark.index) {
+        @let active = mark.index <= cycleHour();
+        @let current = mark.index === cycleHour();
+        <g class="hour-mark" [class.active]="active" [class.current]="current">
+          <!-- Outer bracket -->
+          <line x1="0" y1="-225" x2="0" y2="-212"
+            [attr.transform]="'rotate(' + mark.angle + ' 300 300)'"
+            [attr.stroke]="current ? '#00f0ff' : active ? 'rgba(0,240,255,0.3)' : 'rgba(0,240,255,0.06)'"
+            stroke-width="2.5" stroke-linecap="round"/>
+          <!-- Inner tick -->
+          <line x1="0" y1="-208" x2="0" y2="-204"
+            [attr.transform]="'rotate(' + mark.angle + ' 300 300)'"
+            [attr.stroke]="active ? 'rgba(0,240,255,0.2)' : 'rgba(0,240,255,0.04)'"
+            stroke-width="1.5" stroke-linecap="round"/>
+          <!-- Orbital node dot (major hours) -->
+          @if (mark.index % 3 === 0) {
+            <circle cx="300" cy="75" r="2.5"
+              [attr.transform]="'rotate(' + mark.angle + ' 300 300)'"
+              [attr.fill]="current ? '#00f0ff' : active ? 'rgba(0,240,255,0.25)' : 'rgba(0,240,255,0.04)'"
+              [attr.filter]="current ? 'url(#nms-glow)' : 'none'"/>
+          }
+        </g>
+      }
+
+      <!-- ─── SECOND PULSE RING (60 dots) ─── -->
+      @for (dot of pulseDots; track dot.index) {
+        @let active = dot.index <= second();
+        @let current = dot.index === second();
+        <g class="pulse-dot" [class.active]="active" [class.current]="current">
+          <circle cx="300" cy="130" r="2"
+            [attr.transform]="'rotate(' + dot.angle + ' 300 300)'"
+            [attr.fill]="current ? '#00f0ff' : active ? 'rgba(0,240,255,0.3)' : 'rgba(0,240,255,0.04)'"
+            [attr.filter]="current ? 'url(#nms-glow)' : 'none'"/>
+        </g>
+      }
+
+      <!-- Pulse sweep line -->
+      <line x1="300" y1="300" x2="300" y2="120"
+        stroke="rgba(0,240,255,0.06)" stroke-width="1"
+        [attr.transform]="'rotate(' + (second() / 60 * 360) + ' 300 300)'"/>
+
+      <!-- ─── MINUTE ENERGY RING ─── -->
+      <!-- Background ring (empty) -->
+      <circle cx="300" cy="300" r="120" fill="none" stroke="rgba(0,240,255,0.04)" stroke-width="6"/>
+
+      <!-- Charge arc -->
+      <path [attr.d]="minuteArcPath()"
+        fill="none" stroke="url(#minute-grad)"
+        [attr.stroke-width]="6 + minuteIntensity() * 4"
+        stroke-linecap="round"
+        [style.opacity]="0.3 + minuteIntensity() * 0.7"
+        [style.filter]="'url(#nms-glow)'"
+        class="minute-arc"/>
+
+      <!-- Energy glow aura -->
+      <circle cx="300" cy="300" r="125"
+        fill="none" stroke="rgba(0,240,255,0.04)"
+        stroke-width="12"
+        [style.opacity]="minuteIntensity() * 0.5"
+        class="minute-aura"/>
+
+      <!-- Minute charge nodes -->
+      @for (n of [0, 1, 2]; track n) {
+        <circle cx="300" cy="180" r="3"
+          fill="rgba(0,240,255,0.15)"
+          [attr.transform]="'rotate(' + (n * 20) + ' 300 300)'"/>
+      }
+
+      <!-- ─── STAR NODE (solar indicator) ─── -->
+      <g class="star-node" [attr.transform]="'rotate(' + starAngle() + ' 300 300)'">
+        <g transform="translate(300, 70)">
+          <!-- Outer glow -->
+          <circle cx="0" cy="0" r="20" fill="rgba(0,240,255,0.04)" filter="url(#nms-glow-strong)"/>
+          <!-- Mid glow -->
+          <circle cx="0" cy="0" r="13" fill="rgba(0,240,255,0.08)" filter="url(#nms-glow)"/>
+          <!-- Halo ring -->
+          <circle cx="0" cy="0" r="9" fill="none" stroke="rgba(0,240,255,0.2)" stroke-width="1.5"/>
+          <!-- Core -->
+          <circle cx="0" cy="0" r="6" fill="url(#star-grad)" filter="url(#nms-glow)"/>
+          <!-- Bright spot -->
+          <circle cx="-1.5" cy="-1.5" r="2" fill="rgba(255,255,255,0.6)"/>
+          <!-- Rays -->
+          @for (ra of [0, 45, 90, 135, 180, 225, 270, 315]; track ra) {
+            <line x1="0" y1="-10" x2="0" y2="-15"
+              stroke="rgba(0,240,255,0.15)" stroke-width="1.5" stroke-linecap="round"
+              [attr.transform]="'rotate(' + ra + ')'"/>
+          }
+          <!-- Extra cross rays -->
+          @for (ra of [22.5, 67.5, 112.5, 157.5, 202.5, 247.5, 292.5, 337.5]; track ra) {
+            <line x1="0" y1="-11" x2="0" y2="-13"
+              stroke="rgba(0,240,255,0.08)" stroke-width="1" stroke-linecap="round"
+              [attr.transform]="'rotate(' + ra + ')'"/>
+          }
+        </g>
+        <!-- Connector line from center to node -->
+        <line x1="300" y1="300" x2="300" y2="76"
+          stroke="rgba(0,240,255,0.04)" stroke-width="1" stroke-dasharray="3 6"/>
+      </g>
+
+      <!-- ─── SCANNER BRACKETS / HUD GEOMETRY ─── -->
+      <!-- Top-left bracket -->
+      <path d="M 60 120 L 60 60 L 120 60" fill="none" stroke="rgba(0,240,255,0.12)" stroke-width="1.5"/>
+      <circle cx="60" cy="60" r="3" fill="rgba(0,240,255,0.15)"/>
+
+      <!-- Top-right bracket -->
+      <path d="M 540 120 L 540 60 L 480 60" fill="none" stroke="rgba(0,240,255,0.12)" stroke-width="1.5"/>
+      <circle cx="540" cy="60" r="3" fill="rgba(0,240,255,0.15)"/>
+
+      <!-- Bottom-left bracket -->
+      <path d="M 60 480 L 60 540 L 120 540" fill="none" stroke="rgba(0,240,255,0.12)" stroke-width="1.5"/>
+      <circle cx="60" cy="540" r="3" fill="rgba(0,240,255,0.15)"/>
+
+      <!-- Bottom-right bracket -->
+      <path d="M 540 480 L 540 540 L 480 540" fill="none" stroke="rgba(0,240,255,0.12)" stroke-width="1.5"/>
+      <circle cx="540" cy="540" r="3" fill="rgba(0,240,255,0.15)"/>
+
+      <!-- Crosshair center -->
+      <circle cx="300" cy="300" r="4" fill="none" stroke="rgba(0,240,255,0.08)" stroke-width="1"/>
+      <line x1="290" y1="300" x2="310" y2="300" stroke="rgba(0,240,255,0.06)" stroke-width="1"/>
+      <line x1="300" y1="290" x2="300" y2="310" stroke="rgba(0,240,255,0.06)" stroke-width="1"/>
+
+      <!-- Decorative scan rings -->
+      <circle cx="300" cy="300" r="80" fill="none" stroke="rgba(0,240,255,0.02)" stroke-width="1" stroke-dasharray="2 6"/>
+      <circle cx="300" cy="300" r="180" fill="none" stroke="rgba(0,240,255,0.02)" stroke-width="1" stroke-dasharray="2 10"/>
+
+      <!-- HUD text labels -->
+      <text x="70" y="145" fill="rgba(0,240,255,0.15)" font-family="'Courier New', monospace" font-size="9" letter-spacing="2">SCAN:ACTIVE</text>
+      <text x="440" y="145" fill="rgba(0,240,255,0.15)" font-family="'Courier New', monospace" font-size="9" letter-spacing="2">ORBIT:STABLE</text>
+      <text x="70" y="455" fill="rgba(0,240,255,0.15)" font-family="'Courier New', monospace" font-size="9" letter-spacing="2">SIGNAL:NOMINAL</text>
+      <text x="430" y="455" fill="rgba(0,240,255,0.15)" font-family="'Courier New', monospace" font-size="9" letter-spacing="2">ENERGY:CHARGED</text>
+    </svg>
+
+    <!-- PLANET -->
+    <img class="planet" src="/NoMan'sSky/planetaNoMan'sSky.png" alt="" />
+
+    <!-- ─── LEFT FLOATING PANEL ─── -->
+    <aside class="float-panel float-left">
+      <div class="fp-header">PLANETARY ANALYSIS</div>
+      <div class="fp-divider"></div>
+      <div class="fp-row">
+        <span class="fp-l">Atmosphere</span>
+        <span class="fp-v">BREATHABLE</span>
+      </div>
+      <div class="fp-row">
+        <span class="fp-l">Hazard Level</span>
+        <span class="fp-v fp-hazard">NOMINAL</span>
+      </div>
+      <div class="fp-row">
+        <span class="fp-l">Current Phase</span>
+        <span class="fp-v">{{ worldPhaseLabel() }}</span>
+      </div>
+      <div class="fp-row">
+        <span class="fp-l">Day Progress</span>
+        <span class="fp-v">{{ dayProgress() }}%</span>
+      </div>
+      <div class="fp-row">
+        <span class="fp-l">Scanner Sync</span>
+        <span class="fp-v">STABLE</span>
+      </div>
+      <div class="fp-row">
+        <span class="fp-l">Signal Scan</span>
+        <span class="fp-v">ACTIVE</span>
+      </div>
+    </aside>
+
+    <!-- ─── RIGHT FLOATING PANEL ─── -->
+    <aside class="float-panel float-right">
+      <div class="fp-time">{{ timeDisplay() }}</div>
+      <div class="fp-date">{{ dateDisplay() }}</div>
+      <div class="fp-divider"></div>
+      <div class="fp-row">
+        <span class="fp-l">H</span>
+        <span class="fp-v">Orbit Cycle</span>
+      </div>
+      <div class="fp-row">
+        <span class="fp-l">M</span>
+        <span class="fp-v">Energy Charge</span>
+      </div>
+      <div class="fp-row">
+        <span class="fp-l">S</span>
+        <span class="fp-v">Pulse Sweep</span>
+      </div>
+      <div class="fp-divider"></div>
+      <div class="fp-row">
+        <span class="fp-l">Biome</span>
+        <span class="fp-v">Temperate</span>
+      </div>
+      <div class="fp-row">
+        <span class="fp-l">Signal</span>
+        <span class="fp-v">◉ STABLE</span>
+      </div>
+    </aside>
+
+  </main>
+
+  <!-- ═══════ BOTTOM INSTRUMENT DECK ═══════ -->
+  <footer class="bottom-deck">
+    <div class="deck-left">
+      <span class="deck-indicator">
+        <span class="deck-dot deck-dot-h"></span> ORBIT
+      </span>
+      <span class="deck-indicator">
+        <span class="deck-dot deck-dot-m"></span> CHARGE
+      </span>
+      <span class="deck-indicator">
+        <span class="deck-dot deck-dot-s"></span> PULSE
+      </span>
+    </div>
+
+    <div class="deck-center">
+      <span class="deck-label">00:00</span>
+      <input type="range" min="0" max="240" step="0.1"
+        [ngModel]="sliderValue()" (ngModelChange)="onSliderChange($event)"
+        class="nms-slider" />
+      <span class="deck-label">24:00</span>
+    </div>
+
+    <div class="deck-right">
+      <button class="deck-btn" (click)="onResetTime()">⟳ REAL</button>
+    </div>
+  </footer>
+
+</div>

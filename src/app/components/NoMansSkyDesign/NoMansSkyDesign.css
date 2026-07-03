@@ -1,0 +1,409 @@
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap');
+
+:host {
+  display: block;
+  width: 100%;
+  height: 100%;
+  font-family: 'Orbitron', 'Courier New', monospace;
+}
+
+.nms-shell {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  background: #06080c;
+  color: #c0e8ff;
+  overflow: hidden;
+}
+
+/* ═══════ TOP TELEMETRY BAR ═══════ */
+.top-bar {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 20px;
+  background: rgba(0, 20, 40, 0.6);
+  border-bottom: 1px solid rgba(0, 240, 255, 0.08);
+  font-size: 10px;
+  letter-spacing: 2px;
+  z-index: 10;
+}
+
+.tb-brand {
+  font-size: 13px;
+  font-weight: 900;
+  color: #00f0ff;
+  text-shadow: 0 0 20px rgba(0, 240, 255, 0.3);
+  letter-spacing: 4px;
+}
+
+.tb-sep {
+  width: 1px;
+  height: 16px;
+  background: rgba(0, 240, 255, 0.15);
+}
+
+.tb-label {
+  color: rgba(0, 240, 255, 0.3);
+  text-transform: uppercase;
+}
+
+.tb-value {
+  color: rgba(0, 240, 255, 0.7);
+  font-weight: 700;
+}
+
+.tb-value.phase-dawn { color: #ffa040; }
+.tb-value.phase-day { color: #80f0ff; }
+.tb-value.phase-dusk { color: #ff6040; }
+.tb-value.phase-night { color: #6080c0; }
+
+.tb-fill {
+  flex: 1;
+}
+
+.tb-pulse {
+  color: rgba(0, 240, 255, 0.2);
+  font-size: 9px;
+  animation: sync-pulse 2s ease-in-out infinite;
+}
+
+@keyframes sync-pulse {
+  0%, 100% { opacity: 0.2; }
+  50% { opacity: 0.6; }
+}
+
+/* ═══════ MAIN HOLOGRAPHIC FIELD ═══════ */
+.main-field {
+  position: relative;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.bg-space {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  pointer-events: none;
+  z-index: 0;
+  filter: brightness(0.7) saturate(1.1);
+}
+
+/* ═══════ SIGNAL PARTICLES ═══════ */
+.signal-particle {
+  position: absolute;
+  z-index: 2;
+  pointer-events: none;
+  border-radius: 50%;
+  background: rgba(0, 240, 255, 0.2);
+  width: var(--sp-size, 2px);
+  height: var(--sp-size, 2px);
+  opacity: var(--sp-opacity, 0.08);
+  animation: signal-drift var(--sp-dur, 8s) ease-in-out infinite;
+  animation-delay: var(--sp-delay, 0s);
+}
+
+@keyframes signal-drift {
+  0% {
+    transform: translateY(0) translateX(0) scale(1);
+    opacity: var(--sp-opacity, 0.08);
+  }
+  30% {
+    transform: translateY(-30%) translateX(5px) scale(1.2);
+    opacity: calc(var(--sp-opacity, 0.08) * 1.5);
+  }
+  70% {
+    transform: translateY(-60%) translateX(-5px) scale(0.8);
+    opacity: calc(var(--sp-opacity, 0.08) * 0.6);
+  }
+  100% {
+    transform: translateY(-100%) translateX(3px) scale(0.5);
+    opacity: 0;
+  }
+}
+
+/* ═══════ RINGS SVG ═══════ */
+.rings-svg {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  z-index: 3;
+  pointer-events: none;
+}
+
+.hour-mark {
+  transition: opacity 0.3s ease;
+}
+
+.minute-arc {
+  transition: d 0.3s ease, stroke-width 0.3s ease, opacity 0.3s ease;
+}
+
+.minute-aura {
+  transition: opacity 0.5s ease;
+  animation: aura-pulse 3s ease-in-out infinite;
+}
+
+@keyframes aura-pulse {
+  0%, 100% { opacity: 0.03; }
+  50% { opacity: 0.08; }
+}
+
+.star-node {
+  animation: star-node-pulse 3s ease-in-out infinite;
+  transform-origin: 300px 300px;
+}
+
+@keyframes star-node-pulse {
+  0%, 100% { filter: drop-shadow(0 0 8px rgba(0, 240, 255, 0.2)); }
+  50% { filter: drop-shadow(0 0 20px rgba(0, 240, 255, 0.4)); }
+}
+
+/* ═══════ PLANET ═══════ */
+.planet {
+  position: absolute;
+  width: 220px;
+  height: 220px;
+  z-index: 2;
+  pointer-events: none;
+  border-radius: 50%;
+  object-fit: cover;
+  box-shadow:
+    0 0 40px rgba(0, 240, 255, 0.08),
+    0 0 80px rgba(0, 240, 255, 0.04),
+    inset 0 0 60px rgba(0, 240, 255, 0.02);
+  filter: saturate(1.1) contrast(1.05);
+}
+
+/* ═══════ FLOATING PANELS ═══════ */
+.float-panel {
+  position: absolute;
+  z-index: 5;
+  width: 200px;
+  padding: 14px 16px;
+  background: rgba(0, 16, 32, 0.7);
+  border: 1px solid rgba(0, 240, 255, 0.1);
+  backdrop-filter: blur(8px);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.float-left {
+  left: 20px;
+  bottom: 60px;
+  border-radius: 4px;
+}
+
+.float-right {
+  right: 20px;
+  bottom: 60px;
+  border-radius: 4px;
+  align-items: flex-end;
+}
+
+.fp-header {
+  font-size: 9px;
+  letter-spacing: 3px;
+  color: rgba(0, 240, 255, 0.5);
+  font-weight: 700;
+}
+
+.fp-divider {
+  height: 1px;
+  background: linear-gradient(90deg, rgba(0, 240, 255, 0.15), transparent);
+  margin: 2px 0;
+}
+
+.float-right .fp-divider {
+  background: linear-gradient(270deg, rgba(0, 240, 255, 0.15), transparent);
+}
+
+.fp-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.float-right .fp-row {
+  flex-direction: row-reverse;
+}
+
+.fp-l {
+  font-size: 9px;
+  letter-spacing: 1.5px;
+  color: rgba(0, 240, 255, 0.25);
+  text-transform: uppercase;
+}
+
+.fp-v {
+  font-size: 10px;
+  font-weight: 700;
+  color: rgba(0, 240, 255, 0.6);
+  letter-spacing: 1px;
+}
+
+.fp-hazard {
+  color: rgba(0, 255, 100, 0.6);
+}
+
+.fp-time {
+  font-size: 26px;
+  font-weight: 900;
+  color: #00f0ff;
+  text-shadow: 0 0 20px rgba(0, 240, 255, 0.3);
+  letter-spacing: 3px;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+
+.fp-date {
+  font-size: 10px;
+  letter-spacing: 2px;
+  color: rgba(0, 240, 255, 0.3);
+  margin-top: 4px;
+}
+
+/* ═══════ BOTTOM INSTRUMENT DECK ═══════ */
+.bottom-deck {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  padding: 10px 24px;
+  gap: 20px;
+  background: rgba(0, 16, 32, 0.7);
+  border-top: 1px solid rgba(0, 240, 255, 0.08);
+  z-index: 10;
+}
+
+.deck-left {
+  display: flex;
+  gap: 16px;
+  min-width: 200px;
+}
+
+.deck-indicator {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 9px;
+  letter-spacing: 2px;
+  color: rgba(0, 240, 255, 0.3);
+  font-weight: 700;
+}
+
+.deck-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  animation: dot-blink 2s ease-in-out infinite;
+}
+
+.deck-dot-h { background: #00f0ff; }
+.deck-dot-m { background: #00a0ff; animation-delay: 0.3s; }
+.deck-dot-s { background: #0060ff; animation-delay: 0.6s; }
+
+@keyframes dot-blink {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 1; }
+}
+
+.deck-center {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  justify-content: center;
+}
+
+.deck-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: rgba(0, 240, 255, 0.2);
+  min-width: 40px;
+  font-variant-numeric: tabular-nums;
+}
+
+.nms-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  flex: 1;
+  max-width: 400px;
+  height: 3px;
+  background: rgba(0, 240, 255, 0.1);
+  border-radius: 2px;
+  outline: none;
+  cursor: pointer;
+}
+
+.nms-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 14px;
+  height: 14px;
+  background: transparent;
+  border: 2px solid #00f0ff;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 0 10px rgba(0, 240, 255, 0.2);
+}
+
+.nms-slider::-webkit-slider-thumb:hover {
+  background: rgba(0, 240, 255, 0.15);
+  box-shadow: 0 0 20px rgba(0, 240, 255, 0.4);
+}
+
+.nms-slider::-webkit-slider-thumb:active {
+  transform: scale(0.9);
+}
+
+.nms-slider::-moz-range-thumb {
+  width: 14px;
+  height: 14px;
+  background: transparent;
+  border: 2px solid #00f0ff;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.deck-right {
+  display: flex;
+  gap: 8px;
+  min-width: 120px;
+  justify-content: flex-end;
+}
+
+.deck-btn {
+  padding: 6px 14px;
+  background: transparent;
+  border: 1px solid rgba(0, 240, 255, 0.15);
+  color: rgba(0, 240, 255, 0.5);
+  font-family: 'Orbitron', 'Courier New', monospace;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border-radius: 2px;
+}
+
+.deck-btn:hover {
+  background: rgba(0, 240, 255, 0.08);
+  border-color: rgba(0, 240, 255, 0.3);
+  color: #00f0ff;
+  box-shadow: 0 0 16px rgba(0, 240, 255, 0.1);
+}
+
+.deck-btn:active {
+  transform: scale(0.96);
+}
