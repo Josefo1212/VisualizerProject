@@ -93,7 +93,7 @@
   object-fit: cover;
   pointer-events: none;
   z-index: 0;
-  filter: brightness(0.7) saturate(1.1);
+  filter: brightness(0.6) saturate(1.15);
 }
 
 /* ═══════ SIGNAL PARTICLES ═══════ */
@@ -142,8 +142,15 @@
   transition: opacity 0.3s ease;
 }
 
+/* ─── Minute Ring ─── */
 .minute-arc {
-  transition: d 0.3s ease, stroke-width 0.3s ease, opacity 0.3s ease;
+  transition: stroke-dashoffset 0.4s ease, stroke-width 0.4s ease, opacity 0.4s ease;
+  animation: minute-energy-pulse 3s ease-in-out infinite;
+}
+
+@keyframes minute-energy-pulse {
+  0%, 100% { filter: drop-shadow(0 0 6px rgba(0, 240, 255, 0.4)); }
+  50% { filter: drop-shadow(0 0 14px rgba(0, 240, 255, 0.7)); }
 }
 
 .minute-aura {
@@ -153,9 +160,28 @@
 
 @keyframes aura-pulse {
   0%, 100% { opacity: 0.03; }
-  50% { opacity: 0.08; }
+  50% { opacity: 0.09; }
 }
 
+.minute-node {
+  animation: node-pulse 2s ease-in-out infinite;
+}
+
+.minute-node-halo {
+  animation: node-halo-pulse 2s ease-in-out infinite;
+}
+
+@keyframes node-pulse {
+  0%, 100% { r: 5; opacity: 1; }
+  50% { r: 6; opacity: 0.7; }
+}
+
+@keyframes node-halo-pulse {
+  0%, 100% { opacity: 0.15; r: 9; }
+  50% { opacity: 0.05; r: 12; }
+}
+
+/* ─── Star Node ─── */
 .star-node {
   animation: star-node-pulse 3s ease-in-out infinite;
   transform-origin: 300px 300px;
@@ -164,6 +190,28 @@
 @keyframes star-node-pulse {
   0%, 100% { filter: drop-shadow(0 0 8px rgba(0, 240, 255, 0.2)); }
   50% { filter: drop-shadow(0 0 20px rgba(0, 240, 255, 0.4)); }
+}
+
+/* ─── Hour Marker ─── */
+.hour-marker {
+  animation: hour-marker-pulse 2.5s ease-in-out infinite;
+  transform-origin: center;
+}
+
+@keyframes hour-marker-pulse {
+  0%, 100% { filter: drop-shadow(0 0 4px rgba(0, 240, 255, 0.2)); }
+  50% { filter: drop-shadow(0 0 12px rgba(0, 240, 255, 0.5)); }
+}
+
+/* ─── Planet Shimmer ─── */
+.planet-shimmer {
+  animation: shimmer-rotate 10s linear infinite;
+  transform-origin: 300px 300px;
+}
+
+@keyframes shimmer-rotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
 }
 
 /* ═══════ PLANET ═══════ */
@@ -176,10 +224,26 @@
   border-radius: 50%;
   object-fit: cover;
   box-shadow:
-    0 0 40px rgba(0, 240, 255, 0.08),
-    0 0 80px rgba(0, 240, 255, 0.04),
-    inset 0 0 60px rgba(0, 240, 255, 0.02);
+    0 0 60px rgba(0, 240, 255, 0.08),
+    0 0 120px rgba(0, 180, 255, 0.04),
+    inset 0 0 40px rgba(0, 240, 255, 0.02);
   filter: saturate(1.1) contrast(1.05);
+}
+
+.planet-aura {
+  position: absolute;
+  width: 260px;
+  height: 260px;
+  border-radius: 50%;
+  z-index: 1;
+  pointer-events: none;
+  background: radial-gradient(circle, rgba(0, 240, 255, 0.03) 0%, rgba(0, 180, 255, 0.02) 40%, transparent 70%);
+  animation: aura-breathe 4s ease-in-out infinite;
+}
+
+@keyframes aura-breathe {
+  0%, 100% { opacity: 0.5; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.03); }
 }
 
 /* ═══════ FLOATING PANELS ═══════ */
@@ -188,12 +252,12 @@
   z-index: 5;
   width: 200px;
   padding: 14px 16px;
-  background: rgba(0, 16, 32, 0.7);
-  border: 1px solid rgba(0, 240, 255, 0.1);
-  backdrop-filter: blur(8px);
+  background: rgba(0, 16, 32, 0.75);
+  border: 1px solid rgba(0, 240, 255, 0.08);
+  backdrop-filter: blur(10px);
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 7px;
 }
 
 .float-left {
@@ -212,18 +276,18 @@
 .fp-header {
   font-size: 9px;
   letter-spacing: 3px;
-  color: rgba(0, 240, 255, 0.5);
+  color: rgba(0, 240, 255, 0.45);
   font-weight: 700;
 }
 
 .fp-divider {
   height: 1px;
-  background: linear-gradient(90deg, rgba(0, 240, 255, 0.15), transparent);
+  background: linear-gradient(90deg, rgba(0, 240, 255, 0.12), transparent);
   margin: 2px 0;
 }
 
 .float-right .fp-divider {
-  background: linear-gradient(270deg, rgba(0, 240, 255, 0.15), transparent);
+  background: linear-gradient(270deg, rgba(0, 240, 255, 0.12), transparent);
 }
 
 .fp-row {
@@ -240,19 +304,19 @@
 .fp-l {
   font-size: 9px;
   letter-spacing: 1.5px;
-  color: rgba(0, 240, 255, 0.25);
+  color: rgba(0, 240, 255, 0.2);
   text-transform: uppercase;
 }
 
 .fp-v {
   font-size: 10px;
   font-weight: 700;
-  color: rgba(0, 240, 255, 0.6);
+  color: rgba(0, 240, 255, 0.55);
   letter-spacing: 1px;
 }
 
 .fp-hazard {
-  color: rgba(0, 255, 100, 0.6);
+  color: rgba(0, 255, 100, 0.55);
 }
 
 .fp-time {
@@ -268,7 +332,7 @@
 .fp-date {
   font-size: 10px;
   letter-spacing: 2px;
-  color: rgba(0, 240, 255, 0.3);
+  color: rgba(0, 240, 255, 0.25);
   margin-top: 4px;
 }
 
@@ -279,8 +343,8 @@
   align-items: center;
   padding: 10px 24px;
   gap: 20px;
-  background: rgba(0, 16, 32, 0.7);
-  border-top: 1px solid rgba(0, 240, 255, 0.08);
+  background: rgba(0, 16, 32, 0.75);
+  border-top: 1px solid rgba(0, 240, 255, 0.06);
   z-index: 10;
 }
 
@@ -296,7 +360,7 @@
   gap: 6px;
   font-size: 9px;
   letter-spacing: 2px;
-  color: rgba(0, 240, 255, 0.3);
+  color: rgba(0, 240, 255, 0.25);
   font-weight: 700;
 }
 
@@ -312,7 +376,7 @@
 .deck-dot-s { background: #0060ff; animation-delay: 0.6s; }
 
 @keyframes dot-blink {
-  0%, 100% { opacity: 0.3; }
+  0%, 100% { opacity: 0.25; }
   50% { opacity: 1; }
 }
 
@@ -328,7 +392,7 @@
   font-size: 10px;
   font-weight: 700;
   letter-spacing: 2px;
-  color: rgba(0, 240, 255, 0.2);
+  color: rgba(0, 240, 255, 0.18);
   min-width: 40px;
   font-variant-numeric: tabular-nums;
 }
@@ -339,7 +403,7 @@
   flex: 1;
   max-width: 400px;
   height: 3px;
-  background: rgba(0, 240, 255, 0.1);
+  background: rgba(0, 240, 255, 0.08);
   border-radius: 2px;
   outline: none;
   cursor: pointer;
@@ -386,8 +450,8 @@
 .deck-btn {
   padding: 6px 14px;
   background: transparent;
-  border: 1px solid rgba(0, 240, 255, 0.15);
-  color: rgba(0, 240, 255, 0.5);
+  border: 1px solid rgba(0, 240, 255, 0.12);
+  color: rgba(0, 240, 255, 0.4);
   font-family: 'Orbitron', 'Courier New', monospace;
   font-size: 9px;
   font-weight: 700;
@@ -399,9 +463,9 @@
 
 .deck-btn:hover {
   background: rgba(0, 240, 255, 0.08);
-  border-color: rgba(0, 240, 255, 0.3);
+  border-color: rgba(0, 240, 255, 0.25);
   color: #00f0ff;
-  box-shadow: 0 0 16px rgba(0, 240, 255, 0.1);
+  box-shadow: 0 0 16px rgba(0, 240, 255, 0.08);
 }
 
 .deck-btn:active {

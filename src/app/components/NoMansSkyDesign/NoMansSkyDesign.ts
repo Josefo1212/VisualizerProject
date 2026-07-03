@@ -26,6 +26,13 @@ function seededMod(i: number, base: number, offset: number): number {
   return ((i * offset * 2.3) % base + base) % base;
 }
 
+const CX = 300;
+const CY = 300;
+const MINUTE_R = 120;
+const MINUTE_CIRC = 2 * Math.PI * MINUTE_R;
+const HOUR_R = 215;
+const SECOND_R = 170;
+
 @Component({
   selector: 'app-no-mans-sky-design',
   standalone: true,
@@ -35,6 +42,12 @@ function seededMod(i: number, base: number, offset: number): number {
 })
 export class NoMansSkyDesignComponent {
   readonly time = inject(TimeEngineService);
+
+  readonly CX = CX;
+  readonly CY = CY;
+  readonly MINUTE_R = MINUTE_R;
+  readonly MINUTE_CIRC = MINUTE_CIRC;
+  readonly HOUR_R = HOUR_R;
 
   readonly sliderValue = computed(() => {
     const h = this.time.hours$();
@@ -93,39 +106,52 @@ export class NoMansSkyDesignComponent {
   });
 
   readonly dayOfMonth = computed(() => new Date().getDate());
-
   readonly yearNum = computed(() => new Date().getFullYear());
 
-  /* ─── ORBITAL HOUR RING (24 marks) ─── */
+  /* ─── ORBITAL HOUR RING ─── */
   readonly hourMarks: OrbitMark[] = Array.from({ length: 24 }, (_, i) => ({
     index: i,
     angle: (i / 24) * 360,
   }));
 
-  /* ─── PULSE SECOND RING (60 dots) ─── */
+  /* ─── PULSE SECOND RING ─── */
   readonly pulseDots: PulseDot[] = Array.from({ length: 60 }, (_, i) => ({
     index: i,
     angle: (i / 60) * 360,
   }));
 
-  /* ─── STAR NODE POSITION ─── */
+  /* ─── STAR NODE ─── */
   readonly starAngle = computed(() => (this.cycleHour() / 24) * 360);
 
-  /* ─── MINUTE ENERGY CHARGE ─── */
-  readonly minuteAngle = computed(() => (this.minute() / 60) * 360);
+  /* ─── MINUTE ENERGY RING (stroke-dashoffset) ─── */
+  readonly minuteProgress = computed(() => this.minute() / 60);
+
+  readonly minuteDashOffset = computed(() =>
+    MINUTE_CIRC * (1 - this.minuteProgress())
+  );
+
   readonly minuteIntensity = computed(() => Math.max(0.2, this.minute() / 59));
 
-  /* ─── MINUTE ARC PATH ─── */
-  readonly minuteArcPath = computed(() => {
-    const a = this.minuteAngle();
-    const rad = (a * Math.PI) / 180;
-    const endX = 300 + 120 * Math.sin(rad);
-    const endY = 300 - 120 * Math.cos(rad);
-    const large = a > 180 ? 1 : 0;
-    return `M 300 180 A 120 120 0 ${large} 1 ${endX.toFixed(2)} ${endY.toFixed(2)}`;
+  readonly minuteNodePos = computed(() => {
+    const angleDeg = -90 + this.minuteProgress() * 360;
+    const rad = (angleDeg * Math.PI) / 180;
+    return {
+      x: CX + MINUTE_R * Math.cos(rad),
+      y: CY + MINUTE_R * Math.sin(rad),
+    };
   });
 
-  /* ─── SIGNAL PARTICLES (ambient) ─── */
+  /* ─── HOUR MARKER (current hour position) ─── */
+  readonly hourMarkerPos = computed(() => {
+    const angleDeg = (this.cycleHour() / 24) * 360 - 90;
+    const rad = (angleDeg * Math.PI) / 180;
+    return {
+      x: CX + HOUR_R * Math.cos(rad),
+      y: CY + HOUR_R * Math.sin(rad),
+    };
+  });
+
+  /* ─── SIGNAL PARTICLES ─── */
   readonly signalParticles: SignalParticle[] = Array.from({ length: 20 }, (_, i) => ({
     id: i,
     x: 20 + seededMod(i, 60, 3),

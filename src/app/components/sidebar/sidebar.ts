@@ -24,7 +24,7 @@ export class SidebarComponent {
     { id: 'assassins-creed', icon: '🦅', name: "Assassin's Creed", cover: "/Assassin'sCreed/botonAssassin'sCreed.jpg", svgIcon: "/Assassin'sCreed/iconAssassin'sCreed.png" },
     { id: 'fortnite', icon: '🌀', name: 'Fortnite', cover: '/Fortnite/botonFortnite.jpg', svgIcon: '/Fortnite/iconFortnite.png' },
     { id: 'dark-souls', icon: '🔥', name: 'Dark Souls', cover: '/DarkSouls/botonDarkSouls.jpg', svgIcon: '/DarkSouls/iconDarkSouls.png' },
-    { id: 'no-mans-sky', icon: '🌌', name: "No Man's Sky", cover: "/NoMan'sSky/botonNoMan'sSky.jpg", svgIcon: "/DarkSouls/iconDarkSouls.png" },
+    { id: 'no-mans-sky', icon: '🌌', name: "No Man's Sky", cover: "/NoMan'sSky/botonNoMan'sSky.jpg", svgIcon: "/NoMan'sSky/iconNoMan'sSky.png" },
   ];
 
   toggle(): void {
