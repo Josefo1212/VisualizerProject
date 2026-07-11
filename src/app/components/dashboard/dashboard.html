@@ -1,56 +1,194 @@
 <div class="dashboard" [class.online]="isSystemOnline()">
 
+  <!-- ═══ VIDEO ═══ -->
   <video #bgVideo class="bg-video" [class.visible]="isSystemOnline()" autoplay muted playsinline preload="auto" loop
     (timeupdate)="onVideoTimeUpdate(bgVideo)">
     <source src="/General/fondo.mp4" type="video/mp4" />
   </video>
-  <div class="video-overlay" [class.visible]="isSystemOnline()"></div>
 
+  <!-- ═══ CSS OVERLAYS ═══ -->
+  <div class="film-grain" [class.visible]="isSystemOnline()"></div>
+  <div class="scanlines" [class.visible]="isSystemOnline()"></div>
+  <div class="lens-glow" [class.visible]="isSystemOnline()"></div>
+  <div class="video-vignette" [class.visible]="isSystemOnline()"></div>
+
+  <!-- ═══ SCAN LINE SWEEP ═══ -->
+  <div class="scan-line" [class.active]="scanActive()"></div>
+
+  <!-- ═══ FLOATING DUST PARTICLES ═══ -->
+  @for (p of particles; track p.id) {
+    <div class="dust-particle"
+      [style.left.%]="p.x"
+      [style.top.%]="p.y"
+      [style.width.px]="p.size"
+      [style.height.px]="p.size"
+      [style.opacity]="p.opacity"
+      [style.--d-delay.s]="p.delay"
+      [style.--d-dur.s]="p.duration">
+    </div>
+  }
+
+  <!-- ═══ SIDEBAR ═══ -->
   <app-sidebar
     [inactive]="!isSystemOnline()"
+    [sessionActive]="session.sessionActive()"
     [selectedDesign]="selectedDesign()"
     (designChange)="onDesignChange($event)"
   />
 
+  <!-- ═══ MAIN CONTENT ═══ -->
   <main class="main-content">
+
+    <!-- ── SYSTEM OFF: POWER SCREEN ── -->
     @if (!isSystemOnline()) {
       <app-power-screen (powerOnFinished)="onPowerOnFinished()" />
-    } @else {
-      @if (selectedDesign() === 'gta') {
-        <app-gta-design class="gta-view" />
-      } @else if (selectedDesign() === 'amongus') {
-        <app-among-us-design class="among-us-view" />
-      } @else if (selectedDesign() === 'subnautica') {
-        <app-subnautica-design class="subnautica-view" />
-      } @else if (selectedDesign() === 'fallout') {
-        <app-fallout-design class="fallout-view" />
-      } @else if (selectedDesign() === 'cyberpunk') {
-        <app-cyberpunk-design class="cyberpunk-view" />
-      } @else if (selectedDesign() === 'assassins-creed') {
-        <app-assassins-creed-design class="assassins-creed-view" />
-      } @else if (selectedDesign() === 'fortnite') {
-        <app-fortnite-design class="fortnite-view" />
-      } @else if (selectedDesign() === 'dark-souls') {
-        <app-dark-souls-design class="dark-souls-view" />
-      } @else if (selectedDesign() === 'no-mans-sky') {
-        <app-no-mans-sky-design class="no-mans-sky-view" />
-      } @else if (selectedDesign() === 'god-of-war') {
-        <app-god-of-war-design class="god-of-war-view" />
-      } @else {
-        <div class="station">
-          <div class="welcome-card">
-            <div class="rgb-border"></div>
-            <div class="card-content">
-              <div class="status-indicator">
-                <span class="status-dot"></span>
-                <span class="status-label">SYSTEM ONLINE</span>
-              </div>
-              <h1 class="welcome-title">GAME CENTER</h1>
-              <p class="welcome-sub">Welcome teacher, this still needs work, don't worry</p>
+    }
+
+    <!-- ── BOOT SEQUENCE ── -->
+    @else if (!bootComplete()) {
+      <div class="boot-screen">
+        <div class="boot-container">
+          @for (line of bootLines; track $index; let i = $index) {
+            <div class="boot-line" [class.visible]="i <= bootPhase()"
+              [class.boot-ready]="i === bootLines.length - 1 && bootPhase() === bootLines.length - 1">
+              @if (i <= bootPhase()) {
+                <span class="boot-prompt">></span>
+              }
+              {{ line }}
             </div>
+          }
+        </div>
+      </div>
+    }
+
+    <!-- ── SELECTED DESIGN VIEW ── -->
+    @else if (selectedDesign() === 'gta') {
+      <app-gta-design class="design-view" />
+    } @else if (selectedDesign() === 'amongus') {
+      <app-among-us-design class="design-view" />
+    } @else if (selectedDesign() === 'subnautica') {
+      <app-subnautica-design class="design-view" />
+    } @else if (selectedDesign() === 'fallout') {
+      <app-fallout-design class="design-view" />
+    } @else if (selectedDesign() === 'cyberpunk') {
+      <app-cyberpunk-design class="design-view" />
+    } @else if (selectedDesign() === 'assassins-creed') {
+      <app-assassins-creed-design class="design-view" />
+    } @else if (selectedDesign() === 'fortnite') {
+      <app-fortnite-design class="design-view" />
+    } @else if (selectedDesign() === 'dark-souls') {
+      <app-dark-souls-design class="design-view" />
+    } @else if (selectedDesign() === 'no-mans-sky') {
+      <app-no-mans-sky-design class="design-view" />
+    } @else if (selectedDesign() === 'god-of-war') {
+      <app-god-of-war-design class="design-view" />
+    }
+
+    <!-- ── HUB ── -->
+    @else {
+      <div class="hub">
+
+        <!-- ═══ TOP HUD ═══ -->
+        <div class="top-hud">
+          <span class="hud-item">
+            <span class="hud-lbl">GAME CENTER</span>
+          </span>
+          <span class="hud-sep"></span>
+          <span class="hud-item">
+            <span class="hud-lbl">SYSTEM ONLINE</span>
+            <span class="hud-dot"></span>
+          </span>
+          <span class="hud-sep"></span>
+          <span class="hud-item">
+            <span class="hud-lbl">SESSION</span>
+            <span class="hud-val hud-active">ACTIVE</span>
+          </span>
+          <span class="hud-sep"></span>
+          <span class="hud-item">
+            <span class="hud-lbl">FPS</span>
+            <span class="hud-val">{{ session.fps() }}</span>
+          </span>
+          <span class="hud-sep"></span>
+          <span class="hud-item">
+            <span class="hud-lbl">ENGINE</span>
+            <span class="hud-val hud-active">ONLINE</span>
+          </span>
+        </div>
+
+        <!-- ═══ CENTER SVG HUD ═══ -->
+        <div class="hub-center">
+          <svg class="hud-svg" viewBox="0 0 400 400" [class.rotating]="bootComplete()">
+            <defs>
+              <filter id="hudGlow">
+                <feGaussianBlur stdDeviation="3" result="blur"/>
+                <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+              </filter>
+            </defs>
+
+            <!-- Outer ring -->
+            <circle cx="200" cy="200" r="190" stroke="rgba(0,243,255,0.04)" fill="none" stroke-width="1"/>
+
+            <!-- Dash ring -->
+            <circle cx="200" cy="200" r="178" stroke="rgba(0,243,255,0.025)" fill="none"
+              stroke-width="0.5" stroke-dasharray="4 10" class="ring-slow"/>
+
+            <!-- Mid ring -->
+            <circle cx="200" cy="200" r="135" stroke="rgba(0,243,255,0.03)" fill="none" stroke-width="0.5"/>
+            <circle cx="200" cy="200" r="135" stroke="rgba(0,243,255,0.015)" fill="none"
+              stroke-width="0.5" stroke-dasharray="2 6" class="ring-reverse"/>
+
+            <!-- Inner ring -->
+            <circle cx="200" cy="200" r="88" stroke="rgba(0,243,255,0.02)" fill="none" stroke-width="0.5"/>
+
+            <!-- Radial marks (every 30°) -->
+            @for (a of [0,30,60,90,120,150,180,210,240,270,300,330]; track a) {
+              <line x1="200" y1="12" x2="200" y2="28" stroke="rgba(0,243,255,0.04)" stroke-width="1"
+                [attr.transform]="'rotate(' + a + ' 200 200)'"/>
+            }
+
+            <!-- Tick marks (every 15°) -->
+            @for (a of [15,45,75,105,135,165,195,225,255,285,315,345]; track a) {
+              <line x1="200" y1="16" x2="200" y2="24" stroke="rgba(0,243,255,0.02)" stroke-width="0.5"
+                [attr.transform]="'rotate(' + a + ' 200 200)'"/>
+            }
+
+            <!-- Center glow circle -->
+            <circle cx="200" cy="200" r="50" fill="rgba(0,243,255,0.008)" filter="url(#hudGlow)"/>
+
+            <!-- Crosshair -->
+            <line x1="170" y1="200" x2="230" y2="200" stroke="rgba(0,243,255,0.015)" stroke-width="0.5"/>
+            <line x1="200" y1="170" x2="200" y2="230" stroke="rgba(0,243,255,0.015)" stroke-width="0.5"/>
+            <circle cx="200" cy="200" r="4" fill="rgba(0,243,255,0.04)"/>
+
+            <!-- Corner brackets -->
+            <path d="M 12 12 L 34 12 L 34 16" fill="none" stroke="rgba(0,243,255,0.04)" stroke-width="1"/>
+            <path d="M 388 12 L 366 12 L 366 16" fill="none" stroke="rgba(0,243,255,0.04)" stroke-width="1"/>
+            <path d="M 12 388 L 34 388 L 34 384" fill="none" stroke="rgba(0,243,255,0.04)" stroke-width="1"/>
+            <path d="M 388 388 L 366 388 L 366 384" fill="none" stroke="rgba(0,243,255,0.04)" stroke-width="1"/>
+          </svg>
+
+          <!-- Timer overlay -->
+          <div class="timer-overlay">
+            <div class="timer-label">GAME SESSION</div>
+            <div class="timer-value">{{ session.formattedElapsed() }}</div>
+            <div class="timer-status">SESSION ACTIVE</div>
           </div>
         </div>
-      }
+
+        <!-- ═══ BOTTOM STATUS ═══ -->
+        <div class="bottom-status">
+          <span>WORLDS {{ session.totalWorlds }}</span>
+          <span class="bs-sep"></span>
+          <span>VIZ {{ session.totalWorlds }}</span>
+          <span class="bs-sep"></span>
+          <span>SESSION {{ session.formattedElapsed() }}</span>
+          <span class="bs-sep"></span>
+          <span>ENGINE <span class="bs-online">ONLINE</span></span>
+        </div>
+
+      </div>
     }
+
   </main>
+
 </div>

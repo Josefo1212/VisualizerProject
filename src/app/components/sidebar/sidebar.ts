@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, signal } from '@angular/core';
+import { Component, input, Output, EventEmitter, signal } from '@angular/core';
 import { HoverRevealComponent } from '../HoverReveal/HoverReveal';
 
 @Component({
@@ -9,8 +9,9 @@ import { HoverRevealComponent } from '../HoverReveal/HoverReveal';
   styleUrl: './Sidebar.css',
 })
 export class SidebarComponent {
-  @Input() inactive = false;
-  @Input() selectedDesign = '';
+  readonly inactive = input(false);
+  readonly sessionActive = input(false);
+  readonly selectedDesign = input('');
   @Output() designChange = new EventEmitter<string>();
 
   readonly collapsed = signal<boolean>(false);
@@ -28,13 +29,13 @@ export class SidebarComponent {
     { id: 'god-of-war', icon: '🪓', name: 'God of War', cover: '/GodOfWar/botonGodOfWar.jpg', svgIcon: '/GodOfWar/iconGodOfWar.png' },
   ];
 
-  toggle(): void {
-    if (this.inactive) return;
+  toggleCollapse(): void {
+    if (this.inactive()) return;
     this.collapsed.update(v => !v);
   }
 
   selectDesign(id: string): void {
-    if (this.inactive) return;
+    if (this.inactive() || !this.sessionActive()) return;
     this.designChange.emit(id);
   }
 }
