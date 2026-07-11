@@ -1,0 +1,56 @@
+<div class="panel-telemetria">
+
+  <!-- ─── SYSTEM MONITOR ─── -->
+  <div class="sub-panel">
+    <div class="sp-title">SYSTEM MONITOR</div>
+    <div class="monitor-body">
+      <div class="mon-row">
+        <span class="mon-label">RENDER</span>
+        <div class="mon-track">
+          <div class="mon-fill" [style.width.%]="renderLoad()" style="background:#30d158"></div>
+        </div>
+        <span class="mon-val">{{ renderLoad() }}%</span>
+      </div>
+      <div class="mon-row">
+        <span class="mon-label">SIGNALS</span>
+        <div class="mon-track">
+          <div class="mon-fill" [style.width.%]="signalLoad()" style="background:#00f3ff"></div>
+        </div>
+        <span class="mon-val">{{ signalLoad() }}%</span>
+      </div>
+      <div class="mon-row">
+        <span class="mon-label">ENGINE</span>
+        <div class="mon-track">
+          <div class="mon-fill" [style.width.%]="engineLoad()" style="background:#ff9f0a"></div>
+        </div>
+        <span class="mon-val">{{ engineLoad() }}%</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── SESSION LOG ─── -->
+  <div class="sub-panel log-panel">
+    <div class="sp-title">SESSION LOG</div>
+    <div class="log-body">
+      <div class="log-scroll">
+        @for (entry of logEntries(); track entry.time + entry.msg) {
+          <div class="log-line">
+            <span class="log-ts">[{{ entry.time }}]</span>
+            <span class="log-msg">{{ entry.msg }}</span>
+          </div>
+        }
+      </div>
+      <div class="log-cursor"></div>
+    </div>
+  </div>
+
+  <!-- ─── SESSION UPTIME ─── -->
+  <div class="sub-panel uptime-panel">
+    <div class="sp-title">SESSION UPTIME</div>
+    <div class="uptime-body">
+      <span class="uptime-val">{{ uptime() }}</span>
+      <span class="uptime-unit">mm:ss</span>
+    </div>
+  </div>
+
+</div>

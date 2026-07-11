@@ -1,0 +1,377 @@
+:host {
+  display: block;
+  height: 100%;
+}
+
+.spotlight {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--accent, #00f3ff);
+}
+
+/* ═══════ COMMON TRANSITION ═══════ */
+.sp-world,
+.sp-default {
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+
+.sp-world.transitioning,
+.sp-default.transitioning {
+  opacity: 0;
+  transform: translateY(6px);
+}
+
+/* ═══════ WORLD PREVIEW ═══════ */
+.sp-world {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+  max-width: 420px;
+  text-align: center;
+}
+
+.sp-icon {
+  width: 76px;
+  height: 76px;
+  margin-bottom: 16px;
+}
+
+.sp-name {
+  font-family: 'Cinzel', serif;
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: 4px;
+  color: var(--accent, #00f3ff);
+  margin-bottom: 8px;
+  line-height: 1.2;
+}
+
+.sp-tagline {
+  font-family: 'Courier New', monospace;
+  font-size: 13px;
+  letter-spacing: 0.5px;
+  color: rgba(200, 200, 220, 0.75);
+  margin-bottom: 16px;
+  font-style: italic;
+}
+
+.sp-meta {
+  display: flex;
+  gap: 20px;
+  font-family: 'Courier New', monospace;
+  font-size: 10px;
+  letter-spacing: 2px;
+  color: rgba(200, 200, 220, 0.6);
+  margin-bottom: 20px;
+  text-transform: uppercase;
+}
+
+.sp-status-val {
+  color: rgba(48, 209, 88, 0.8);
+}
+
+.sp-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.sp-enter {
+  font-family: 'Courier New', monospace;
+  font-size: 11px;
+  letter-spacing: 4px;
+  color: rgba(0, 243, 255, 0.75);
+  background: transparent;
+  border: 1px solid rgba(0, 243, 255, 0.3);
+  padding: 10px 28px;
+  cursor: pointer;
+  transition: color 0.25s ease, border-color 0.25s ease, transform 0.25s ease;
+}
+
+.sp-enter:hover {
+  color: rgba(0, 243, 255, 0.8);
+  border-color: rgba(0, 243, 255, 0.3);
+  transform: translateX(3px);
+}
+
+/* ═══════ DEFAULT STATE ═══════ */
+.sp-default {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 40px 20px;
+  min-height: 220px;
+  width: 100%;
+}
+
+.sp-abstract {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 160px;
+  height: 160px;
+  pointer-events: none;
+  margin-bottom: 0;
+}
+
+.sp-title {
+  position: relative;
+  z-index: 1;
+  font-family: 'Cinzel', serif;
+  font-size: 30px;
+  font-weight: 900;
+  letter-spacing: 10px;
+  color: rgba(0, 243, 255, 0.65);
+  margin-bottom: 6px;
+}
+
+.sp-subtitle {
+  position: relative;
+  z-index: 1;
+  font-family: 'Courier New', monospace;
+  font-size: 13px;
+  letter-spacing: 3px;
+  color: rgba(200, 200, 220, 0.6);
+  margin-bottom: 14px;
+}
+
+.sp-hint {
+  position: relative;
+  z-index: 1;
+  font-family: 'Courier New', monospace;
+  font-size: 10px;
+  letter-spacing: 2px;
+  color: rgba(200, 200, 220, 0.5);
+}
+
+.sp-start-btn {
+  position: relative;
+  z-index: 1;
+  font-family: 'Courier New', monospace;
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: 6px;
+  color: rgba(0, 243, 255, 0.75);
+  background: transparent;
+  border: 1px solid rgba(0, 243, 255, 0.25);
+  padding: 12px 36px;
+  cursor: pointer;
+  transition: color 0.3s ease, border-color 0.3s ease, background 0.3s ease, transform 0.2s ease;
+  outline: none;
+  margin-top: 4px;
+}
+
+.sp-start-btn:hover {
+  color: rgba(0, 243, 255, 0.85);
+  border-color: rgba(0, 243, 255, 0.3);
+  background: rgba(0, 243, 255, 0.04);
+}
+
+.sp-start-btn:active {
+  transform: scale(0.97);
+}
+
+/* ═══════ SVG ANIMATIONS ═══════ */
+
+/* GTA — window pulse + star twinkle */
+.sp-gta-win {
+  animation: gtaWinPulse 3s ease-in-out infinite;
+}
+.sp-gta-star {
+  animation: gtaStarTwinkle 4s ease-in-out infinite;
+}
+@keyframes gtaWinPulse {
+  0%, 100% { opacity: 0.15; }
+  50% { opacity: 0.35; }
+}
+@keyframes gtaStarTwinkle {
+  0%, 100% { opacity: 0.06; }
+  50% { opacity: 0.15; }
+}
+
+/* Among Us — gentle float */
+.sp-amongus-float {
+  animation: amongusFloat 4s ease-in-out infinite;
+}
+@keyframes amongusFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
+}
+
+/* Subnautica — bubble rise */
+.sp-sub-bubble {
+  animation: subBubble 3s ease-in-out infinite;
+}
+@keyframes subBubble {
+  0% { transform: translateY(0); opacity: 0.15; }
+  50% { transform: translateY(-8px); opacity: 0.25; }
+  100% { transform: translateY(0); opacity: 0.15; }
+}
+
+/* Fallout — slow rotation */
+.sp-fallout-rotate {
+  animation: falloutSpin 20s linear infinite;
+  transform-origin: center;
+}
+@keyframes falloutSpin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Cyberpunk — glitch segments */
+.sp-cp-glitch {
+  animation: cpGlitch 0.15s ease-in-out 3;
+  opacity: 0.08;
+}
+.sp-world:not(.transitioning) .sp-cp-glitch {
+  animation: cpGlitch 0.15s ease-in-out 3, cpGlitch 0.15s ease-in-out 3 8s;
+}
+@keyframes cpGlitch {
+  0%, 100% { opacity: 0.08; }
+  50% { opacity: 0; }
+}
+
+/* AC — wing sway */
+.sp-ac-wing {
+  animation: acWingSway 3s ease-in-out infinite;
+  transform-origin: center;
+}
+@keyframes acWingSway {
+  0%, 100% { transform: rotate(0deg); }
+  50% { transform: rotate(3deg); }
+}
+
+/* Fortnite — pulse + spark */
+.sp-fortnite-pulse {
+  animation: fnPulse 4s ease-in-out infinite;
+}
+@keyframes fnPulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.03); }
+}
+.sp-fn-spark {
+  animation: fnSpark 1.5s ease-in-out infinite;
+}
+@keyframes fnSpark {
+  0%, 100% { opacity: 0.15; }
+  50% { opacity: 0.3; }
+}
+
+/* Dark Souls — ember flicker */
+.sp-ds-ember {
+  animation: dsEmber 2s ease-in-out infinite;
+}
+@keyframes dsEmber {
+  0%, 100% { opacity: 0.2; transform: scale(1); }
+  30% { opacity: 0.35; transform: scale(1.3); }
+  60% { opacity: 0.1; transform: scale(0.8); }
+}
+
+/* No Man's Sky — slow rotation + orbit */
+.sp-nms-rotate {
+  animation: nmsSpin 30s linear infinite;
+  transform-origin: center;
+}
+@keyframes nmsSpin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+.sp-nms-orbit {
+  animation: nmsOrbit 6s ease-in-out infinite;
+}
+@keyframes nmsOrbit {
+  0%, 100% { opacity: 0.12; transform: scale(1); }
+  50% { opacity: 0.28; transform: scale(1.2); }
+}
+
+/* God of War — rune glow */
+.sp-gow-rune {
+  animation: gowRuneGlow 3s ease-in-out infinite;
+}
+@keyframes gowRuneGlow {
+  0%, 100% { opacity: 0.2; }
+  50% { opacity: 0.45; }
+}
+
+/* ═══════ CORE ENGINE SVG ANIMATIONS ═══════ */
+/* Inactive (default) — slower, dimmer */
+.sp-core-ring-outer {
+  animation: coreRingOuter 30s linear infinite;
+  transform-origin: center;
+}
+.sp-core-ring-inner {
+  animation: coreRingInner 20s linear infinite reverse;
+  transform-origin: center;
+}
+.sp-core-orbit-1 {
+  animation: coreOrbit1 16s linear infinite;
+  transform-origin: 90px 90px;
+}
+.sp-core-orbit-2 {
+  animation: coreOrbit2 10s linear infinite;
+  transform-origin: 90px 90px;
+}
+.sp-core-pulse {
+  animation: corePulse 3s ease-in-out infinite;
+}
+.sp-core-pulse-inner {
+  animation: corePulseInner 2s ease-in-out infinite;
+}
+
+@keyframes coreRingOuter {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+@keyframes coreRingInner {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+@keyframes coreOrbit1 {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+@keyframes coreOrbit2 {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+@keyframes corePulse {
+  0%, 100% { opacity: 0.1; }
+  50% { opacity: 0.22; }
+}
+@keyframes corePulseInner {
+  0%, 100% { opacity: 0.25; }
+  50% { opacity: 0.5; }
+}
+
+/* Active (session on) — faster, brighter */
+.sp-default.session-active .sp-core-ring-outer {
+  animation-duration: 14s;
+  opacity: 0.15;
+}
+.sp-default.session-active .sp-core-ring-inner {
+  animation-duration: 10s;
+  opacity: 0.12;
+}
+.sp-default.session-active .sp-core-orbit-1 {
+  animation-duration: 8s;
+}
+.sp-default.session-active .sp-core-orbit-1 line {
+  opacity: 0.2;
+}
+.sp-default.session-active .sp-core-orbit-2 {
+  animation-duration: 5s;
+}
+.sp-default.session-active .sp-core-orbit-2 line {
+  opacity: 0.12;
+}
+.sp-default.session-active .sp-core-pulse {
+  animation-duration: 1.5s;
+}
+.sp-default.session-active .sp-core-pulse-inner {
+  animation-duration: 1s;
+}

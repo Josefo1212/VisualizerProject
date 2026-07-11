@@ -1,6 +1,8 @@
-import { Component, inject, signal, computed } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { SidebarComponent } from '../Sidebar/Sidebar';
 import { PowerScreenComponent } from '../PowerScreen/PowerScreen';
+import { SpotlightComponent } from '../Spotlight/Spotlight';
+import { PanelTelemetriaComponent } from '../PanelTelemetria/PanelTelemetria';
 import { GtaDesignComponent } from '../GtaDesign/GtaDesign';
 import { AmongUsDesignComponent } from '../AmongUsDesign/AmongUsDesign';
 import { SubnauticaDesignComponent } from '../SubnauticaDesign/SubnauticaDesign';
@@ -13,24 +15,12 @@ import { NoMansSkyDesignComponent } from '../NoMansSkyDesign/NoMansSkyDesign';
 import { GodOfWarDesignComponent } from '../GodOfWarDesign/GodOfWarDesign';
 import { SessionService } from '../../services/session';
 
-const WORLD_NAMES: Record<string, string> = {
-  'gta': 'Grand Theft Auto',
-  'amongus': 'Among Us',
-  'subnautica': 'Subnautica',
-  'fallout': 'Fallout',
-  'cyberpunk': 'Cyberpunk 2077',
-  'assassins-creed': "Assassin's Creed",
-  'fortnite': 'Fortnite',
-  'dark-souls': 'Dark Souls',
-  'no-mans-sky': "No Man's Sky",
-  'god-of-war': 'God of War',
-};
-
 @Component({
   selector: 'app-dashboard',
   standalone: true,
   imports: [
     SidebarComponent, PowerScreenComponent,
+    SpotlightComponent, PanelTelemetriaComponent,
     GtaDesignComponent, AmongUsDesignComponent, SubnauticaDesignComponent,
     FalloutDesignComponent, CyberpunkDesignComponent, AssassinsCreedDesignComponent,
     FortniteDesignComponent, DarkSoulsDesignComponent, NoMansSkyDesignComponent,
@@ -44,6 +34,7 @@ export class DashboardComponent {
 
   readonly isSystemOnline = signal(false);
   readonly selectedDesign = signal<string>('');
+  readonly hoveredWorld = signal<string | null>(null);
 
   readonly particles = Array.from({ length: 12 }, (_, i) => ({
     id: i,
@@ -54,11 +45,6 @@ export class DashboardComponent {
     delay: (i % 6) * 2.5,
     duration: 20 + (i % 3) * 6,
   }));
-
-  readonly currentWorldName = computed(() => {
-    const id = this.selectedDesign();
-    return id ? WORLD_NAMES[id] ?? id : 'Dashboard';
-  });
 
   onPowerOnFinished(): void {
     this.isSystemOnline.set(true);
@@ -73,6 +59,24 @@ export class DashboardComponent {
     if (this.session.sessionActive()) {
       this.session.setCurrentWorld(id);
     }
+  }
+
+  onHoverChange(id: string | null): void {
+    if (this.session.sessionActive()) {
+      this.hoveredWorld.set(id);
+    }
+  }
+
+  onEnterWorld(id: string): void {
+    this.selectedDesign.set(id);
+    if (this.session.sessionActive()) {
+      this.session.setCurrentWorld(id);
+    }
+  }
+
+  onBackToHub(): void {
+    this.selectedDesign.set('');
+    this.hoveredWorld.set(null);
   }
 
   onVideoTimeUpdate(video: HTMLVideoElement): void {

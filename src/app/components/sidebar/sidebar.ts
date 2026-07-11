@@ -13,6 +13,7 @@ export class SidebarComponent {
   readonly sessionActive = input(false);
   readonly selectedDesign = input('');
   @Output() designChange = new EventEmitter<string>();
+  @Output() hoverChange = new EventEmitter<string | null>();
 
   readonly collapsed = signal<boolean>(false);
 

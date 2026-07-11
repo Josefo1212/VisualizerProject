@@ -31,6 +31,7 @@
     [sessionActive]="session.sessionActive()"
     [selectedDesign]="selectedDesign()"
     (designChange)="onDesignChange($event)"
+    (hoverChange)="onHoverChange($any($event))"
   />
 
   <!-- ═══ MAIN CONTENT ═══ -->
@@ -57,11 +58,7 @@
         </span>
         <span class="sb-sep"></span>
         <span class="sb-item">ENGINE <span class="sb-val sb-online">ONLINE</span></span>
-        <span class="sb-sep"></span>
-        <span class="sb-item">ANGULAR <span class="sb-val">21</span></span>
-        <span class="sb-sep"></span>
         <span class="sb-item">FPS <span class="sb-val">{{ session.fps() }}</span></span>
-        <span class="sb-sep"></span>
         <span class="sb-item">WORLDS <span class="sb-val">10</span></span>
         <span class="sb-sep"></span>
         <span class="sb-item">RENDER <span class="sb-val sb-online">READY</span></span>
@@ -93,49 +90,22 @@
         }
 
         @else {
-          <!-- ═══ HUB ═══ -->
-          <div class="hub">
-            <div class="hero">
-              <div class="hero-title">GAME CENTER</div>
-              <div class="hero-sub">Interactive Time Visualization Platform</div>
+          <!-- ═══ HUB LAYOUT ═══ -->
+          <div class="hub-layout">
+            <div class="hub-center">
+              <app-spotlight
+                [worldId]="hoveredWorld()"
+                [sessionActive]="session.sessionActive()"
+                (enterWorld)="onEnterWorld($event)"
+                (startSession)="onStartSession()"
+              />
+              <div class="scanline-sweep"></div>
             </div>
 
-            <div class="info-panel">
-              <div class="info-title">PROJECT STATUS</div>
-              <div class="info-grid">
-                <div class="info-row">
-                  <span class="info-l">Worlds Loaded</span>
-                  <span class="info-v">10 / 10</span>
-                </div>
-                <div class="info-row">
-                  <span class="info-l">Visualization Engines</span>
-                  <span class="info-v">10</span>
-                </div>
-                <div class="info-row">
-                  <span class="info-l">Rendering</span>
-                  <span class="info-v info-online">ACTIVE</span>
-                </div>
-                <div class="info-row">
-                  <span class="info-l">Theme</span>
-                  <span class="info-v">CYBER UI</span>
-                </div>
-                <div class="info-row">
-                  <span class="info-l">System</span>
-                  <span class="info-v info-online">ONLINE</span>
-                </div>
-              </div>
-            </div>
-
-            @if (!session.sessionActive()) {
-              <button class="start-btn" (click)="onStartSession()">
-                START GAME SESSION
-              </button>
-            } @else {
-              <div class="session-active">
-                <span class="sa-dot"></span>
-                SESSION ACTIVE — Select a world from the sidebar
-              </div>
-            }
+            <app-panel-telemetria
+              [sessionActive]="session.sessionActive()"
+              [elapsedSeconds]="session.elapsedSeconds()"
+            />
           </div>
         }
 

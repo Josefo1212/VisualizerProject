@@ -29,6 +29,8 @@
           [class.ds-btn]="d.id === 'dark-souls'"
           [style.--i]="i"
           (click)="selectDesign(d.id)"
+          (mouseenter)="sessionActive() ? hoverChange.emit(d.id) : null"
+          (mouseleave)="sessionActive() ? hoverChange.emit(null) : null"
           [coverImage]="d.cover ?? ''"
           [disabled]="inactive() || collapsed()"
         >

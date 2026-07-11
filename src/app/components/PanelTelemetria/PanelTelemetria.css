@@ -1,0 +1,160 @@
+:host {
+  display: block;
+  width: 200px;
+  flex-shrink: 0;
+}
+
+.panel-telemetria {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  height: 100%;
+  padding: 8px;
+  border-left: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+/* ═══════ SUB-PANEL COMMON ═══════ */
+.sub-panel {
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  background: rgba(0, 0, 0, 0.15);
+  border-radius: 4px;
+}
+
+.sp-title {
+  font-family: 'Courier New', monospace;
+  font-size: 10px;
+  letter-spacing: 3px;
+  color: rgba(200, 200, 220, 0.55);
+  padding: 8px 12px 5px;
+  text-transform: uppercase;
+}
+
+/* ═══════ MONITOR ═══════ */
+.monitor-body {
+  padding: 2px 10px 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.mon-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.mon-label {
+  font-family: 'Courier New', monospace;
+  font-size: 10px;
+  letter-spacing: 1.5px;
+  color: rgba(200, 200, 220, 0.6);
+  width: 46px;
+  flex-shrink: 0;
+  text-transform: uppercase;
+}
+
+.mon-track {
+  flex: 1;
+  height: 3px;
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.mon-fill {
+  height: 100%;
+  border-radius: 2px;
+  transition: width 0.8s ease;
+}
+
+.mon-val {
+  font-family: 'Courier New', monospace;
+  font-size: 10px;
+  color: rgba(200, 200, 220, 0.7);
+  width: 30px;
+  text-align: right;
+  flex-shrink: 0;
+}
+
+/* ═══════ SESSION LOG ═══════ */
+.log-panel {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.log-body {
+  flex: 1;
+  padding: 2px 10px 8px;
+  display: flex;
+  align-items: flex-end;
+  gap: 2px;
+  min-height: 0;
+}
+
+.log-scroll {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  scrollbar-width: none;
+}
+
+.log-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+.log-line {
+  font-family: 'Courier New', monospace;
+  font-size: 10px;
+  line-height: 1.5;
+  white-space: nowrap;
+}
+
+.log-ts {
+  color: rgba(0, 243, 255, 0.5);
+  margin-right: 5px;
+}
+
+.log-msg {
+  color: rgba(200, 200, 220, 0.5);
+  letter-spacing: 0.3px;
+}
+
+.log-cursor {
+  width: 6px;
+  height: 9px;
+  background: rgba(0, 243, 255, 0.55);
+  flex-shrink: 0;
+  animation: blinkCursor 1.2s step-end infinite;
+}
+
+@keyframes blinkCursor {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+/* ═══════ UPTIME ═══════ */
+.uptime-body {
+  padding: 6px 10px 10px;
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+
+.uptime-val {
+  font-family: 'Courier New', monospace;
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: 4px;
+  color: rgba(48, 209, 88, 0.6);
+}
+
+.uptime-unit {
+  font-family: 'Courier New', monospace;
+  font-size: 10px;
+  letter-spacing: 1.5px;
+  color: rgba(200, 200, 220, 0.45);
+}
