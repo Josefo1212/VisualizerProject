@@ -65,10 +65,10 @@
       <input
         type="range"
         class="slider-input"
-        min="-4320"
-        max="14400"
-        step="1"
-        [value]="totalTime()"
+        min="0"
+        max="24"
+        step="0.1"
+        [value]="timeEngine.hours$() + timeEngine.minutes$() / 60"
         [style.--fill.%]="sliderPercentage()"
         (input)="onTimeChange($event)"
       />

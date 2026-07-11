@@ -20,13 +20,13 @@ export class FortniteDesignComponent {
   readonly time = inject(TimeEngineService);
 
   readonly sliderValue = computed(() => {
-    const hour = this.time.currentHour$();
-    return Math.max(0, Math.min(100, (hour / 24) * 100));
+    return this.time.currentHour$() + this.time.minutes$() / 60;
   });
   readonly isDragging = signal(false);
 
-  readonly matchProgress = computed(() => this.sliderValue());
-  readonly isCritical = computed(() => this.matchProgress() >= 100);
+  readonly matchProgress = computed(() => (this.sliderValue() / 24) * 100);
+
+  readonly isCritical = computed(() => this.sliderValue() >= 24);
 
   readonly shieldPercent = computed(() => {
     const h = this.time.hours$();
@@ -111,7 +111,7 @@ export class FortniteDesignComponent {
 
   onSliderChange(v: any): void {
     const val = typeof v === 'string' ? parseFloat(v) : v;
-    this.time.setHora((val / 100) * 24);
+    this.time.setHora(val);
   }
 
   onDragStart(): void {

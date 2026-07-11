@@ -453,10 +453,10 @@ export class GodOfWarDesignComponent {
   }));
 
   /* ─── Slider ─── */
-  readonly sliderValue = computed(() => this.cycleHour() * 60 + this.minute());
+  readonly sliderValue = computed(() => this.cycleHour() + this.minute() / 60);
 
-  onSliderChange(m: number): void {
-    this.time.setHora(m / 60);
+  onSliderChange(h: number): void {
+    this.time.setHora(h);
   }
 
   onResetTime(): void {

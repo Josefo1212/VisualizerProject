@@ -75,11 +75,11 @@ export class AssassinsCreedDesignComponent implements OnDestroy {
 
   readonly syncIndex = computed(() => {
     const v = this.sliderValue();
-    return (70 + v * 0.28).toFixed(1);
+    return (70 + (v / 24) * 28).toFixed(1);
   });
 
   readonly syncSegments = computed<SyncSegment[]>(() => {
-    const rawIndex = 70 + this.sliderValue() * 0.28;
+    const rawIndex = 70 + (this.sliderValue() / 24) * 28;
     const total = 10;
     const activeCount = Math.round((rawIndex / 100) * total);
     const dragging = this.isDragging();
@@ -89,7 +89,7 @@ export class AssassinsCreedDesignComponent implements OnDestroy {
     }));
   });
 
-  readonly mappedHours = computed(() => (this.sliderValue() / 100) * 240);
+  readonly mappedHours = computed(() => this.sliderValue());
 
   constructor() {
     this.syncFromTime();
@@ -101,14 +101,13 @@ export class AssassinsCreedDesignComponent implements OnDestroy {
   }
 
   private syncFromTime(): void {
-    const h = this.time.hours$();
-    const pct = Math.max(0, Math.min(100, (h / 240) * 100));
-    this.sliderValue.set(pct);
+    const h = this.time.hours$() + this.time.minutes$() / 60;
+    this.sliderValue.set(Math.max(0, Math.min(24, h)));
   }
 
   onSliderChange(v: number): void {
     this.sliderValue.set(v);
-    this.time.setHora((v / 100) * 240);
+    this.time.setHora(v);
   }
 
   onDragStart(): void {

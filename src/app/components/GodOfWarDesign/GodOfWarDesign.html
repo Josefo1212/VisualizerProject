@@ -364,7 +364,7 @@
   <!-- ═══════ SLIDER ═══════ -->
   <div class="gow-slider-bar">
     <span class="sl-label">00:00</span>
-    <input type="range" min="0" max="1440" step="1"
+    <input type="range" min="0" max="24" step="0.1"
       [ngModel]="sliderValue()" (ngModelChange)="onSliderChange($event)"
       class="gow-slider" />
     <span class="sl-label">24:00</span>

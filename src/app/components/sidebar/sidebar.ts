@@ -38,4 +38,8 @@ export class SidebarComponent {
     if (this.inactive() || !this.sessionActive()) return;
     this.designChange.emit(id);
   }
+
+  goToDashboard(): void {
+    this.designChange.emit('');
+  }
 }

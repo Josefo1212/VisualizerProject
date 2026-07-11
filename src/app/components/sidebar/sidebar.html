@@ -14,6 +14,13 @@
 
   <div class="sidebar-divider"></div>
 
+  @if (selectedDesign()) {
+    <div class="back-item" (click)="goToDashboard()">
+      <span class="back-icon">←</span>
+      <span class="back-label">DASHBOARD</span>
+    </div>
+  }
+
   <div class="design-list">
     @for (d of designs; track d.id; let i = $index) {
       <app-hover-reveal

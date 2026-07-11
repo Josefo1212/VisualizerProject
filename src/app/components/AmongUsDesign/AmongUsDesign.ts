@@ -104,7 +104,7 @@ export class AmongUsDesignComponent implements OnInit, OnDestroy {
 
   onTimeChange(event: Event): void {
     const value = (event.target as HTMLInputElement).value;
-    this.timeEngine.setHora(Number(value) / 60);
+    this.timeEngine.setHora(Number(value));
   }
 
   onResetTime(): void {
