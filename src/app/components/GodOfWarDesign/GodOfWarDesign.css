@@ -18,7 +18,7 @@
   transition: background 0.8s ease;
 }
 
-/* ═══════ PHASE ATMOSPHERE ── CSS overlay ═══════ */
+/* ═══════ PHASE ATMOSPHERE ═══════ */
 .phase-atmo {
   position: absolute;
   inset: 0;
@@ -39,7 +39,7 @@
   background: linear-gradient(180deg, rgba(20,30,70,0.22) 0%, rgba(10,20,40,0.08) 50%, transparent 80%);
 }
 
-/* ═══════ FOG LAYERS ── CSS animation ═══════ */
+/* ═══════ FOG ═══════ */
 .fog-layer {
   position: absolute;
   inset: 0;
@@ -78,7 +78,7 @@
   50% { transform: translateX(2%) scaleX(1.04); }
 }
 
-/* ═══════ AMBIENT PARTICLES ── CSS animation ═══════ */
+/* ═══════ AMBIENT PARTICLES ═══════ */
 .ambient-particle {
   position: absolute;
   z-index: 2;
@@ -204,10 +204,19 @@
   50% { filter: drop-shadow(0 0 12px rgba(200,224,255,0.08)); }
 }
 
+/* ─── Second pulse ─── */
+.second-pulse {
+  animation: sec-pulse 0.5s ease-in-out infinite;
+}
+@keyframes sec-pulse {
+  0%, 100% { filter: drop-shadow(0 0 2px rgba(200,224,255,0.15)); }
+  50% { filter: drop-shadow(0 0 6px rgba(200,224,255,0.3)); }
+}
+
 /* ─── Wolf sprites ─── */
 .wolf-sprite {
   position: absolute;
-  z-index: 4;
+  z-index: 5;
   width: 72px;
   height: auto;
   pointer-events: none;
@@ -219,138 +228,134 @@
   filter: drop-shadow(0 0 6px rgba(180,200,220,0.06));
 }
 
-/* ─── Altar ─── */
-.altar-wrap {
+/* ─── Wolf trail particles ─── */
+.trail-particle {
   position: absolute;
   z-index: 4;
-  bottom: 8%;
-  left: 50%;
-  transform: translateX(-50%);
-  display: flex;
-  align-items: center;
-  justify-content: center;
   pointer-events: none;
+  border-radius: 50%;
+  will-change: transform, opacity;
 }
-.altar-img {
-  max-height: 150px;
-  width: auto;
-  object-fit: contain;
-  opacity: 0.8;
-  filter: brightness(0.65) contrast(1.1);
-  transition: filter 1s ease;
+.trail-warm {
+  background: radial-gradient(circle, rgba(255,200,80,0.4), rgba(255,160,40,0.1));
+  animation: trail-spark 1.2s ease-in-out infinite;
 }
-.phase-night .altar-img {
-  filter: brightness(0.48) contrast(1.15) hue-rotate(5deg);
+.trail-cold {
+  background: radial-gradient(circle, rgba(200,224,255,0.3), rgba(160,200,240,0.08));
+  animation: trail-mist 1.6s ease-in-out infinite;
 }
-.altar-svg {
-  position: absolute;
-  width: 130px;
-  height: 130px;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  pointer-events: none;
-  transition: opacity 0.8s ease;
+@keyframes trail-spark {
+  0%, 100% { transform: scale(1) translateY(0); opacity: 0.06; }
+  50% { transform: scale(1.6) translateY(-2px); opacity: 0.12; }
+}
+@keyframes trail-mist {
+  0%, 100% { transform: scale(1) translateX(0); opacity: 0.04; }
+  50% { transform: scale(1.4) translateX(2px); opacity: 0.08; }
 }
 
-/* ─── Altar second marks ─── */
-.altar-mark {
-  transition: opacity 0.15s ease;
-}
-.altar-mark-cur {
-  animation: pulse-mark 1s ease-in-out infinite;
-}
-@keyframes pulse-mark {
-  0%, 100% { filter: drop-shadow(0 0 3px rgba(200,224,255,0.2)); }
-  50% { filter: drop-shadow(0 0 10px rgba(200,224,255,0.4)); }
-}
-
-/* ═══════ BOTTOM HUD PANEL ═══════ */
+/* ═══════ RUNIC TIME ANALYSIS PANEL ═══════ */
 .gow-bottom {
   flex-shrink: 0;
-  display: flex;
-  padding: 8px 16px;
-  gap: 3px;
+  z-index: 20;
   background: rgba(0,0,0,0.55);
   border-top: 1px solid rgba(180,200,220,0.04);
-  z-index: 20;
-  min-height: 64px;
 }
-.bp-mod {
-  flex: 1;
+.rune-panel {
+  display: flex;
+  flex-direction: column;
+  padding: 6px 18px;
+  gap: 4px;
+}
+.rp-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid rgba(180,200,220,0.04);
+  padding-bottom: 3px;
+}
+.rp-brand {
+  font-size: 9px;
+  letter-spacing: 3px;
+  color: rgba(180,200,220,0.18);
+  font-weight: 700;
+}
+.rp-phase {
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+.rp-phase-day { color: rgba(255,200,120,0.3); }
+.rp-phase-night { color: rgba(160,190,240,0.3); }
+.rp-phase-dawn { color: rgba(220,180,160,0.3); }
+.rp-phase-dusk { color: rgba(220,160,120,0.3); }
+
+.rp-body {
+  display: flex;
+  align-items: flex-start;
+  gap: 24px;
+  padding: 0 8px;
+}
+.rp-col {
   display: flex;
   flex-direction: column;
   gap: 2px;
-  padding: 5px 12px;
-  border: 1px solid rgba(180,200,220,0.03);
-  background: rgba(180,200,220,0.008);
+  min-width: 240px;
 }
-.bp-title {
-  font-size: 8px;
-  letter-spacing: 2.5px;
-  color: rgba(180,200,220,0.15);
-  font-weight: 700;
-  text-transform: uppercase;
+.rp-col-condensed {
+  min-width: 180px;
 }
-.bp-div {
-  height: 1px;
-  background: linear-gradient(90deg, rgba(180,200,220,0.06), transparent);
-  margin: 1px 0 2px 0;
+.rp-sep {
+  width: 1px;
+  height: 44px;
+  background: rgba(180,200,220,0.04);
+  margin-top: 2px;
+  flex-shrink: 0;
 }
-.bp-row {
+.rp-stat {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  width: 100%;
+  gap: 6px;
 }
-.bp-right .bp-row {
-  flex-direction: row-reverse;
+.rp-l {
+  font-size: 9px;
+  letter-spacing: 1px;
+  color: rgba(180,200,220,0.2);
+  text-transform: uppercase;
+  white-space: nowrap;
 }
-.bp-l {
-  font-size: 8px;
-  letter-spacing: 0.8px;
-  color: rgba(180,200,220,0.15);
+.rp-v {
+  font-size: 11px;
+  font-weight: 700;
+  color: rgba(180,200,220,0.4);
+  letter-spacing: 0.5px;
+  font-variant-numeric: tabular-nums;
+}
+.rp-tiny {
+  font-size: 10px;
+}
+.rp-cycle {
   text-transform: uppercase;
 }
-.bp-v {
-  font-size: 9px;
-  font-weight: 700;
-  color: rgba(180,200,220,0.35);
-  letter-spacing: 0.3px;
+.rp-trans {
+  text-transform: uppercase;
 }
-.bp-v-phase { color: rgba(180,200,220,0.3); }
-.bp-lore {
+.rp-lore {
   font-size: 8px;
   font-style: italic;
-  color: rgba(180,200,220,0.08);
-  letter-spacing: 0.3px;
-  margin-top: 1px;
-  white-space: nowrap;
+  color: rgba(180,200,220,0.06);
+  letter-spacing: 0.4px;
+  padding-top: 3px;
+  border-top: 1px solid rgba(180,200,220,0.02);
+  text-align: center;
+  transition: opacity 0.6s ease;
   overflow: hidden;
+  white-space: nowrap;
   text-overflow: ellipsis;
 }
-.bp-time {
-  font-size: 20px;
-  font-weight: 900;
-  color: rgba(180,200,220,0.4);
-  letter-spacing: 2.5px;
-  font-variant-numeric: tabular-nums;
-  line-height: 1;
-  text-shadow: 0 0 10px rgba(180,200,220,0.04);
-}
-.bp-date {
-  font-size: 8px;
-  letter-spacing: 1.2px;
-  color: rgba(180,200,220,0.12);
-  margin-top: 1px;
-}
-.bp-right { align-items: flex-end; }
-.bp-center { align-items: center; text-align: center; }
-.bp-center .bp-row { justify-content: center; gap: 8px; }
-.bp-center .bp-l { text-align: right; }
-.bp-center .bp-v { text-align: left; }
 
-/* ═══════ SLIDER ── responsive absolute positions ═══════ */
+/* ═══════ SLIDER ═══════ */
 .gow-slider-bar {
   flex-shrink: 0;
   display: flex;

@@ -12,13 +12,23 @@ interface ArcMark {
   ity: number;
   otx: number;
   oty: number;
-  eox: number;
-  eoy: number;
 }
 
 interface RuneMark {
   index: number;
+  itx: number; ity: number;
+  otx: number; oty: number;
+  rtx: number; rty: number;
+  rune: string;
+  isMajor: boolean;
+}
+
+interface TrailParticle {
   angle: number;
+  x: number;
+  y: number;
+  size: number;
+  opacity: number;
 }
 
 interface Particle {
@@ -37,16 +47,21 @@ function seededMod(i: number, base: number, offset: number): number {
 
 /* ─── Arc geometry ─── */
 const ARC_CX = 600;
-const ARC_CY = 360;
-const ARC_R = 280;
-const ARC_R_INNER = 272;
-const ARC_R_OUTER = 288;
+const ARC_CY = 340;
+const ARC_R = 270;
 
-/* ─── Altar geometry ─── */
-const ALTAR_CX = 600;
-const ALTAR_CY = 490;
-const ALTAR_R_SEC = 72;
-const ALTAR_R_STARS = 58;
+/* ─── Clock geometry (same center as arc, drawn on top) ─── */
+const CLOCK_CX = 600;
+const CLOCK_CY = 440;
+const CLOCK_R_HOURS = 220;
+const CLOCK_R_MINS = 188;
+const CLOCK_R_SECS = 162;
+
+const RUNES_24 = [
+  'ᚠ','ᚢ','ᚦ','ᚨ','ᚱ','ᚲ','ᚷ','ᚹ',
+  'ᚺ','ᚾ','ᛁ','ᛃ','ᛇ','ᛈ','ᛉ','ᛋ',
+  'ᛏ','ᛒ','ᛖ','ᛗ','ᛚ','ᛝ','ᛞ','ᛟ',
+];
 
 @Component({
   selector: 'app-god-of-war-design',
@@ -57,14 +72,13 @@ const ALTAR_R_STARS = 58;
 })
 export class GodOfWarDesignComponent {
   readonly time = inject(TimeEngineService);
+  readonly destroyRef = inject(DestroyRef);
 
-  readonly ARC_CX = ARC_CX;
-  readonly ARC_CY = ARC_CY;
-  readonly ARC_R = ARC_R;
-  readonly ARC_R_INNER = ARC_R_INNER;
-  readonly ARC_R_OUTER = ARC_R_OUTER;
-  readonly ALTAR_R_SEC = ALTAR_R_SEC;
-  readonly ALTAR_R_STARS = ALTAR_R_STARS;
+  readonly CLOCK_CX = CLOCK_CX;
+  readonly CLOCK_CY = CLOCK_CY;
+  readonly CLOCK_R_HOURS = CLOCK_R_HOURS;
+  readonly CLOCK_R_MINS = CLOCK_R_MINS;
+  readonly CLOCK_R_SECS = CLOCK_R_SECS;
 
   /* ─── Time ─── */
   readonly cycleHour = computed(() => ((this.time.hours$() % 24) + 24) % 24);
@@ -100,20 +114,12 @@ export class GodOfWarDesignComponent {
   });
 
   readonly worldPhaseLabel = computed(() => {
-    const p = this.worldPhase();
-    switch (p) {
+    switch (this.worldPhase()) {
       case 'dawn': return 'Dawn';
       case 'day': return 'Day';
       case 'dusk': return 'Dusk';
       case 'night': return 'Night';
     }
-  });
-
-  readonly celestialHuntState = computed(() => {
-    const p = this.worldPhase();
-    if (p === 'dawn' || p === 'dusk') return 'TRANSITION';
-    if (p === 'day') return 'ACTIVE';
-    return 'DORMANT';
   });
 
   readonly activeHunter = computed(() => {
@@ -126,40 +132,81 @@ export class GodOfWarDesignComponent {
     return p === 'day' || p === 'dawn' ? 'Sun' : 'Moon';
   });
 
-  readonly loreText = computed(() => {
-    const p = this.worldPhase();
-    switch (p) {
-      case 'dawn': return 'Sköll stirs as dawn breaks over Midgard…';
-      case 'day': return 'Sköll hunts the sun across the frozen heavens.';
-      case 'dusk': return 'Hati emerges as the light fades beyond the peaks.';
-      case 'night': return 'Hati shadows the moon through the endless dark.';
-    }
-  });
-
-  /* ─── Celestial arc (24 marks) ─── */
+  /* ─── Arc marks (24 positions on 180° semicircle) ─── */
   readonly arcMarks: ArcMark[] = Array.from({ length: 24 }, (_, i) => {
     const a = -180 + (i / 24) * 180;
     const r = (a * Math.PI) / 180;
     const c = Math.cos(r), s = Math.sin(r);
     const isMajor = i % 3 === 0;
-    const tickIn = 6;
-    const tickOut = isMajor ? 14 : 8;
     return {
       index: i,
       angle: a,
       x: ARC_CX + ARC_R * c,
       y: ARC_CY + ARC_R * s,
       isMajor,
-      itx: ARC_CX + (ARC_R - tickIn) * c,
-      ity: ARC_CY + (ARC_R - tickIn) * s,
-      otx: ARC_CX + (ARC_R + tickOut) * c,
-      oty: ARC_CY + (ARC_R + tickOut) * s,
-      eox: ARC_CX + (ARC_R + tickOut + 5) * c,
-      eoy: ARC_CY + (ARC_R + tickOut + 5) * s,
+      itx: ARC_CX + (ARC_R - 6) * c,
+      ity: ARC_CY + (ARC_R - 6) * s,
+      otx: ARC_CX + (ARC_R + (isMajor ? 14 : 8)) * c,
+      oty: ARC_CY + (ARC_R + (isMajor ? 14 : 8)) * s,
     };
   });
 
-  /* ─── Sun (day) ─── */
+  /* ─── Clock hour marks (24 full circle) ─── */
+  readonly clockMarks: RuneMark[] = Array.from({ length: 24 }, (_, i) => {
+    const a = i * 15 - 90;
+    const r = (a * Math.PI) / 180;
+    const c = Math.cos(r), s = Math.sin(r);
+    const isMajor = i % 3 === 0;
+    return {
+      index: i,
+      itx: CLOCK_CX + (CLOCK_R_HOURS - 8) * c,
+      ity: CLOCK_CY + (CLOCK_R_HOURS - 8) * s,
+      otx: CLOCK_CX + (CLOCK_R_HOURS + 4) * c,
+      oty: CLOCK_CY + (CLOCK_R_HOURS + 4) * s,
+      rtx: CLOCK_CX + (CLOCK_R_HOURS + 16) * c,
+      rty: CLOCK_CY + (CLOCK_R_HOURS + 16) * s,
+      rune: RUNES_24[i],
+      isMajor,
+    };
+  });
+
+  /* ─── Minute marks (60) ─── */
+  readonly minuteMarks: { index: number; itx: number; ity: number; otx: number; oty: number }[] =
+    Array.from({ length: 60 }, (_, i) => {
+      const a = i * 6 - 90;
+      const r = (a * Math.PI) / 180;
+      const c = Math.cos(r), s = Math.sin(r);
+      return {
+        index: i,
+        itx: CLOCK_CX + (CLOCK_R_MINS - 4) * c,
+        ity: CLOCK_CY + (CLOCK_R_MINS - 4) * s,
+        otx: CLOCK_CX + (CLOCK_R_MINS + 3) * c,
+        oty: CLOCK_CY + (CLOCK_R_MINS + 3) * s,
+      };
+    });
+
+  /* ─── Second marks (60) ─── */
+  readonly secondMarks: { index: number; itx: number; ity: number; otx: number; oty: number }[] =
+    Array.from({ length: 60 }, (_, i) => {
+      const a = i * 6 - 90;
+      const r = (a * Math.PI) / 180;
+      const c = Math.cos(r), s = Math.sin(r);
+      return {
+        index: i,
+        itx: CLOCK_CX + (CLOCK_R_SECS - 3) * c,
+        ity: CLOCK_CY + (CLOCK_R_SECS - 3) * s,
+        otx: CLOCK_CX + (CLOCK_R_SECS + 2) * c,
+        oty: CLOCK_CY + (CLOCK_R_SECS + 2) * s,
+      };
+    });
+
+  /* ─── Hour hand ─── */
+  readonly clockHourAngle = computed(() => this.cycleHour() * 15 + this.minute() * 0.25 - 90);
+  readonly clockHourRad = computed(() => (this.clockHourAngle() * Math.PI) / 180);
+  readonly clockHandX = computed(() => CLOCK_CX + (CLOCK_R_HOURS - 22) * Math.cos(this.clockHourRad()));
+  readonly clockHandY = computed(() => CLOCK_CY + (CLOCK_R_HOURS - 22) * Math.sin(this.clockHourRad()));
+
+  /* ─── Sun ─── */
   readonly sunAngle = computed(() => -180 + (((this.fractionalHour() - 6 + 24) % 24) / 12) * 180);
   readonly sunRad = computed(() => (this.sunAngle() * Math.PI) / 180);
   readonly sunPos = computed(() => ({
@@ -174,7 +221,7 @@ export class GodOfWarDesignComponent {
     return 0.04;
   });
 
-  /* ─── Moon (night) ─── */
+  /* ─── Moon ─── */
   readonly moonAngle = computed(() => -180 + (((this.fractionalHour() - 18 + 24) % 24) / 12) * 180);
   readonly moonRad = computed(() => (this.moonAngle() * Math.PI) / 180);
   readonly moonPos = computed(() => ({
@@ -189,10 +236,10 @@ export class GodOfWarDesignComponent {
     return 0.04;
   });
 
-  /* ─── Wolves (trail astro by minute distance) ─── */
-  readonly wolfTrailDeg = computed(() => 26 * (1 - this.minute() / 59));
+  /* ─── Wolves (behind astro — subtract trail for left-to-right arc) ─── */
+  readonly wolfTrailDeg = computed(() => 10 + 16 * (1 - this.minute() / 59));
 
-  readonly skollAngle = computed(() => this.sunAngle() + this.wolfTrailDeg());
+  readonly skollAngle = computed(() => this.sunAngle() - this.wolfTrailDeg());
   readonly skollRad = computed(() => (this.skollAngle() * Math.PI) / 180);
   readonly skollPos = computed(() => ({
     x: ARC_CX + ARC_R * Math.cos(this.skollRad()),
@@ -200,7 +247,7 @@ export class GodOfWarDesignComponent {
   }));
   readonly skollOpacity = computed(() => Math.max(this.sunOpacity() * 0.85, 0.06));
 
-  readonly hatiAngle = computed(() => this.moonAngle() + this.wolfTrailDeg());
+  readonly hatiAngle = computed(() => this.moonAngle() - this.wolfTrailDeg());
   readonly hatiRad = computed(() => (this.hatiAngle() * Math.PI) / 180);
   readonly hatiPos = computed(() => ({
     x: ARC_CX + ARC_R * Math.cos(this.hatiRad()),
@@ -208,25 +255,85 @@ export class GodOfWarDesignComponent {
   }));
   readonly hatiOpacity = computed(() => Math.max(this.moonOpacity() * 0.85, 0.06));
 
+  /* ─── Wolf trail particles ─── */
+  readonly skollTrail = computed(() => {
+    const trail: TrailParticle[] = [];
+    const base = this.skollAngle();
+    for (let i = 0; i < 6; i++) {
+      const a = base - (i + 1) * 4;
+      const r = (a * Math.PI) / 180;
+      trail.push({
+        angle: a,
+        x: ARC_CX + ARC_R * Math.cos(r),
+        y: ARC_CY + ARC_R * Math.sin(r),
+        size: 2.5 + (5 - i) * 0.8,
+        opacity: 0.07 - i * 0.01,
+      });
+    }
+    return trail;
+  });
+
+  readonly hatiTrail = computed(() => {
+    const trail: TrailParticle[] = [];
+    const base = this.hatiAngle();
+    for (let i = 0; i < 6; i++) {
+      const a = base - (i + 1) * 4;
+      const r = (a * Math.PI) / 180;
+      trail.push({
+        angle: a,
+        x: ARC_CX + ARC_R * Math.cos(r),
+        y: ARC_CY + ARC_R * Math.sin(r),
+        size: 1.8 + (5 - i) * 0.6,
+        opacity: 0.05 - i * 0.007,
+      });
+    }
+    return trail;
+  });
+
   /* ─── Sprite frame cycling ─── */
   readonly skollFrame = signal(0);
   readonly hatiFrame = signal(0);
 
-  readonly destroyRef = inject(DestroyRef);
+  /* ─── Lore system ─── */
+  readonly allLore = [
+    'Sköll never stops his hunt.',
+    'Hati waits beyond the horizon.',
+    'The fate of the sun cannot be escaped.',
+    'Every cycle brings Ragnarök closer.',
+    'The wolves chase the eternal light.',
+    'When Sköll catches the sun, the world ends.',
+    'Hati shall devour the moon when Ragnarök comes.',
+    'The children of Fenrir shape the day and night.',
+    'Midgard rests between light and shadow.',
+    'The All-Father set the wolves upon their path.',
+    'Time flows like the rivers of Niflheim.',
+    'The runes remember all that has passed.',
+    'The Norns weave the threads of fate.',
+    'Yggdrasil watches over every cycle.',
+    'A new dawn breaks over the frozen peaks.',
+    'The giants stir beneath the mountains.',
+  ];
+
+  readonly currentLoreIndex = signal(0);
+  readonly currentLore = computed(() => this.allLore[this.currentLoreIndex()]);
 
   constructor() {
-    const id = setInterval(() => {
+    const frameId = setInterval(() => {
       this.skollFrame.update(f => (f + 1) % 16);
       this.hatiFrame.update(f => (f + 1) % 16);
     }, 80);
-    this.destroyRef.onDestroy(() => clearInterval(id));
+    this.destroyRef.onDestroy(() => clearInterval(frameId));
+
+    const loreId = setInterval(() => {
+      this.currentLoreIndex.update(i => (i + 1) % this.allLore.length);
+    }, 8000);
+    this.destroyRef.onDestroy(() => clearInterval(loreId));
   }
 
   /* ─── Wolf tangent rotation ─── */
   readonly skollRotation = computed(() => this.skollAngle() + 90);
   readonly hatiRotation = computed(() => this.hatiAngle() + 90);
 
-  /* ─── Wolf sprite positioning (percentage of scene) ─── */
   readonly skollSpriteStyle = computed(() => ({
     left: `${(this.skollPos().x / 1200) * 100}%`,
     top: `${(this.skollPos().y / 600) * 100}%`,
@@ -241,18 +348,31 @@ export class GodOfWarDesignComponent {
     opacity: this.hatiOpacity(),
   }));
 
-  /* ─── Day progress arc path (sunrise → current pos) ─── */
+  /* ─── Trail particle style helpers ─── */
+  trailStyle(t: TrailParticle, cx: number, cy: number): Record<string, string> {
+    return {
+      left: `${(t.x / 1200) * 100}%`,
+      top: `${(t.y / 600) * 100}%`,
+      width: `${t.size}px`,
+      height: `${t.size}px`,
+      opacity: String(t.opacity),
+    };
+  }
+
+  /* ─── Day/night arc paths ─── */
   readonly dayArcPath = computed(() => {
     const h = this.cycleHour();
     if (h < 6 || h > 18) return '';
     const p = this.sunPos();
     return `M ${ARC_CX - ARC_R} ${ARC_CY} A ${ARC_R} ${ARC_R} 0 0 0 ${p.x} ${p.y}`;
   });
+
   readonly dayArcColor = computed(() => {
-    const p = this.worldPhase();
-    if (p === 'dawn') return 'rgba(220,180,120,0.12)';
-    if (p === 'dusk') return 'rgba(200,140,80,0.10)';
-    return 'rgba(200,180,140,0.08)';
+    switch (this.worldPhase()) {
+      case 'dawn': return 'rgba(220,180,120,0.18)';
+      case 'dusk': return 'rgba(200,140,80,0.14)';
+      default: return 'rgba(200,180,140,0.10)';
+    }
   });
 
   readonly nightArcPath = computed(() => {
@@ -263,18 +383,62 @@ export class GodOfWarDesignComponent {
     }
     return '';
   });
-  readonly nightArcColor = 'rgba(160,180,220,0.06)';
+  readonly nightArcColor = 'rgba(160,180,220,0.08)';
 
-  /* ─── Altar second marks (60) ─── */
-  readonly secondMarks: RuneMark[] = Array.from({ length: 60 }, (_, i) => ({
-    index: i,
-    angle: (i / 60) * 360,
-  }));
+  /* ─── Clock dynamic glow ─── */
+  readonly clockGlow = computed(() => {
+    const h = this.cycleHour();
+    const isDay = h >= 6 && h < 18;
+    return {
+      color: isDay ? 'rgba(255,200,120,0.05)' : 'rgba(140,180,240,0.05)',
+      active: isDay ? 'rgba(255,200,120,0.08)' : 'rgba(140,180,240,0.08)',
+    };
+  });
 
-  readonly sweepPos = computed(() => {
-    const sweepAng = (this.second() / 60) * 360 - 90;
-    const sweepRad = (sweepAng * Math.PI) / 180;
-    return { x: 100 + 60 * Math.cos(sweepRad), y: 100 + 60 * Math.sin(sweepRad) };
+  readonly clockRuneColor = computed(() => {
+    const h = this.cycleHour();
+    if (h >= 6 && h < 18) return 'rgba(255,200,120,0.25)';
+    return 'rgba(160,190,240,0.25)';
+  });
+
+  /* ─── Runic Time Analysis ─── */
+  readonly hoursRemainingFormatted = computed(() => {
+    const h = this.cycleHour();
+    const target = h < 18 ? 18 : 30;
+    const totalMin = (target - h) * 60 + (59 - this.minute());
+    const rh = Math.floor(totalMin / 60);
+    const rm = Math.round(totalMin % 60);
+    return `${rh}h ${rm.toString().padStart(2, '0')}m`;
+  });
+
+  readonly sunPositionPercent = computed(() => {
+    const h = this.cycleHour();
+    if (h < 6) return 0;
+    if (h > 18) return 100;
+    return ((h - 6) / 12) * 100;
+  });
+
+  readonly wolfAngularSeparation = computed(() => this.wolfTrailDeg().toFixed(1));
+
+  readonly nextTransition = computed(() => {
+    const h = this.cycleHour();
+    if (h >= 5 && h < 6) return { label: 'Sunrise', type: 'dawn' };
+    if (h >= 6 && h < 7) return { label: 'Morning', type: 'day' };
+    if (h >= 7 && h < 12) return { label: 'Noon', type: 'day' };
+    if (h >= 12 && h < 17) return { label: 'Afternoon', type: 'day' };
+    if (h >= 17 && h < 18) return { label: 'Golden Hour', type: 'dusk' };
+    if (h >= 18 && h < 19) return { label: 'Sunset', type: 'dusk' };
+    if (h >= 19 && h < 20) return { label: 'Twilight', type: 'night' };
+    if (h >= 20 && h < 22) return { label: 'Nightfall', type: 'night' };
+    return { label: 'Dawn', type: 'dawn' };
+  });
+
+  readonly realmTimeFlow = computed(() => {
+    const m = this.minute();
+    if (m >= 55 || m < 5) return 'Accelerating';
+    if (m >= 45) return 'Flowing';
+    if (m >= 30) return 'Steady';
+    return 'Stable';
   });
 
   /* ─── Ambient particles ─── */
