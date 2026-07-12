@@ -1,5 +1,6 @@
 import { Component, computed, inject } from '@angular/core';
 import { TimeEngineService } from '../../services/timeEngine';
+import { SessionService } from '../../services/session';
 
 const CYCLE = (n: number) => ((n % 24) + 24) % 24;
 
@@ -49,6 +50,11 @@ const QUESTS = [
 })
 export class FalloutDesignComponent {
   readonly time = inject(TimeEngineService);
+  private readonly session = inject(SessionService);
+
+  constructor() {
+    this.session.addLog('FALLOUT WORLD INITIALIZED');
+  }
 
   readonly clockDisplay = computed(() => {
     const h = this.time.hours$().toString().padStart(2, '0');

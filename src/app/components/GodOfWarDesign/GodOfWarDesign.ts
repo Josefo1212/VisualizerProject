@@ -1,6 +1,7 @@
 import { Component, computed, inject, signal, DestroyRef } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TimeEngineService } from '../../services/timeEngine';
+import { SessionService } from '../../services/session';
 
 interface ArcMark {
   index: number;
@@ -73,6 +74,7 @@ const RUNES_24 = [
 export class GodOfWarDesignComponent {
   readonly time = inject(TimeEngineService);
   readonly destroyRef = inject(DestroyRef);
+  private readonly session = inject(SessionService);
 
   readonly CLOCK_CX = CLOCK_CX;
   readonly CLOCK_CY = CLOCK_CY;
@@ -318,6 +320,7 @@ export class GodOfWarDesignComponent {
   readonly currentLore = computed(() => this.allLore[this.currentLoreIndex()]);
 
   constructor() {
+    this.session.addLog('GOD OF WAR WORLD INITIALIZED');
     const frameId = setInterval(() => {
       this.skollFrame.update(f => (f + 1) % 16);
       this.hatiFrame.update(f => (f + 1) % 16);

@@ -1,6 +1,7 @@
 import { Component, computed, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TimeEngineService } from '../../services/timeEngine';
+import { SessionService } from '../../services/session';
 
 interface ArcHour {
   index: number;
@@ -51,6 +52,11 @@ function seededMod(i: number, base: number, offset: number): number {
 })
 export class DarkSoulsDesignComponent {
   readonly time = inject(TimeEngineService);
+  private readonly session = inject(SessionService);
+
+  constructor() {
+    this.session.addLog('DARK SOULS WORLD INITIALIZED');
+  }
 
   readonly sliderValue = computed(() => {
     const h = this.time.hours$();
@@ -62,11 +68,11 @@ export class DarkSoulsDesignComponent {
   readonly second = this.time.seconds$;
 
   readonly flameIntensity = computed(() => {
-    const m = this.minute();
-    return Math.max(0.2, m / 59);
+    const h = this.cycleHour();
+    return Math.pow(Math.min(h, 24) / 24, 1.8);
   });
 
-  readonly flameScale = computed(() => 0.8 + this.flameIntensity() * 1.4);
+  readonly flameScale = computed(() => 0.35 + this.flameIntensity() * 0.55);
 
   readonly worldPhase = computed(() => {
     const h = this.cycleHour();
@@ -216,9 +222,11 @@ export class DarkSoulsDesignComponent {
   /* ─── METHODS ─── */
   onSliderChange(h: number): void {
     this.time.setHora(h);
+    this.session.addLog(`TIME SET TO ${Math.round(h).toString().padStart(2, '0')}:00`);
   }
 
   onResetTime(): void {
     this.time.resetToRealTime();
+    this.session.addLog('TIME RESET TO REAL TIME');
   }
 }

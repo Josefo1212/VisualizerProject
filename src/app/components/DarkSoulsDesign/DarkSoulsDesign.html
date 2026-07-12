@@ -195,25 +195,77 @@
         <div class="bf-glow bf-glow-mid"></div>
         <div class="bf-glow bf-glow-inner"></div>
       </div>
-      <div class="bf-flames" [style.--bf-scale]="flameScale()">
-        <div class="bf-smoke s1"></div>
-        <div class="bf-smoke s2"></div>
-        <div class="bf-smoke s3"></div>
-        <div class="bf-flame bf-flame-outer"></div>
-        <div class="bf-flame bf-flame-mid"></div>
-        <div class="bf-flame bf-flame-inner"></div>
-        <div class="bf-flame bf-flame-core"></div>
-        <div class="bf-flame bf-flame-glow"></div>
-        <div class="bf-embers">
-          <span class="be be-1"></span>
-          <span class="be be-2"></span>
-          <span class="be be-3"></span>
-          <span class="be be-4"></span>
-          <span class="be be-5"></span>
-          <span class="be be-6"></span>
-          <span class="be be-7"></span>
-          <span class="be be-8"></span>
-        </div>
+      <div class="bf-flame-wrap" [style.--bf-scale]="flameScale()">
+        <svg class="bf-flame-svg" viewBox="0 0 180 260" preserveAspectRatio="xMidYMax meet" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <filter id="flame-soft">
+              <feGaussianBlur stdDeviation="2" result="b"/>
+              <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+            </filter>
+            <filter id="flame-glow-blur">
+              <feGaussianBlur stdDeviation="10" result="b"/>
+              <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+            </filter>
+            <filter id="flame-tip-blur">
+              <feGaussianBlur stdDeviation="3"/>
+            </filter>
+            <radialGradient id="g-glow" cx="50%" cy="100%" r="80%">
+              <stop offset="0%" stop-color="rgba(200,110,50,0.12)"/>
+              <stop offset="50%" stop-color="rgba(180,90,40,0.06)"/>
+              <stop offset="100%" stop-color="rgba(100,40,10,0)"/>
+            </radialGradient>
+            <linearGradient id="g-main" x1="0" y1="1" x2="0" y2="0">
+              <stop offset="0%" stop-color="rgba(255,180,80,0.55)"/>
+              <stop offset="30%" stop-color="rgba(240,140,50,0.4)"/>
+              <stop offset="60%" stop-color="rgba(200,90,35,0.18)"/>
+              <stop offset="100%" stop-color="rgba(180,70,25,0)"/>
+            </linearGradient>
+            <linearGradient id="g-side" x1="0" y1="1" x2="0" y2="0">
+              <stop offset="0%" stop-color="rgba(240,160,70,0.45)"/>
+              <stop offset="35%" stop-color="rgba(220,120,45,0.3)"/>
+              <stop offset="65%" stop-color="rgba(190,90,35,0.12)"/>
+              <stop offset="100%" stop-color="rgba(160,70,20,0)"/>
+            </linearGradient>
+            <linearGradient id="g-inner" x1="0" y1="1" x2="0" y2="0">
+              <stop offset="0%" stop-color="rgba(255,225,130,0.65)"/>
+              <stop offset="35%" stop-color="rgba(255,195,80,0.45)"/>
+              <stop offset="65%" stop-color="rgba(240,150,55,0.15)"/>
+              <stop offset="100%" stop-color="rgba(220,120,40,0)"/>
+            </linearGradient>
+            <linearGradient id="g-core" x1="0" y1="1" x2="0" y2="0">
+              <stop offset="0%" stop-color="rgba(255,250,235,0.9)"/>
+              <stop offset="25%" stop-color="rgba(255,240,200,0.7)"/>
+              <stop offset="50%" stop-color="rgba(255,215,150,0.3)"/>
+              <stop offset="100%" stop-color="rgba(240,180,100,0)"/>
+            </linearGradient>
+          </defs>
+          <!-- Glow envelope -->
+          <path class="fl fl-glow" d="M 2 250 C 2 200 12 170 20 145 C 28 120 36 95 46 75 C 54 58 62 42 68 30 C 72 22 76 16 80 12 C 84 10 86 10 90 10 C 94 10 96 10 100 12 C 104 16 108 22 112 30 C 118 42 126 58 134 75 C 144 95 152 120 160 145 C 168 170 178 200 178 250 Z" fill="url(#g-glow)" filter="url(#flame-glow-blur)"/>
+          <!-- Main flame body -->
+          <path class="fl fl-main" d="M 8 250 C 8 215 16 188 22 168 C 28 148 34 130 42 114 C 48 100 52 88 56 78 C 60 66 64 56 68 48 C 72 40 74 34 78 30 C 82 26 84 22 88 22 C 92 22 94 24 96 30 C 98 36 102 44 104 52 C 108 64 112 76 116 90 C 122 108 128 124 134 142 C 140 160 146 178 152 194 C 158 210 164 226 170 240 C 174 248 176 250 178 250 Z" fill="url(#g-main)" filter="url(#flame-soft)"/>
+          <!-- Left tongue -->
+          <path class="fl fl-left" d="M 10 250 C 12 230 18 208 24 186 C 30 164 36 144 42 126 C 46 114 50 102 54 92 C 58 80 62 70 66 60 C 68 54 72 48 74 42 C 76 38 78 34 80 32 C 82 30 84 28 86 30 C 88 34 90 40 92 48 C 94 58 98 70 102 82 C 106 96 110 110 114 124 C 118 138 124 152 130 168 C 136 184 142 200 148 216 C 152 228 156 240 160 250 Z" fill="url(#g-side)" filter="url(#flame-tip-blur)"/>
+          <!-- Right tongue -->
+          <path class="fl fl-right" d="M 160 250 C 162 232 166 214 170 196 C 174 178 178 160 178 142 C 178 126 176 112 174 98 C 172 84 168 72 164 62 C 160 52 156 44 152 38 C 148 32 144 28 142 26 C 140 24 138 22 136 24 C 134 28 132 34 130 42 C 128 52 124 64 120 78 C 116 94 112 110 108 126 C 104 142 102 158 100 174 C 98 190 98 206 100 220 C 102 234 104 246 106 250 Z" fill="url(#g-side)" filter="url(#flame-tip-blur)"/>
+          <!-- Central flicker -->
+          <path class="fl fl-flick" d="M 30 250 C 30 220 36 196 42 174 C 46 156 52 140 56 126 C 60 114 64 104 68 94 C 72 84 74 76 78 70 C 80 64 82 60 84 58 C 86 56 88 54 90 54 C 92 54 94 56 96 58 C 98 60 100 64 102 70 C 106 76 108 84 112 94 C 116 104 120 114 124 126 C 128 140 134 156 138 174 C 144 196 150 220 150 250 Z" fill="url(#g-inner)" filter="url(#flame-soft)"/>
+          <!-- Bright core -->
+          <path class="fl fl-core" d="M 52 250 C 52 232 58 216 62 200 C 66 186 70 172 74 160 C 76 152 78 144 82 138 C 84 132 86 128 88 126 C 90 124 90 124 92 126 C 94 128 96 132 98 138 C 102 144 104 152 106 160 C 110 172 114 186 118 200 C 122 216 128 232 128 250 Z" fill="url(#g-core)"/>
+        </svg>
+      </div>
+      <img class="bf-lena" src="/DarkSouls/leña.png" alt="" />
+      <div class="bf-smoke s1"></div>
+      <div class="bf-smoke s2"></div>
+      <div class="bf-smoke s3"></div>
+      <div class="bf-embers">
+        <span class="be be-1"></span>
+        <span class="be be-2"></span>
+        <span class="be be-3"></span>
+        <span class="be be-4"></span>
+        <span class="be be-5"></span>
+        <span class="be be-6"></span>
+        <span class="be be-7"></span>
+        <span class="be be-8"></span>
       </div>
     </div>
 

@@ -1,5 +1,6 @@
 import { Component, computed, inject } from '@angular/core';
-import { TimeEngineService } from '../../services/timeEngine'; // Ajusta la ruta si es necesario
+import { TimeEngineService } from '../../services/timeEngine';
+import { SessionService } from '../../services/session';
 
 const DAYS_SPANISH = ['DOMINGO', 'LUNES', 'MARTES', 'MIÉRCOLES', 'JUEVES', 'VIERNES', 'SÁBADO'];
 const MONTHS_SPANISH = ['ENERO', 'FEBRERO', 'MARZO', 'ABRIL', 'MAYO', 'JUNIO', 'JULIO', 'AGOSTO', 'SEPTIEMBRE', 'OCTUBRE', 'NOVIEMBRE', 'DICIEMBRE'];
@@ -13,6 +14,11 @@ const TASKS = ['Metal', 'Lithium', 'Titanium', 'Copper', 'Quartz', 'Gold'];
 })
 export class SubnauticaDesignComponent {
   readonly time = inject(TimeEngineService);
+  private readonly session = inject(SessionService);
+
+  constructor() {
+    this.session.addLog('SUBNAUTICA WORLD INITIALIZED');
+  }
 
   readonly currentSecond = this.time.seconds$;
 

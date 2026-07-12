@@ -1,6 +1,7 @@
 import { Component, computed, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TimeEngineService } from '../../services/timeEngine';
+import { SessionService } from '../../services/session';
 
 interface MatchLogEntry {
   killer: string;
@@ -18,6 +19,11 @@ interface MatchLogEntry {
 })
 export class FortniteDesignComponent {
   readonly time = inject(TimeEngineService);
+  private readonly session = inject(SessionService);
+
+  constructor() {
+    this.session.addLog('FORTNITE WORLD INITIALIZED');
+  }
 
   readonly sliderValue = computed(() => {
     return this.time.currentHour$() + this.time.minutes$() / 60;

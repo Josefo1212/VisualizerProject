@@ -1,5 +1,6 @@
 import { Component, computed, signal, OnInit, OnDestroy, inject } from '@angular/core';
 import { TimeEngineService } from '../../services/timeEngine';
+import { SessionService } from '../../services/session';
 import { Task, DayInfo, DAY_NAMES } from '../../interfaces/amongUs';
 
 @Component({
@@ -10,6 +11,7 @@ import { Task, DayInfo, DAY_NAMES } from '../../interfaces/amongUs';
 })
 export class AmongUsDesignComponent implements OnInit, OnDestroy {
   readonly timeEngine = inject(TimeEngineService);
+  private readonly session = inject(SessionService);
 
   readonly cycleMinutes = computed(() => {
     const ch = ((this.timeEngine.hours$() % 24) + 24) % 24;
@@ -93,6 +95,7 @@ export class AmongUsDesignComponent implements OnInit, OnDestroy {
   private frameInterval?: ReturnType<typeof setInterval>;
 
   ngOnInit(): void {
+    this.session.addLog('AMONG US WORLD INITIALIZED');
     this.frameInterval = setInterval(() => {
       this.currentFrameIndex.update(i => (i + 1) % 8);
     }, 80);

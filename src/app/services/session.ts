@@ -1,9 +1,28 @@
 import { Injectable, computed, signal, inject, DestroyRef } from '@angular/core';
 
+export interface LogEntry {
+  time: string;
+  msg: string;
+}
+
 @Injectable({ providedIn: 'root' })
 export class SessionService {
   private destroyRef = inject(DestroyRef);
   private timers: ReturnType<typeof setInterval>[] = [];
+
+  /* ─── Global log ─── */
+  readonly logEntries = signal<LogEntry[]>([]);
+
+  addLog(msg: string): void {
+    this.logEntries.update(entries => {
+      const next = [...entries, { time: this.now(), msg }];
+      return next.length > 50 ? next.slice(-50) : next;
+    });
+  }
+
+  private now(): string {
+    return new Date().toLocaleTimeString('en-US', { hour12: false });
+  }
 
   /* ─── Session state ─── */
   readonly sessionActive = signal(false);
@@ -59,11 +78,48 @@ export class SessionService {
     return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
   });
 
-  /* ─── FPS simulation ─── */
-  readonly fps = signal(60);
+  /* ─── Real FPS tracking ─── */
+  readonly fps = signal(0);
+  private frameTimes: number[] = [];
+  private rafId: number | null = null;
 
   constructor() {
-    this.destroyRef.onDestroy(() => this.clearAllTimers());
+    this.startFpsTracking();
+    this.addLog('SYSTEM BOOT SEQUENCE INITIATED');
+    this.addLog('KERNEL LOADED');
+    this.addLog('SIGNAL PROCESSOR ACTIVE');
+    this.addLog('RENDER ENGINE READY');
+    this.addLog('WORLDS SYNCHRONIZED');
+    this.destroyRef.onDestroy(() => {
+      this.stopFpsTracking();
+      this.clearAllTimers();
+    });
+  }
+
+  private startFpsTracking(): void {
+    if (typeof requestAnimationFrame === 'undefined') return;
+    const tick = (timestamp: number) => {
+      if (this.frameTimes.length >= 15) this.frameTimes.shift();
+      this.frameTimes.push(timestamp);
+      if (this.frameTimes.length > 1) {
+        let sum = 0;
+        for (let i = 1; i < this.frameTimes.length; i++) {
+          sum += this.frameTimes[i] - this.frameTimes[i - 1];
+        }
+        const avgDelta = sum / (this.frameTimes.length - 1);
+        this.fps.set(Math.round(1000 / avgDelta));
+      }
+      this.rafId = requestAnimationFrame(tick);
+    };
+    this.rafId = requestAnimationFrame(tick);
+  }
+
+  private stopFpsTracking(): void {
+    if (this.rafId !== null) {
+      cancelAnimationFrame(this.rafId);
+      this.rafId = null;
+    }
+    this.frameTimes = [];
   }
 
   /* ─── Session lifecycle ─── */
@@ -83,6 +139,9 @@ export class SessionService {
     this.initLine.set(0);
     this.initComplete.set(false);
 
+    this.addLog('SESSION STARTED');
+    this.addLog('TIME ENGINE LOCKED');
+    this.addLog('WORLD GRID ENABLED');
     this.runInitSequence();
   }
 
@@ -113,6 +172,8 @@ export class SessionService {
         s.add(worldId);
         return s;
       });
+      const label = worldId.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+      this.addLog(`WORLD LOADED: ${label}`);
     }
   }
 

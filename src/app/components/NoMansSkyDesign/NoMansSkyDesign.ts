@@ -1,6 +1,7 @@
 import { Component, computed, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TimeEngineService } from '../../services/timeEngine';
+import { SessionService } from '../../services/session';
 
 interface OrbitMark {
   index: number;
@@ -52,6 +53,11 @@ const ROMAN: Record<number, string> = {
 })
 export class NoMansSkyDesignComponent {
   readonly time = inject(TimeEngineService);
+  private readonly session = inject(SessionService);
+
+  constructor() {
+    this.session.addLog('NO MANS SKY WORLD INITIALIZED');
+  }
 
   readonly CX = CX;
   readonly CY = CY;

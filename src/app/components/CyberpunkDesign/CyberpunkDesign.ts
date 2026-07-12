@@ -1,6 +1,7 @@
 import { Component, computed, inject, signal, ChangeDetectionStrategy, OnDestroy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TimeEngineService } from '../../services/timeEngine';
+import { SessionService } from '../../services/session';
 
 @Component({
   selector: 'app-cyberpunk-design',
@@ -12,6 +13,7 @@ import { TimeEngineService } from '../../services/timeEngine';
 })
 export class CyberpunkDesignComponent implements OnDestroy {
   readonly time = inject(TimeEngineService);
+  private readonly session = inject(SessionService);
 
   private readonly _now = signal<Date>(new Date());
   private readonly _clockInterval: ReturnType<typeof setInterval>;
@@ -107,6 +109,7 @@ export class CyberpunkDesignComponent implements OnDestroy {
   }
 
   constructor() {
+    this.session.addLog('CYBERPUNK WORLD INITIALIZED');
     this.syncFromTime();
     this._clockInterval = setInterval(() => this._now.set(new Date()), 50);
   }

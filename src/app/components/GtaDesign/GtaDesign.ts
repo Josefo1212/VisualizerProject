@@ -1,6 +1,7 @@
 import { Component, inject, computed, Signal } from '@angular/core';
 import { TimeEngineService } from '../../services/timeEngine';
 import { SliderComponent } from '../Slider/Slider';
+import { SessionService } from '../../services/session';
 import { Rgb, SkyPt, SKY_PTS } from '../../interfaces/gta';
 
 const lerp = (a: number, b: number, t: number): number => a + (b - a) * t;
@@ -32,6 +33,11 @@ const findSegment = <T extends { h: number }>(pts: T[], h: number): [T, T, numbe
 })
 export class GtaDesignComponent {
   readonly time = inject(TimeEngineService);
+  private readonly session = inject(SessionService);
+
+  constructor() {
+    this.session.addLog('GTA WORLD INITIALIZED');
+  }
 
   readonly currentHour: Signal<number> = this.time.currentHour$;
 

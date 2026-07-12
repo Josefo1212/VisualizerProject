@@ -1,6 +1,7 @@
 import { Component, computed, inject, signal, ChangeDetectionStrategy, OnDestroy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TimeEngineService } from '../../services/timeEngine';
+import { SessionService } from '../../services/session';
 
 interface TimelineNode {
   id: number;
@@ -30,6 +31,7 @@ interface SyncSegment {
 })
 export class AssassinsCreedDesignComponent implements OnDestroy {
   readonly time = inject(TimeEngineService);
+  private readonly session = inject(SessionService);
 
   /* ─── High-precision clock ─── */
   private readonly _now = signal<Date>(new Date());
@@ -92,6 +94,7 @@ export class AssassinsCreedDesignComponent implements OnDestroy {
   readonly mappedHours = computed(() => this.sliderValue());
 
   constructor() {
+    this.session.addLog('ASSASSINS CREED WORLD INITIALIZED');
     this.syncFromTime();
     this._clockInterval = setInterval(() => this._now.set(new Date()), 50);
   }

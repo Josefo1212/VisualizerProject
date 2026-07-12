@@ -52,11 +52,14 @@ export class DashboardComponent {
 
   onStartSession(): void {
     this.session.startSession();
+    this.session.addLog('USER INITIATED SESSION');
   }
 
   onDesignChange(id: string): void {
     this.selectedDesign.set(id);
     if (this.session.sessionActive()) {
+      const label = id.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+      this.session.addLog(`SELECTED: ${label}`);
       this.session.setCurrentWorld(id);
     }
   }
@@ -70,6 +73,8 @@ export class DashboardComponent {
   onEnterWorld(id: string): void {
     this.selectedDesign.set(id);
     if (this.session.sessionActive()) {
+      const label = id.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+      this.session.addLog(`ENTERING WORLD: ${label}`);
       this.session.setCurrentWorld(id);
     }
   }
@@ -77,6 +82,9 @@ export class DashboardComponent {
   onBackToHub(): void {
     this.selectedDesign.set('');
     this.hoveredWorld.set(null);
+    if (this.session.sessionActive()) {
+      this.session.addLog('RETURNED TO HUB');
+    }
   }
 
   onVideoTimeUpdate(video: HTMLVideoElement): void {
