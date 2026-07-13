@@ -146,17 +146,7 @@
       <span class="travel-time">{{ mappedHours().toFixed(1) }}h</span>
       <button class="reset-btn" (click)="onResetTime()">REAL TIME</button>
     </div>
-    <input
-      type="range"
-      min="0"
-      max="24"
-      step="0.1"
-      [ngModel]="sliderValue()"
-      (ngModelChange)="onSliderChange($event)"
-      (pointerdown)="onDragStart()"
-      (pointerup)="onDragEnd()"
-      class="memory-slider"
-    />
+    <app-slider [value]="sliderValue()" [min]="0" [max]="24" [step]="0.1" (valueChange)="onSliderChange($event)" (dragStart)="onDragStart()" (dragEnd)="onDragEnd()"></app-slider>
     <div class="travel-marks">
       @for (mark of [0,25,50,75,100]; track mark) {
         <span>{{ mark }}%</span>

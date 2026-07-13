@@ -107,17 +107,7 @@
             <span class="slider-tick" [class.active]="time.hours$() >= t - 12 && time.hours$() < t + 12"></span>
           }
         </div>
-        <input
-          type="range"
-          class="slider-input"
-          min="0"
-          max="24"
-          step="0.1"
-          [ngModel]="sliderValue()"
-          (ngModelChange)="onSliderChange($event)"
-          (pointerdown)="onDragStart()"
-          (pointerup)="onDragEnd()"
-        />
+        <app-slider [value]="sliderValue()" [min]="0" [max]="24" [step]="0.1" (valueChange)="onSliderChange($event)" (dragStart)="onDragStart()" (dragEnd)="onDragEnd()"></app-slider>
       </div>
       <span class="slider-value">CHRONO: {{ hoursDisplay() }} &#9654;</span>
       <button class="reset-btn" (click)="onResetTime()">&#9654; REAL TIME</button>

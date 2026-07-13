@@ -1,7 +1,7 @@
 import { Component, computed, inject } from '@angular/core';
-import { FormsModule } from '@angular/forms';
 import { TimeEngineService } from '../../services/timeEngine';
 import { SessionService } from '../../services/session';
+import { SliderComponent } from '../Slider/Slider';
 
 interface OrbitMark {
   index: number;
@@ -47,7 +47,7 @@ const ROMAN: Record<number, string> = {
 @Component({
   selector: 'app-no-mans-sky-design',
   standalone: true,
-  imports: [FormsModule],
+  imports: [SliderComponent],
   templateUrl: './NoMansSkyDesign.html',
   styleUrl: './NoMansSkyDesign.css',
 })

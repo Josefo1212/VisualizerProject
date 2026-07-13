@@ -2,10 +2,12 @@ import { Component, computed, signal, OnInit, OnDestroy, inject } from '@angular
 import { TimeEngineService } from '../../services/timeEngine';
 import { SessionService } from '../../services/session';
 import { Task, DayInfo, DAY_NAMES } from '../../interfaces/amongUs';
+import { SliderComponent } from '../Slider/Slider';
 
 @Component({
   selector: 'app-among-us-design',
   standalone: true,
+  imports: [SliderComponent],
   templateUrl: './AmongUsDesign.html',
   styleUrl: './AmongUsDesign.css',
 })
@@ -105,9 +107,8 @@ export class AmongUsDesignComponent implements OnInit, OnDestroy {
     clearInterval(this.frameInterval);
   }
 
-  onTimeChange(event: Event): void {
-    const value = (event.target as HTMLInputElement).value;
-    this.timeEngine.setHora(Number(value));
+  onSliderChange(value: number): void {
+    this.timeEngine.setHora(value);
   }
 
   onResetTime(): void {

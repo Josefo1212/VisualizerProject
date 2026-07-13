@@ -1,7 +1,7 @@
 import { Component, computed, inject, signal, ChangeDetectionStrategy, OnDestroy } from '@angular/core';
-import { FormsModule } from '@angular/forms';
 import { TimeEngineService } from '../../services/timeEngine';
 import { SessionService } from '../../services/session';
+import { SliderComponent } from '../Slider/Slider';
 
 interface TimelineNode {
   id: number;
@@ -24,7 +24,7 @@ interface SyncSegment {
 @Component({
   selector: 'app-assassins-creed-design',
   standalone: true,
-  imports: [FormsModule],
+  imports: [SliderComponent],
   templateUrl: './AssassinsCreedDesign.html',
   styleUrl: './AssassinsCreedDesign.css',
   changeDetection: ChangeDetectionStrategy.OnPush,

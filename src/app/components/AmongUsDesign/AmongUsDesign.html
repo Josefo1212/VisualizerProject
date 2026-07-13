@@ -62,16 +62,9 @@
   <div class="row row-slider">
     <span class="slider-edge">-72h</span>
     <div class="slider-body">
-      <input
-        type="range"
-        class="slider-input"
-        min="0"
-        max="24"
-        step="0.1"
-        [value]="timeEngine.hours$() + timeEngine.minutes$() / 60"
-        [style.--fill.%]="sliderPercentage()"
-        (input)="onTimeChange($event)"
-      />
+      <div class="slider-wrapper">
+        <app-slider [value]="timeEngine.hours$() + timeEngine.minutes$() / 60" [min]="0" [max]="24" [step]="0.1" (valueChange)="onSliderChange($event)"></app-slider>
+      </div>
     </div>
     <span class="slider-edge">{{ totalDays() }}d {{ cycleMinutes() }}m</span>
     @if (timeEngine.manualMode$()) {

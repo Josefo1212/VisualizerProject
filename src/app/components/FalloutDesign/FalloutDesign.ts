@@ -1,6 +1,7 @@
 import { Component, computed, inject } from '@angular/core';
 import { TimeEngineService } from '../../services/timeEngine';
 import { SessionService } from '../../services/session';
+import { SliderComponent } from '../Slider/Slider';
 
 const CYCLE = (n: number) => ((n % 24) + 24) % 24;
 
@@ -45,6 +46,7 @@ const QUESTS = [
 @Component({
   selector: 'app-fallout-design',
   standalone: true,
+  imports: [SliderComponent],
   templateUrl: './FalloutDesign.html',
   styleUrls: ['./FalloutDesign.css']
 })
@@ -128,9 +130,8 @@ export class FalloutDesignComponent {
 
   readonly isRadCritical = computed(() => this.rawRad() > 120);
 
-  onApChange(event: Event): void {
-    const value = (event.target as HTMLInputElement).value;
-    this.time.setHora(Number(value));
+  onApChange(value: number): void {
+    this.time.setHora(value);
   }
 
   onResetTime(): void {

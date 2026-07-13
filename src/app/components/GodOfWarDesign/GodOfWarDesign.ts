@@ -1,7 +1,7 @@
 import { Component, computed, inject, signal, DestroyRef } from '@angular/core';
-import { FormsModule } from '@angular/forms';
 import { TimeEngineService } from '../../services/timeEngine';
 import { SessionService } from '../../services/session';
+import { SliderComponent } from '../Slider/Slider';
 
 interface ArcMark {
   index: number;
@@ -67,7 +67,7 @@ const RUNES_24 = [
 @Component({
   selector: 'app-god-of-war-design',
   standalone: true,
-  imports: [FormsModule],
+  imports: [SliderComponent],
   templateUrl: './GodOfWarDesign.html',
   styleUrl: './GodOfWarDesign.css',
 })

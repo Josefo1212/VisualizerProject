@@ -337,9 +337,7 @@
 
     <div class="deck-center">
       <span class="deck-label">00:00</span>
-      <input type="range" min="0" max="24" step="0.1"
-        [ngModel]="sliderValue()" (ngModelChange)="onSliderChange($event)"
-        class="nms-slider" />
+      <app-slider [value]="sliderValue()" [min]="0" [max]="24" [step]="0.1" (valueChange)="onSliderChange($event)"></app-slider>
       <span class="deck-label">24:00</span>
     </div>
 

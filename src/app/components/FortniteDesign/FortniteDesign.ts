@@ -1,7 +1,7 @@
 import { Component, computed, inject, signal, ChangeDetectionStrategy } from '@angular/core';
-import { FormsModule } from '@angular/forms';
 import { TimeEngineService } from '../../services/timeEngine';
 import { SessionService } from '../../services/session';
+import { SliderComponent } from '../Slider/Slider';
 
 interface MatchLogEntry {
   killer: string;
@@ -12,7 +12,7 @@ interface MatchLogEntry {
 @Component({
   selector: 'app-fortnite-design',
   standalone: true,
-  imports: [FormsModule],
+  imports: [SliderComponent],
   templateUrl: './FortniteDesign.html',
   styleUrl: './FortniteDesign.css',
   changeDetection: ChangeDetectionStrategy.OnPush,

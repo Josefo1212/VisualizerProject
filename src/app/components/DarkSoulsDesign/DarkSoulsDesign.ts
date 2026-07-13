@@ -1,7 +1,7 @@
 import { Component, computed, inject } from '@angular/core';
-import { FormsModule } from '@angular/forms';
 import { TimeEngineService } from '../../services/timeEngine';
 import { SessionService } from '../../services/session';
+import { SliderComponent } from '../Slider/Slider';
 
 interface ArcHour {
   index: number;
@@ -46,7 +46,7 @@ function seededMod(i: number, base: number, offset: number): number {
 @Component({
   selector: 'app-dark-souls-design',
   standalone: true,
-  imports: [FormsModule],
+  imports: [SliderComponent],
   templateUrl: './DarkSoulsDesign.html',
   styleUrl: './DarkSoulsDesign.css',
 })

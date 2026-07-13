@@ -487,56 +487,25 @@
   align-items: center;
 }
 
-.match-slider {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 100%;
-  height: 14px;
-  background: linear-gradient(90deg, #bf00ff 0%, #bf00ff var(--fill), #1a1e26 var(--fill), #1a1e26 100%);
-  border: 1px solid rgba(255,255,255,0.06);
-  outline: none;
-  cursor: pointer;
-  --fill: 0%;
-}
-
-.match-slider::-webkit-slider-runnable-track {
-  width: 100%;
-  height: 14px;
-  background: transparent;
-  border: none;
-}
-
-.match-slider::-moz-range-track {
-  width: 100%;
-  height: 14px;
-  background: transparent;
-  border: none;
-}
-
-.match-slider::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  width: 20px;
-  height: 20px;
-  background: #00b4ff;
-  border: 2px solid #fff;
-  box-shadow:
-    0 0 10px rgba(0,180,255,0.6),
-    0 0 24px rgba(0,180,255,0.2);
-  cursor: pointer;
-  transform: rotate(45deg);
-  margin-top: -3px;
-}
-
-.match-slider::-moz-range-thumb {
-  width: 20px;
-  height: 20px;
-  background: #00b4ff;
-  border: 2px solid #fff;
-  box-shadow:
-    0 0 10px rgba(0,180,255,0.6),
-    0 0 24px rgba(0,180,255,0.2);
-  cursor: pointer;
-  transform: rotate(45deg);
+app-slider {
+  --slider-track-color: rgba(255, 255, 255, 0.06);
+  --slider-fill-color: linear-gradient(90deg, #bf00ff, #00b4ff);
+  --slider-thumb-color: #00b4ff;
+  --slider-thumb-bg: #00b4ff;
+  --slider-thumb-size: 20px;
+  --slider-thumb-width: 20px;
+  --slider-thumb-height: 20px;
+  --slider-thumb-transform: translate(-50%, -50%) rotate(45deg);
+  --slider-thumb-border: 2px solid #fff;
+  --slider-thumb-shadow: 0 0 10px rgba(0, 180, 255, 0.6), 0 0 24px rgba(0, 180, 255, 0.2);
+  --slider-thumb-hover-transform: translate(-50%, -50%) rotate(45deg);
+  --slider-thumb-hover-border: 2px solid #fff;
+  --slider-thumb-active-transform: translate(-50%, -50%) rotate(45deg);
+  --slider-track-height: 12px;
+  --slider-track-border: 1px solid rgba(255, 255, 255, 0.06);
+  --slider-value-color: rgba(0, 180, 255, 0.85);
+  --slider-value-font: 'Barlow Condensed', 'Impact', 'Arial Black', sans-serif;
+  --slider-fill-radius: 0;
 }
 
 .slider-pct {

@@ -1,12 +1,12 @@
 import { Component, computed, inject, signal, ChangeDetectionStrategy, OnDestroy } from '@angular/core';
-import { FormsModule } from '@angular/forms';
 import { TimeEngineService } from '../../services/timeEngine';
 import { SessionService } from '../../services/session';
+import { SliderComponent } from '../Slider/Slider';
 
 @Component({
   selector: 'app-cyberpunk-design',
   standalone: true,
-  imports: [FormsModule],
+  imports: [SliderComponent],
   templateUrl: './CyberpunkDesign.html',
   styleUrl: './CyberpunkDesign.css',
   changeDetection: ChangeDetectionStrategy.OnPush,

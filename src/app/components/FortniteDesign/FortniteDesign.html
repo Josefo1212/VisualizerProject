@@ -132,18 +132,7 @@
         <span class="slider-label-right">TORMENTA FINAL</span>
       </div>
       <div class="slider-wrapper">
-        <input
-          type="range"
-          min="0"
-          max="24"
-          step="0.1"
-          [value]="sliderValue()"
-          (input)="onSliderChange($any($event.target).value)"
-          (pointerdown)="onDragStart()"
-          (pointerup)="onDragEnd()"
-          class="match-slider"
-          [style.--fill.%]="sliderValue()"
-        />
+        <app-slider [value]="sliderValue()" [min]="0" [max]="24" [step]="0.1" (valueChange)="onSliderChange($event)" (dragStart)="onDragStart()" (dragEnd)="onDragEnd()"></app-slider>
       </div>
       <div class="slider-pct">{{ sliderValue().toFixed(1) }}%</div>
       <button class="reset-btn" (click)="onResetTime()">REINICIAR</button>

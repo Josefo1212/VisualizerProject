@@ -1,4 +1,6 @@
-<div class="slider-container">
+<div class="slider-container"
+  [style.--slider-fill-color]="accent"
+  [style.--slider-track-color]="trackColor">
   <input
     type="range"
     class="slider-input"
@@ -7,6 +9,8 @@
     [step]="step"
     [value]="value"
     (input)="onInput($event)"
+    (pointerdown)="onDragStart()"
+    (pointerup)="onDragEnd()"
   />
 
   <div class="slider-visual" aria-hidden="true">
