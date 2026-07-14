@@ -19,12 +19,11 @@ export class CyberpunkDesignComponent implements OnDestroy {
   private readonly _clockInterval: ReturnType<typeof setInterval>;
 
   readonly clockMs = computed(() => {
-    const h = this.time.hours$();
+    const h = this.cycleHour();
     const m = this.time.minutes$();
     const s = this.time.seconds$();
     const ms = this._now().getMilliseconds().toString().padStart(3, '0');
-    const sign = h >= 0 ? '+' : '-';
-    return `${sign}${Math.abs(h).toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}.${ms}`;
+    return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}.${ms}`;
   });
 
   readonly cycleHour = computed(() => ((this.time.hours$() % 24) + 24) % 24);
@@ -91,7 +90,7 @@ export class CyberpunkDesignComponent implements OnDestroy {
     return `${h >= 0 ? '+' : ''}${h.toFixed(1)}h`;
   });
 
-  readonly sliderTicks = [-72, -48, -24, 0, 24, 48, 72, 96, 120, 144, 168, 192, 216, 240];
+  readonly sliderTicks = [0, 24, 48, 72, 96, 120, 144, 168, 192, 216, 240];
 
   readonly isDragging = signal(false);
 

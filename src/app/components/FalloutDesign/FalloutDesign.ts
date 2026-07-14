@@ -59,7 +59,7 @@ export class FalloutDesignComponent {
   }
 
   readonly clockDisplay = computed(() => {
-    const h = this.time.hours$().toString().padStart(2, '0');
+    const h = CYCLE(this.time.hours$()).toString().padStart(2, '0');
     const m = this.time.minutes$().toString().padStart(2, '0');
     const s = this.time.seconds$().toString().padStart(2, '0');
     return `${h}:${m}:${s}`;

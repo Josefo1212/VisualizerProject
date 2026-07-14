@@ -151,7 +151,7 @@
         <span class="ap-value">{{ apDisplay() }}</span>
         <button class="ap-reset" (click)="onResetTime()">🛠️ REPAIR V2</button>
       </div>
-      <app-slider class="ap-slider" [value]="time.hours$()" [min]="0" [max]="24" [step]="0.1" (valueChange)="onApChange($event)"></app-slider>
+      <app-slider class="ap-slider" [value]="time.hours$()" [min]="0" [max]="168" [step]="0.1" (valueChange)="onApChange($event)"></app-slider>
       <div class="ap-footer">
         <span class="ap-mode">[ MODE: SURVIVAL ]</span>
         <span class="ap-mode">{{ clockDisplay() }}</span>
