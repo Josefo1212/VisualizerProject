@@ -320,7 +320,7 @@ export class GodOfWarDesignComponent {
   readonly currentLore = computed(() => this.allLore[this.currentLoreIndex()]);
 
   constructor() {
-    this.session.addLog('GOD OF WAR WORLD INITIALIZED');
+    this.session.addLog('GOD OF WAR WORLD INITIALIZED', 'success');
     const frameId = setInterval(() => {
       this.skollFrame.update(f => (f + 1) % 16);
       this.hatiFrame.update(f => (f + 1) % 16);

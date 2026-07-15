@@ -56,7 +56,7 @@ export class NoMansSkyDesignComponent {
   private readonly session = inject(SessionService);
 
   constructor() {
-    this.session.addLog('NO MANS SKY WORLD INITIALIZED');
+    this.session.addLog('NO MANS SKY WORLD INITIALIZED', 'success');
   }
 
   readonly CX = CX;

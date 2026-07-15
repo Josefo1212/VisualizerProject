@@ -97,7 +97,7 @@ export class AmongUsDesignComponent implements OnInit, OnDestroy {
   private frameInterval?: ReturnType<typeof setInterval>;
 
   ngOnInit(): void {
-    this.session.addLog('AMONG US WORLD INITIALIZED');
+    this.session.addLog('AMONG US WORLD INITIALIZED', 'success');
     this.frameInterval = setInterval(() => {
       this.currentFrameIndex.update(i => (i + 1) % 8);
     }, 80);

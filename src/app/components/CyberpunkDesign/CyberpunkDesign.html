@@ -1,104 +1,355 @@
-<div class="hud-container">
+<div class="hud-container"
+     [class.glitch-active]="glitchActive()"
+     [class.micro-vibrate]="microGlitchType() === 'vibrate'"
+     [class.micro-flicker]="microGlitchType() === 'flicker'"
+     [class.micro-line]="microGlitchType() === 'line'">
+  <div class="noise-overlay"></div>
+  <div class="particles-layer"></div>
+  <div class="diagonal-lines"></div>
+
   <div class="hud-frame">
+    <!-- TOP BAR -->
     <div class="hud-topbar">
-      <span class="top-left">&#9650; RETINAL HUD v2.07 // KIPOSHI NET</span>
-      <span class="top-right">[ SYSTEM STATUS: {{ systemStatus() }} ]</span>
+      <span class="top-left">&#9650; KIROSHI OPTICS HUD v3.11 // NEURAL INTERFACE</span>
+      <span class="top-center">[ {{ systemStatus() }} ]</span>
+      <span class="top-right">{{ utcOffset() }} // LAT: {{ latency() }}ms</span>
     </div>
 
-    <div class="hud-grid">
-      <div class="hud-col col-stats">
-        <div class="col-header">[ VITAL STATS ]</div>
+    <!-- MAIN 3-COLUMN CONTENT -->
+    <div class="hud-main">
 
-        <div class="stat-section">
-          <div class="stat-label">HP</div>
-          <div class="stat-bar">
-            <div class="bar-track">
-              <div class="bar-fill hp-fill" [style.width.%]="hpPercent()"></div>
-            </div>
-            <span class="stat-value">{{ hpPercent() }}%</span>
+      <!-- LEFT COLUMN -->
+      <div class="hud-col col-left">
+
+        <!-- Neural Map -->
+        <div class="panel neural-panel">
+          <div class="panel-header">[ NEURAL MAP ] <span class="header-extra">v.2.31 // ACTIVE</span></div>
+          <svg class="neural-svg" viewBox="0 0 100 95">
+            <path class="brain-outline" d="M50,38 C32,20 12,28 12,48 C12,65 28,78 50,75 C72,78 88,65 88,48 C88,28 68,20 50,38 Z" />
+            <path class="brain-outline brain-inner" d="M50,42 C38,30 22,36 22,50 C22,62 36,72 50,70 C64,72 78,62 78,50 C78,36 62,30 50,42 Z" />
+            @for (conn of neuralConnections; track $index) {
+              <line [attr.x1]="neuralNodes[conn[0]].x" [attr.y1]="neuralNodes[conn[0]].y"
+                    [attr.x2]="neuralNodes[conn[1]].x" [attr.y2]="neuralNodes[conn[1]].y"
+                    class="neural-line" [class.pulsed]="$index % 4 === (neuralPulsePhase() % 4)"
+                    [class.dashed]="$index > 30" />
+            }
+            @for (node of neuralNodes; track $index) {
+              <circle [attr.cx]="node.x" [attr.cy]="node.y" [attr.r]="node.r"
+                      class="neural-dot" [class.active]="$index % 3 === (neuralPulsePhase() % 3)" />
+            }
+            @for (fp of neuralNodesFloating; track $index) {
+              <circle [attr.cx]="fp.x" [attr.cy]="fp.y" r="0.8"
+                      class="neural-particle" [style.--dx]="fp.vx" [style.--dy]="fp.vy" />
+            }
+            @for (label of neuralLabels; track $index) {
+              <text [attr.x]="label.x" [attr.y]="label.y" class="neural-label">{{ label.text }}</text>
+            }
+          </svg>
+        </div>
+
+        <!-- Circular Indicators -->
+        <div class="circular-grid">
+          <div class="circular-item">
+            <svg viewBox="0 0 44 44" class="circular-svg">
+              <circle cx="22" cy="22" r="18" class="circ-bg" />
+              <path [attr.d]="describeArc(22, 22, 18, 0, (neuralSync() / 100) * 360)" class="circ-fill circ-neural" />
+              <circle cx="22" cy="22" r="2" class="circ-dot circ-dot-neural" />
+            </svg>
+            <span class="circ-label">NEURAL</span>
+            <span class="circ-val">{{ neuralSync() }}%</span>
+          </div>
+          <div class="circular-item">
+            <svg viewBox="0 0 44 44" class="circular-svg">
+              <circle cx="22" cy="22" r="18" class="circ-bg" />
+              <path [attr.d]="describeArc(22, 22, 18, 0, (opticalFocus() / 100) * 360)" class="circ-fill circ-optical" />
+              <circle cx="22" cy="22" r="2" class="circ-dot circ-dot-optical" />
+            </svg>
+            <span class="circ-label">OPTIC</span>
+            <span class="circ-val">{{ opticalFocus() }}%</span>
+          </div>
+          <div class="circular-item">
+            <svg viewBox="0 0 44 44" class="circular-svg">
+              <circle cx="22" cy="22" r="18" class="circ-bg" />
+              <path [attr.d]="describeArc(22, 22, 18, 0, (clockSyncPct() / 100) * 360)" class="circ-fill circ-sync" />
+              <circle cx="22" cy="22" r="2" class="circ-dot circ-dot-sync" />
+            </svg>
+            <span class="circ-label">CLK SYNC</span>
+            <span class="circ-val">{{ clockSyncPct() }}%</span>
+          </div>
+          <div class="circular-item">
+            <svg viewBox="0 0 44 44" class="circular-svg">
+              <circle cx="22" cy="22" r="18" class="circ-bg" />
+              <path [attr.d]="describeArc(22, 22, 18, 0, (networkStatusPct() / 100) * 360)" class="circ-fill circ-network" />
+              <circle cx="22" cy="22" r="2" class="circ-dot circ-dot-network" />
+            </svg>
+            <span class="circ-label">NETWORK</span>
+            <span class="circ-val">{{ networkStatusPct() }}%</span>
           </div>
         </div>
 
-        <div class="stat-section">
-          <div class="stat-label">RAM</div>
-          <div class="stat-bar">
-            <div class="bar-track">
-              <div class="bar-fill ram-fill" [style.width.%]="ramPercent()"></div>
+        <!-- Biometrics -->
+        <div class="panel bio-panel">
+          <div class="panel-header">[ BIOMETRIC STATUS ] <span class="header-extra">LIVE</span></div>
+          <div class="bio-grid">
+            <div class="bio-item">
+              <span class="bio-icon bio-heart">&#9829;</span>
+              <span class="bio-val">{{ heartRate() }}</span>
+              <span class="bio-unit">BPM</span>
             </div>
-            <span class="stat-value">{{ ramUsed() }}/10</span>
+            <div class="bio-item">
+              <span class="bio-label">O2</span>
+              <span class="bio-val">{{ oxygenLevel() }}%</span>
+              <div class="bio-track"><div class="bio-fill" [style.width.%]="oxygenLevel()"></div></div>
+            </div>
+            <div class="bio-item">
+              <span class="bio-label">TEMP</span>
+              <span class="bio-val">{{ bodyTemp().toFixed(1) }}°C</span>
+            </div>
+            <div class="bio-item">
+              <span class="bio-label">BP</span>
+              <span class="bio-val">{{ bpDisplay() }}</span>
+            </div>
+            <div class="bio-item">
+              <span class="bio-label">STRESS</span>
+              <div class="bio-track"><div class="bio-fill stress-fill" [style.width.%]="stressLevel()"></div></div>
+              <span class="bio-val">{{ stressLevel() }}%</span>
+            </div>
+            <div class="bio-item">
+              <span class="bio-label">NEURAL</span>
+              <div class="bio-track"><div class="bio-fill neural-fill" [style.width.%]="neuralActivity()"></div></div>
+              <span class="bio-val">{{ neuralActivity() }}%</span>
+            </div>
           </div>
         </div>
 
-        <div class="svg-viewport" [class.glitch-active]="isDragging()">
-          <div class="scan-laser-line" [style.--scan-color]="scanColor()"></div>
-          <svg class="body-svg" viewBox="0 0 200 400" xmlns="http://www.w3.org/2000/svg">
-            <polygon id="part-head"
-              [class.stable]="bodyParts().head === 'stable'"
-              [class.warning]="bodyParts().head === 'warning'"
-              [class.critical]="bodyParts().head === 'critical'"
-              points="75,15 125,15 140,45 135,75 65,75 60,45" />
-            <polygon id="part-chest"
-              [class.stable]="bodyParts().chest === 'stable'"
-              [class.warning]="bodyParts().chest === 'warning'"
-              [class.critical]="bodyParts().chest === 'critical'"
-              points="65,85 135,85 145,160 120,185 80,185 55,160" />
-            <polygon id="part-larm"
-              [class.stable]="bodyParts().lArm === 'stable'"
-              [class.warning]="bodyParts().lArm === 'warning'"
-              [class.critical]="bodyParts().lArm === 'critical'"
-              points="55,95 25,160 15,220 35,230 45,175 60,135" />
-            <polygon id="part-rarm"
-              [class.stable]="bodyParts().rArm === 'stable'"
-              [class.warning]="bodyParts().rArm === 'warning'"
-              [class.critical]="bodyParts().rArm === 'critical'"
-              points="145,95 175,160 185,220 165,230 155,175 140,135" />
-            <polygon id="part-lleg"
-              [class.stable]="bodyParts().lLeg === 'stable'"
-              [class.warning]="bodyParts().lLeg === 'warning'"
-              [class.critical]="bodyParts().lLeg === 'critical'"
-              points="80,195 60,295 55,365 70,385 90,385 85,295 90,195" />
-            <polygon id="part-rleg"
-              [class.stable]="bodyParts().rLeg === 'stable'"
-              [class.warning]="bodyParts().rLeg === 'warning'"
-              [class.critical]="bodyParts().rLeg === 'critical'"
-              points="120,195 115,295 110,385 130,385 145,365 140,295 160,195" />
+        <!-- Scattered data: optical status -->
+        <div class="data-scatter">
+          <span class="ds-item">OPTICAL STATUS: <span class="ds-val">CALIBRATED</span></span>
+          <span class="ds-item">PING: <span class="ds-val">{{ latency() }}ms</span></span>
+          <span class="ds-item">THERMAL: <span class="ds-val">{{ (cpuLoad() * 0.5 + 35).toFixed(1) }}°C</span></span>
+        </div>
+      </div>
+
+      <!-- CENTER COLUMN -->
+      <div class="hud-col col-center">
+
+        <!-- CHRONO CORE with Pulse SVG behind -->
+        <div class="chrono-core">
+          <div class="chrono-header">[ CHRONO CORE ]</div>
+          <div class="chrono-display-wrap">
+            <svg class="chrono-pulse-svg" viewBox="0 0 220 80">
+              <circle cx="110" cy="40" r="38" class="cp-ring cp-r1"
+                      [class.pulse]="secondPulse()" [class.min-pulse]="minutePulse()" />
+              <circle cx="110" cy="40" r="32" class="cp-ring cp-r2"
+                      [class.pulse]="secondPulse()" />
+              <circle cx="110" cy="40" r="26" class="cp-ring cp-r3" />
+              <circle cx="110" cy="40" r="20" class="cp-ring cp-r4"
+                      [class.min-pulse]="minutePulse()" />
+              <line x1="110" y1="2" x2="110" y2="8" class="cp-tick" />
+              <line x1="110" y1="72" x2="110" y2="78" class="cp-tick" />
+              <line x1="72" y1="40" x2="78" y2="40" class="cp-tick" />
+              <line x1="142" y1="40" x2="148" y2="40" class="cp-tick" />
+              <line x1="83" y1="13" x2="87" y2="17" class="cp-tick" />
+              <line x1="133" y1="13" x2="137" y2="17" class="cp-tick" />
+              <line x1="83" y1="63" x2="87" y2="67" class="cp-tick" />
+              <line x1="133" y1="63" x2="137" y2="67" class="cp-tick" />
+              <circle cx="148" cy="40" r="1.5" class="cp-orb" [style.--orb-angle]="0" />
+              <circle cx="72" cy="40" r="1.2" class="cp-orb" [style.--orb-angle]="180" />
+              <circle cx="110" cy="2" r="1" class="cp-orb" [style.--orb-angle]="90" />
+              <circle cx="110" cy="78" r="1.3" class="cp-orb" [style.--orb-angle]="270" />
+              <path class="cp-glow" d="M110,2 A38,38 0 0,1 148,40" [class.pulse]="secondPulse()" />
+              <path class="cp-glow" d="M72,40 A38,38 0 0,1 110,2" />
+            </svg>
+            <div class="chrono-display">{{ clockMs() }}</div>
+          </div>
+          <div class="chrono-meta">
+            <span>{{ utcOffset() }}</span>
+            <span>LAT {{ latency() }}ms</span>
+            <span>DRIFT {{ clockDrift() }}</span>
+          </div>
+
+          <!-- Tech data grid below clock (MEJORA #9) -->
+          <div class="chrono-tech-grid">
+            <div class="ct-item">
+              <span class="ct-label">CLOCK SYNC</span>
+              <div class="ct-track"><div class="ct-fill ct-fill-cyan" [style.width.%]="clockSyncPct()"></div></div>
+              <span class="ct-value">{{ clockSyncPct() }}%</span>
+            </div>
+            <div class="ct-item">
+              <span class="ct-label">LATENCY</span>
+              <span class="ct-value ct-value-num">{{ latency() }}<span class="ct-unit">ms</span></span>
+            </div>
+            <div class="ct-item">
+              <span class="ct-label">SIGNAL</span>
+              <div class="ct-track"><div class="ct-fill ct-fill-magenta" [style.width.%]="signalStrength()"></div></div>
+              <span class="ct-value">{{ signalStrength() }}%</span>
+            </div>
+            <div class="ct-item">
+              <span class="ct-label">DRIFT</span>
+              <span class="ct-value ct-value-num">{{ clockDrift() }}</span>
+            </div>
+            <div class="ct-item">
+              <span class="ct-label">UPTIME</span>
+              <span class="ct-value ct-value-num">{{ uptime() }}<span class="ct-unit">%</span></span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tech Reticle -->
+        <div class="reticle-wrap">
+          <svg class="reticle-svg" viewBox="0 0 100 100">
+            <circle cx="50" cy="50" r="46" class="ret-ring" />
+            <circle cx="50" cy="50" r="38" class="ret-ring ret-ring-inner" />
+            <line x1="8" y1="50" x2="38" y2="50" class="ret-cross" />
+            <line x1="62" y1="50" x2="92" y2="50" class="ret-cross" />
+            <line x1="50" y1="8" x2="50" y2="38" class="ret-cross" />
+            <line x1="50" y1="62" x2="50" y2="92" class="ret-cross" />
+            <line x1="50" y1="4" x2="50" y2="12" class="ret-tick" />
+            <line x1="50" y1="88" x2="50" y2="96" class="ret-tick" />
+            <line x1="4" y1="50" x2="12" y2="50" class="ret-tick" />
+            <line x1="88" y1="50" x2="96" y2="50" class="ret-tick" />
+            <line x1="16" y1="16" x2="22" y2="22" class="ret-tick" />
+            <line x1="84" y1="16" x2="78" y2="22" class="ret-tick" />
+            <line x1="16" y1="84" x2="22" y2="78" class="ret-tick" />
+            <line x1="84" y1="84" x2="78" y2="78" class="ret-tick" />
+            <circle cx="50" cy="50" r="2" class="ret-dot" />
+            <text x="50" y="52" text-anchor="middle" class="ret-range">RNG 1.2km</text>
+          </svg>
+        </div>
+
+        <!-- Holographic Radar -->
+        <div class="radar-wrap">
+          <svg class="radar-svg" viewBox="0 0 100 100">
+            <circle cx="50" cy="50" r="46" class="radar-ring" />
+            <circle cx="50" cy="50" r="35" class="radar-ring radar-ring-secondary" />
+            <circle cx="50" cy="50" r="24" class="radar-ring" />
+            <circle cx="50" cy="50" r="13" class="radar-ring radar-ring-secondary" />
+            <line x1="4" y1="50" x2="96" y2="50" class="radar-cross" />
+            <line x1="50" y1="4" x2="50" y2="96" class="radar-cross" />
+            <line x1="17" y1="17" x2="25" y2="25" class="radar-dash" />
+            <line x1="83" y1="17" x2="75" y2="25" class="radar-dash" />
+            <line x1="17" y1="83" x2="25" y2="75" class="radar-dash" />
+            <line x1="83" y1="83" x2="75" y2="75" class="radar-dash" />
+            <path class="radar-sweep" d="M50,50 L50,4 A46,46 0 0,1 82.5,82.5 Z" />
+            <circle cx="35" cy="28" r="2" class="radar-blip" />
+            <circle cx="72" cy="22" r="1.5" class="radar-blip" />
+            <circle cx="68" cy="68" r="1" class="radar-blip" />
+            <circle cx="22" cy="65" r="1.5" class="radar-blip" />
+            <circle cx="45" cy="18" r="0.8" class="radar-echo" />
+            <circle cx="78" cy="55" r="0.8" class="radar-echo" />
+            <text x="7" y="50" class="radar-label">270</text>
+            <text x="87" y="50" class="radar-label">090</text>
+            <text x="50" y="7" class="radar-label">000</text>
+            <text x="50" y="95" class="radar-label">180</text>
           </svg>
         </div>
       </div>
 
-      <div class="hud-col col-cyberware">
-        <div class="col-header">[ CYBERWARE INTERFACE ]</div>
+      <!-- RIGHT COLUMN -->
+      <div class="hud-col col-right">
 
-        @for (ware of cyberwareList; track ware.name; let i = $index) {
-          <div class="cyber-item" [class.active]="i === activeCyberIdx()">
-            <span class="cyber-bullet">{{ i === activeCyberIdx() ? '&#9655;' : '&#9654;' }}</span>
-            <div class="cyber-body">
-              <span class="cyber-category">{{ ware.category }}:</span>
-              <span class="cyber-name">{{ ware.name }}</span>
-              <span class="cyber-status" [class.online]="i === activeCyberIdx()">{{ ware.status }}</span>
-            </div>
+        <!-- Event Log -->
+        <div class="panel event-panel">
+          <div class="panel-header">[ EVENT LOG ] <span class="header-extra">SEQ {{ eventIndex() + 1 }}/{{ eventLogEntries.length }}</span></div>
+          <div class="event-console">
+            @for (entry of visibleLogEntries(); track $index) {
+              <div class="event-line" [class.latest]="$index === visibleLogEntries().length - 1"
+                   [class.priority-success]="entry.priority === 'success'"
+                   [class.priority-info]="entry.priority === 'info'"
+                   [class.priority-warning]="entry.priority === 'warning'">
+                <span class="event-ts">{{ eventTs($index) }}</span>
+                <span class="event-icon" [class]="'ev-icon-' + entry.priority">{{ eventIcon(entry.priority) }}</span>
+                <span class="event-msg">{{ entry.msg }}</span>
+                @if ($index === visibleLogEntries().length - 1 && !showAllEvents()) {
+                  <span class="event-cursor">&#9612;</span>
+                }
+              </div>
+            }
           </div>
-        }
-      </div>
+          <div class="event-progress-track">
+            <div class="event-progress-fill" [style.width.%]="eventProgress()"></div>
+          </div>
+        </div>
 
-      <div class="hud-col col-net">
-        <div class="col-header">[ NET RUNLOG ]</div>
-
-        <div class="net-console">
-          @for (line of netLogs(); track $index) {
-            <div class="net-line" [class.active]="$index === netLogs().length - 1">
-              {{ line }}@if ($index === netLogs().length - 1) {<span class="net-cursor">&#9612;</span>}
+        <!-- Cyberware -->
+        <div class="panel cyber-panel">
+          <div class="panel-header">[ CYBERWARE INTERFACE ] <span class="header-extra">{{ activeCyberIdx() + 1 }}/{{ cyberwareList.length }} ACTIVE</span></div>
+          @for (ware of cyberwareList; track ware.name; let i = $index) {
+            <div class="cyber-item" [class.active]="i === activeCyberIdx()">
+              <span class="cyber-led"
+                    [class.led-green]="ware.status === 'ONLINE' || ware.status === 'CONNECTED'"
+                    [class.led-yellow]="ware.status === 'READY' || ware.status === 'STANDBY'"
+                    [class.led-magenta]="ware.status === 'ACTIVE'"></span>
+              <span class="cyber-bullet">{{ i === activeCyberIdx() ? '&#9655;' : '&#9654;' }}</span>
+              <div class="cyber-body">
+                <span class="cyber-category">{{ ware.category }}:</span>
+                <span class="cyber-name">{{ ware.name }}</span>
+                <span class="cyber-status"
+                      [class.online]="ware.status === 'ONLINE' || ware.status === 'CONNECTED'"
+                      [class.ready]="ware.status === 'READY'"
+                      [class.standby]="ware.status === 'STANDBY'"
+                      [class.active-status]="ware.status === 'ACTIVE'">{{ ware.status }}</span>
+              </div>
             </div>
           }
         </div>
 
-        <div class="clock-widget">
-          <span class="clock-label">TIME:</span>
-          <span class="clock-value">{{ clockMs() }}</span>
+        <!-- Scattered data: bandwidth -->
+        <div class="data-scatter data-scatter-right">
+          <span class="ds-item">BANDWIDTH: <span class="ds-val">1.2 Gbps</span></span>
+          <span class="ds-item">CACHE: <span class="ds-val">{{ cacheLoad() }}%</span></span>
+          <span class="ds-item">THREADS: <span class="ds-val">{{ threads() }}</span></span>
         </div>
       </div>
     </div>
 
+    <!-- TECH DATA BAR -->
+    <div class="tech-bar">
+      <div class="tech-mod">
+        <span class="tm-label">CPU</span>
+        <div class="tm-track"><div class="tm-fill cpu-fill" [style.width.%]="cpuLoad()"></div></div>
+        <span class="tm-val">{{ cpuLoad() }}%</span>
+      </div>
+      <div class="tech-mod">
+        <span class="tm-label">GPU</span>
+        <div class="tm-track"><div class="tm-fill gpu-fill" [style.width.%]="gpuLoad()"></div></div>
+        <span class="tm-val">{{ gpuLoad() }}%</span>
+      </div>
+      <div class="tech-mod">
+        <span class="tm-label">FPS</span>
+        <span class="tm-val num">{{ fps() }}</span>
+      </div>
+      <div class="tech-mod">
+        <span class="tm-label">PKTS</span>
+        <span class="tm-val num">{{ packets() }}</span>
+      </div>
+      <div class="tech-mod">
+        <span class="tm-label">SIG</span>
+        <div class="tm-track"><div class="tm-fill sig-fill" [style.width.%]="signalStrength()"></div></div>
+        <span class="tm-val">{{ signalStrength() }}%</span>
+      </div>
+      <div class="tech-mod">
+        <span class="tm-label">THR</span>
+        <span class="tm-val num">{{ threads() }}</span>
+      </div>
+      <div class="tech-mod">
+        <span class="tm-label">MEM</span>
+        <div class="tm-track"><div class="tm-fill mem-fill" [style.width.%]="memoryUsed()"></div></div>
+        <span class="tm-val">{{ memoryUsed() }}%</span>
+      </div>
+      <div class="tech-mod">
+        <span class="tm-label">CACHE</span>
+        <div class="tm-track"><div class="tm-fill cache-fill" [style.width.%]="cacheLoad()"></div></div>
+        <span class="tm-val">{{ cacheLoad() }}%</span>
+      </div>
+      <div class="tech-mod">
+        <span class="tm-label">NET</span>
+        <div class="tm-track"><div class="tm-fill net-fill" [style.width.%]="networkLoad()"></div></div>
+        <span class="tm-val">{{ networkLoad() }}%</span>
+      </div>
+    </div>
+
+    <!-- BOTTOM SLIDER -->
     <div class="hud-bottomslider">
       <span class="slider-label">&#9664; CHRONO SYNC</span>
       <div class="slider-wrapper">
@@ -113,4 +364,15 @@
       <button class="reset-btn" (click)="onResetTime()">&#9654; REAL TIME</button>
     </div>
   </div>
+
+  <!-- SCAN LINE -->
+  <div class="scan-line"
+       [class.scan-visible]="scanLineVisible()"
+       [style.top.%]="scanLinePos()"
+       [style.--scan-color]="scanColor()"></div>
+
+  <!-- GLITCH OVERLAY -->
+  @if (glitchActive()) {
+    <div class="glitch-overlay" [style.--glitch-x]="(glitchIntensity() * 8) + 'px'" [style.--glitch-y]="(glitchIntensity() * 4) + 'px'"></div>
+  }
 </div>

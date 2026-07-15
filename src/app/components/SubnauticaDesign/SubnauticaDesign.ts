@@ -17,7 +17,7 @@ export class SubnauticaDesignComponent {
   private readonly session = inject(SessionService);
 
   constructor() {
-    this.session.addLog('SUBNAUTICA WORLD INITIALIZED');
+    this.session.addLog('SUBNAUTICA WORLD INITIALIZED', 'success');
   }
 
   readonly currentSecond = this.time.seconds$;

@@ -94,7 +94,7 @@ export class AssassinsCreedDesignComponent implements OnDestroy {
   readonly mappedHours = computed(() => this.sliderValue());
 
   constructor() {
-    this.session.addLog('ASSASSINS CREED WORLD INITIALIZED');
+    this.session.addLog('ASSASSINS CREED WORLD INITIALIZED', 'success');
     this.syncFromTime();
     this._clockInterval = setInterval(() => this._now.set(new Date()), 50);
   }

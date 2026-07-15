@@ -34,8 +34,9 @@
     <div class="log-body">
       <div class="log-scroll">
         @for (entry of logEntries(); track entry.time + entry.msg) {
-          <div class="log-line">
+          <div class="log-line log-enter">
             <span class="log-ts">[{{ entry.time }}]</span>
+            <span class="log-type log-type-{{ entry.type }}">{{ entry.type }}</span>
             <span class="log-msg">{{ entry.msg }}</span>
           </div>
         }

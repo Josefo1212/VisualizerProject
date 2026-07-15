@@ -55,7 +55,7 @@ export class FalloutDesignComponent {
   private readonly session = inject(SessionService);
 
   constructor() {
-    this.session.addLog('FALLOUT WORLD INITIALIZED');
+    this.session.addLog('FALLOUT WORLD INITIALIZED', 'success');
   }
 
   readonly clockDisplay = computed(() => {

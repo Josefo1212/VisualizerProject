@@ -52,14 +52,14 @@ export class DashboardComponent {
 
   onStartSession(): void {
     this.session.startSession();
-    this.session.addLog('USER INITIATED SESSION');
+    this.session.addLog('USER INITIATED SESSION', 'info');
   }
 
   onDesignChange(id: string): void {
     this.selectedDesign.set(id);
     if (this.session.sessionActive()) {
       const label = id.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
-      this.session.addLog(`SELECTED: ${label}`);
+      this.session.addLog(`SELECTED: ${label}`, 'info');
       this.session.setCurrentWorld(id);
     }
   }
@@ -74,7 +74,7 @@ export class DashboardComponent {
     this.selectedDesign.set(id);
     if (this.session.sessionActive()) {
       const label = id.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
-      this.session.addLog(`ENTERING WORLD: ${label}`);
+      this.session.addLog(`ENTERING WORLD: ${label}`, 'info');
       this.session.setCurrentWorld(id);
     }
   }
@@ -83,7 +83,7 @@ export class DashboardComponent {
     this.selectedDesign.set('');
     this.hoveredWorld.set(null);
     if (this.session.sessionActive()) {
-      this.session.addLog('RETURNED TO HUB');
+      this.session.addLog('RETURNED TO HUB', 'info');
     }
   }
 

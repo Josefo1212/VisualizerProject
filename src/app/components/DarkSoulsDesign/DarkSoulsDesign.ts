@@ -55,7 +55,7 @@ export class DarkSoulsDesignComponent {
   private readonly session = inject(SessionService);
 
   constructor() {
-    this.session.addLog('DARK SOULS WORLD INITIALIZED');
+    this.session.addLog('DARK SOULS WORLD INITIALIZED', 'success');
   }
 
   readonly sliderValue = computed(() => {
@@ -222,11 +222,11 @@ export class DarkSoulsDesignComponent {
   /* ─── METHODS ─── */
   onSliderChange(h: number): void {
     this.time.setHora(h);
-    this.session.addLog(`TIME SET TO ${Math.round(h).toString().padStart(2, '0')}:00`);
+    this.session.addLog(`TIME SET TO ${Math.round(h).toString().padStart(2, '0')}:00`, 'info');
   }
 
   onResetTime(): void {
     this.time.resetToRealTime();
-    this.session.addLog('TIME RESET TO REAL TIME');
+    this.session.addLog('TIME RESET TO REAL TIME', 'info');
   }
 }

@@ -1,4 +1,4 @@
-import { Component, input, inject, signal, computed } from '@angular/core';
+import { Component, input, inject, signal, computed, DestroyRef } from '@angular/core';
 import { SessionService } from '../../services/session';
 
 @Component({
@@ -9,6 +9,7 @@ import { SessionService } from '../../services/session';
 })
 export class PanelTelemetriaComponent {
   private readonly session = inject(SessionService);
+  private readonly destroyRef = inject(DestroyRef);
 
   readonly sessionActive = input(false);
   readonly elapsedSeconds = input(0);
@@ -26,11 +27,20 @@ export class PanelTelemetriaComponent {
   readonly renderLoad = signal(88);
   readonly engineLoad = signal(54);
 
+  private drift(value: number, base: number, range: number, step: number): number {
+    const next = value + (Math.random() - 0.5) * 2 * step;
+    if (Math.abs(next - base) > range / 2) {
+      return value + (base > value ? step : -step);
+    }
+    return next;
+  }
+
   constructor() {
-    setInterval(() => {
-      this.signalLoad.set(60 + Math.floor(Math.random() * 35));
-      this.renderLoad.set(75 + Math.floor(Math.random() * 20));
-      this.engineLoad.set(40 + Math.floor(Math.random() * 40));
-    }, 3000);
+    const id = setInterval(() => {
+      this.signalLoad.update(v => Math.round(this.drift(v, 77, 30, 1.5)));
+      this.renderLoad.update(v => Math.round(this.drift(v, 85, 18, 1.2)));
+      this.engineLoad.update(v => Math.round(this.drift(v, 55, 30, 1.8)));
+    }, 280);
+    this.destroyRef.onDestroy(() => clearInterval(id));
   }
 }

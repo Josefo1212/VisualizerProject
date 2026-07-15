@@ -22,7 +22,7 @@ export class FortniteDesignComponent {
   private readonly session = inject(SessionService);
 
   constructor() {
-    this.session.addLog('FORTNITE WORLD INITIALIZED');
+    this.session.addLog('FORTNITE WORLD INITIALIZED', 'success');
   }
 
   readonly sliderValue = computed(() => {

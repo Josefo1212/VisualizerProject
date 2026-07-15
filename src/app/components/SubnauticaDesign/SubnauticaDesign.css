@@ -717,7 +717,7 @@
   stroke-width: 4;
   stroke-linecap: round;
   filter: drop-shadow(0 0 8px rgba(0, 240, 255, 0.5));
-  transition: stroke-dashoffset 0.25s ease;
+  /* transition removed: was causing delayed/linear movement instead of jumping to correct arc position */
   pointer-events: none;
 }
 
@@ -740,7 +740,6 @@
 .arc-thumb {
   fill: #ffffff;
   filter: drop-shadow(0 0 8px rgba(0, 240, 255, 1));
-  transition: cx 0.25s ease, cy 0.25s ease;
   pointer-events: none;
 }
 

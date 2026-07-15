@@ -1,8 +1,11 @@
 import { Injectable, computed, signal, inject, DestroyRef } from '@angular/core';
 
+export type LogType = 'info' | 'success' | 'warning' | 'error';
+
 export interface LogEntry {
   time: string;
   msg: string;
+  type: LogType;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -13,9 +16,9 @@ export class SessionService {
   /* ─── Global log ─── */
   readonly logEntries = signal<LogEntry[]>([]);
 
-  addLog(msg: string): void {
+  addLog(msg: string, type: LogType = 'info'): void {
     this.logEntries.update(entries => {
-      const next = [...entries, { time: this.now(), msg }];
+      const next = [...entries, { time: this.now(), msg, type }];
       return next.length > 50 ? next.slice(-50) : next;
     });
   }
@@ -85,11 +88,11 @@ export class SessionService {
 
   constructor() {
     this.startFpsTracking();
-    this.addLog('SYSTEM BOOT SEQUENCE INITIATED');
-    this.addLog('KERNEL LOADED');
-    this.addLog('SIGNAL PROCESSOR ACTIVE');
-    this.addLog('RENDER ENGINE READY');
-    this.addLog('WORLDS SYNCHRONIZED');
+    this.addLog('SYSTEM BOOT SEQUENCE INITIATED', 'info');
+    this.addLog('KERNEL LOADED', 'success');
+    this.addLog('SIGNAL PROCESSOR ACTIVE', 'success');
+    this.addLog('RENDER ENGINE READY', 'success');
+    this.addLog('WORLDS SYNCHRONIZED', 'success');
     this.destroyRef.onDestroy(() => {
       this.stopFpsTracking();
       this.clearAllTimers();
@@ -139,9 +142,9 @@ export class SessionService {
     this.initLine.set(0);
     this.initComplete.set(false);
 
-    this.addLog('SESSION STARTED');
-    this.addLog('TIME ENGINE LOCKED');
-    this.addLog('WORLD GRID ENABLED');
+    this.addLog('SESSION STARTED', 'success');
+    this.addLog('TIME ENGINE LOCKED', 'success');
+    this.addLog('WORLD GRID ENABLED', 'success');
     this.runInitSequence();
   }
 
@@ -173,7 +176,7 @@ export class SessionService {
         return s;
       });
       const label = worldId.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
-      this.addLog(`WORLD LOADED: ${label}`);
+      this.addLog(`WORLD LOADED: ${label}`, 'success');
     }
   }
 

@@ -36,7 +36,7 @@ export class GtaDesignComponent {
   private readonly session = inject(SessionService);
 
   constructor() {
-    this.session.addLog('GTA WORLD INITIALIZED');
+    this.session.addLog('GTA WORLD INITIALIZED', 'success');
   }
 
   readonly currentHour: Signal<number> = this.time.currentHour$;

@@ -103,8 +103,8 @@
   flex-direction: column;
   align-items: center;
   text-align: center;
-  padding: 40px 20px;
-  min-height: 220px;
+  padding: 56px 20px;
+  min-height: 280px;
   width: 100%;
 }
 
@@ -123,11 +123,16 @@
   position: relative;
   z-index: 1;
   font-family: 'Cinzel', serif;
-  font-size: 30px;
+  font-size: 64px;
   font-weight: 900;
-  letter-spacing: 10px;
-  color: rgba(0, 243, 255, 0.65);
-  margin-bottom: 6px;
+  letter-spacing: 12px;
+  color: rgba(120, 247, 255, 0.95);
+  margin-bottom: 22px;
+  text-shadow:
+    0 0 14px rgba(0, 243, 255, 0.35),
+    0 0 32px rgba(0, 243, 255, 0.18),
+    0 3px 10px rgba(0, 0, 0, 0.85),
+    0 0 4px rgba(0, 0, 0, 0.9);
 }
 
 .sp-subtitle {
@@ -135,18 +140,21 @@
   z-index: 1;
   font-family: 'Courier New', monospace;
   font-size: 13px;
-  letter-spacing: 3px;
-  color: rgba(200, 200, 220, 0.6);
-  margin-bottom: 14px;
+  letter-spacing: 5px;
+  color: rgba(200, 200, 220, 0.48);
+  margin-bottom: 26px;
+  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.6);
 }
 
 .sp-hint {
   position: relative;
   z-index: 1;
   font-family: 'Courier New', monospace;
-  font-size: 10px;
-  letter-spacing: 2px;
-  color: rgba(200, 200, 220, 0.5);
+  font-size: 9px;
+  letter-spacing: 2.5px;
+  color: rgba(200, 200, 220, 0.62);
+  text-transform: uppercase;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.75);
 }
 
 .sp-start-btn {

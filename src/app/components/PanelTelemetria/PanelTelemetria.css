@@ -7,17 +7,24 @@
 .panel-telemetria {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 0;
   height: 100%;
   padding: 8px;
-  border-left: 1px solid rgba(255, 255, 255, 0.04);
+  border-left: 1px solid rgba(0, 243, 255, 0.08);
+  background: rgba(8, 12, 18, 0.55);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
 }
 
 /* ═══════ SUB-PANEL COMMON ═══════ */
 .sub-panel {
-  border: 1px solid rgba(255, 255, 255, 0.04);
-  background: rgba(0, 0, 0, 0.15);
-  border-radius: 4px;
+  border: none;
+  background: none;
+  border-radius: 0;
+}
+
+.sub-panel + .sub-panel {
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .sp-title {
@@ -115,9 +122,48 @@
   white-space: nowrap;
 }
 
+.log-line.log-enter {
+  animation: logSlideIn 0.25s ease-out both;
+}
+
+@keyframes logSlideIn {
+  from {
+    opacity: 0;
+    transform: translateX(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
 .log-ts {
   color: rgba(0, 243, 255, 0.5);
   margin-right: 5px;
+}
+
+.log-type {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  margin-right: 5px;
+  text-transform: uppercase;
+}
+
+.log-type-info {
+  color: rgba(0, 166, 255, 0.6);
+}
+
+.log-type-success {
+  color: rgba(48, 209, 88, 0.6);
+}
+
+.log-type-warning {
+  color: rgba(255, 191, 0, 0.55);
+}
+
+.log-type-error {
+  color: rgba(255, 69, 58, 0.55);
 }
 
 .log-msg {
