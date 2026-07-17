@@ -8,40 +8,29 @@
 
   <!-- MIDDLE SECTION: centered vertically -->
   <div class="middle">
-    <!-- ROW 2: ENERGY EXTINCTION CANDLE -->
-    <div class="row row-energy">
-      <div class="energy-header">
-        <span>▶️ TASK IN PROGRESS: <strong>{{ currentTask().name }}</strong></span>
-      </div>
-      <div class="energy-track" [class.critical]="barCritical()">
-        <div class="energy-fill" [style.width.%]="remainingPercentage()"></div>
-        <div class="crewmate" [style.left.%]="crewmatePosition()">
-          <div class="crewmate-frames">
-            @for (idx of frameIndices; track idx) {
-              <img class="frame" src="/AmongUs/sprite{{idx}}.png" [class.active]="idx === currentFrameIndex()" alt="">
-            }
+    <!-- ROW 2 & 3: UNIFIED PROGRESS PANEL -->
+    <div class="row row-unified-progress">
+      
+      <!-- MAIN PANEL: MEDICAL SCAN (Seconds) -->
+      <div class="progress-subpanel scan-panel">
+        <div class="subpanel-left">
+          <div class="subpanel-header">
+            <span class="subpanel-title">🧬 MEDICAL SCAN</span>
           </div>
+          <div class="progress-bar-container">
+            <div class="scanner-bar">
+              @for (idx of scannerSegments; track idx) {
+                <div class="segment" [class.lit]="scannerBlockLit(idx)"></div>
+              }
+            </div>
+          </div>
+          <div class="subpanel-desc">🚀 CURRENT TASK: <strong>{{ currentTask().name }}</strong></div>
+        </div>
+        <div class="subpanel-right">
+          <div class="counter-display scan-counter">{{ scannerRemaining() }}<span class="counter-unit">s</span></div>
         </div>
       </div>
-      <div class="energy-footer">
-        ⏳ MINUTE SCAN: {{ minutesLeft() }}/60s
-      </div>
-    </div>
 
-    <!-- ROW 3: MEDICAL SCAN — OXYGEN DECOMPRESSION -->
-    <div class="row row-scanner">
-      <div class="scanner-left">
-        <div class="scanner-label">🧬 MEDICAL SCAN</div>
-        <div class="scanner-bar">
-          @for (idx of scannerSegments; track idx) {
-            <div class="segment" [class.lit]="scannerBlockLit(idx)"></div>
-          }
-        </div>
-      </div>
-      <div class="scanner-right">
-        <div class="scanner-seconds">{{ scannerRemaining() }}<span class="scanner-unit">s</span></div>
-        <div class="scanner-alert">🚀 SCAN: {{ scannerRemaining() }}/60 segment{{ scannerRemaining() === 1 ? '' : 's' }}</div>
-      </div>
     </div>
 
     <!-- ROW 4: WEEKLY TIMELINE -->
@@ -56,6 +45,26 @@
         </div>
       }
     </div>
+
+    <!-- ROW 4.5: MINUTES PROGRESS BAR -->
+    <div class="row row-minutes-progress">
+      <div class="minutes-left">
+        <div class="minutes-label">▶️ TASK: <strong>{{ currentTask().name }}</strong></div>
+        <div class="minutes-track" [class.critical]="barCritical()">
+          <div class="minutes-fill" [style.width.%]="remainingPercentage()"></div>
+          <div class="crewmate" [style.left.%]="crewmatePosition()">
+            <div class="crewmate-frames">
+              @for (idx of frameIndices; track idx) {
+                <img class="frame" src="/AmongUs/sprite{{idx}}.png" [class.active]="idx === currentFrameIndex()" alt="">
+              }
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="minutes-right">
+        <div class="minutes-counter">{{ minutesLeft() }}<span class="counter-unit">m</span></div>
+      </div>
+    </div>
   </div>
 
   <!-- ROW 5: MASTER TIME SLIDER -->
@@ -63,7 +72,7 @@
     <span class="slider-edge">-72h</span>
     <div class="slider-body">
       <div class="slider-wrapper">
-        <app-slider [value]="timeEngine.hours$() + timeEngine.minutes$() / 60" [min]="0" [max]="24" [step]="0.1" (valueChange)="onSliderChange($event)"></app-slider>
+        <app-slider [value]="sliderValue()" [min]="0" [max]="24" [step]="0.1" (valueChange)="onSliderChange($event)" (dragStart)="isDragging.set(true)" (dragEnd)="isDragging.set(false)"></app-slider>
       </div>
     </div>
     <span class="slider-edge">{{ totalDays() }}d {{ cycleMinutes() }}m</span>

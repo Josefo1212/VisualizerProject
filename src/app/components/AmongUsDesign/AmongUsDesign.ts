@@ -15,6 +15,13 @@ export class AmongUsDesignComponent implements OnInit, OnDestroy {
   readonly timeEngine = inject(TimeEngineService);
   private readonly session = inject(SessionService);
 
+  readonly sliderValue = signal<number>(0);
+  readonly isDragging = signal(false);
+
+  constructor() {
+    this.sliderValue.set(this.timeEngine.currentHour$());
+  }
+
   readonly cycleMinutes = computed(() => {
     const ch = ((this.timeEngine.hours$() % 24) + 24) % 24;
     return ch * 60 + this.timeEngine.minutes$();
@@ -109,10 +116,12 @@ export class AmongUsDesignComponent implements OnInit, OnDestroy {
   }
 
   onSliderChange(value: number): void {
+    this.sliderValue.set(value);
     this.timeEngine.setHora(value);
   }
 
   onResetTime(): void {
+    this.sliderValue.set(this.timeEngine.currentHour$());
     this.timeEngine.resetToRealTime();
   }
 }

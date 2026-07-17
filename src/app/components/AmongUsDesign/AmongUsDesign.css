@@ -22,6 +22,7 @@
   flex-direction: column;
   padding: clamp(40px, 5vh, 56px) clamp(10px, 1.8vw, 16px) clamp(8px, 1.6vh, 14px);
   gap: clamp(4px, 0.5vh, 7px);
+  container-type: inline-size;
 }
 
 .tablet::before {
@@ -44,19 +45,20 @@
 
 .header {
   position: absolute;
-  top: clamp(58px, 6.5vh, 74px);
+  top: clamp(35px, 4.5vh, 48px);
   left: clamp(10px, 1.8vw, 16px);
   right: clamp(10px, 1.8vw, 16px);
   z-index: 1;
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
-  gap: clamp(12px, 2vw, 24px);
+  gap: clamp(4px, 0.5vh, 8px);
 }
 
 .clock-display {
   font-family: 'Courier New', 'Consolas', monospace;
-  font-size: clamp(22px, 3vw, 32px);
+  font-size: clamp(64px, 7.5vw, 80px);
   font-weight: 700;
   color: #00f3ff;
   letter-spacing: 4px;
@@ -66,9 +68,9 @@
 
 .date-display {
   font-family: 'Segoe UI', sans-serif;
-  font-size: clamp(9px, 1vw, 12px);
+  font-size: clamp(10px, 1vw, 13px);
   color: rgba(200, 200, 220, 0.6);
-  letter-spacing: 1px;
+  letter-spacing: 2px;
   text-transform: uppercase;
 }
 
@@ -81,43 +83,117 @@
   margin-inline: clamp(8px, 1.2vw, 16px);
 }
 
-/* ============ ROW 2: ENERGY EXTINCTION CANDLE ============ */
+/* ============ ROW 2 & 3: UNIFIED PROGRESS PANEL ============ */
 
-.row-energy {
+.row-unified-progress {
+  position: relative;
   display: flex;
-  flex-direction: column;
-  gap: 4px;
-  margin-top: 70px;
-  margin-inline: clamp(24px, 3vw, 36px);
+  background: rgba(0, 20, 25, 0.35);
+  border: 1px solid rgba(0, 243, 255, 0.12);
+  border-radius: 12px;
+  padding: clamp(10px, 1.3vh, 16px) clamp(16px, 2vw, 24px);
+  margin-inline: clamp(24px, 3.2vw, 40px);
+  margin-top: clamp(120px, 14vh, 150px);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  min-height: 80px;
 }
 
-.energy-header {
+.progress-subpanel {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: clamp(16px, 2vw, 28px);
+}
+
+.subpanel-left {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: clamp(4px, 0.6vh, 8px);
+  min-width: 0;
+}
+
+.subpanel-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+
+.subpanel-right {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-shrink: 0;
+}
+
+/* Nivel 3 - Título */
+.subpanel-title {
   font-family: 'Courier New', 'Consolas', monospace;
-  font-size: clamp(9px, 0.9vw, 11px);
-  color: #f4ca16;
+  font-size: clamp(10px, 1vw, 12px);
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+.scan-panel .subpanel-title {
+  color: #00f3ff;
+  text-shadow: 0 0 8px rgba(0, 243, 255, 0.25);
+}
+
+.progress-bar-container {
+  position: relative;
+  width: 100%;
+}
+
+.subpanel-desc {
+  font-family: 'Segoe UI', sans-serif;
+  font-size: clamp(7px, 0.65vw, 9px);
+  color: rgba(200, 200, 220, 0.4);
+  letter-spacing: 0.5px;
+}
+
+/* Nivel 2 - Contador Display */
+.counter-display {
+  font-family: 'Courier New', 'Consolas', monospace;
+  font-size: clamp(24px, 3vw, 32px);
+  font-weight: 700;
+  line-height: 1;
   letter-spacing: 1px;
 }
 
-.energy-header strong {
-  color: #fff;
-  text-shadow: 0 0 8px rgba(255, 255, 255, 0.15);
+.scan-counter {
+  color: #00f3ff;
+  text-shadow: 0 0 15px rgba(0, 243, 255, 0.4);
 }
 
+.task-counter {
+  color: #00f3ff;
+  text-shadow: 0 0 15px rgba(0, 243, 255, 0.4);
+}
+
+.counter-unit {
+  font-size: 0.5em;
+  font-weight: 400;
+  margin-left: 2px;
+  opacity: 0.7;
+}
+
+/* Progress track and inner elements */
 .energy-track {
   position: relative;
-  height: 14px;
+  height: 12px;
   background: rgba(255, 255, 255, 0.04);
-  border-radius: 7px;
+  border-radius: 6px;
   overflow: visible;
-  border: 1px solid rgba(244, 202, 22, 0.12);
+  border: 1px solid rgba(0, 243, 255, 0.15);
+  width: 100%;
 }
 
 .energy-fill {
   height: 100%;
-  border-radius: 7px;
-  background: linear-gradient(90deg, #f4ca16, #f4e04d);
+  border-radius: 6px;
+  background: linear-gradient(90deg, #00c3ff, #00f3ff);
   transition: width 0.15s linear;
-  box-shadow: 0 0 12px rgba(244, 202, 22, 0.25);
+  box-shadow: 0 0 12px rgba(0, 243, 255, 0.25);
 }
 
 .energy-track.critical {
@@ -142,13 +218,13 @@
   transition: left 0.15s linear;
   pointer-events: none;
   z-index: 2;
-  margin-bottom: 2px;
+  margin-bottom: 1px;
 }
 
 .crewmate-frames {
   position: relative;
-  width: 34px;
-  height: 36px;
+  width: 28px;
+  height: 30px;
 }
 
 .frame {
@@ -164,43 +240,6 @@
 
 .frame.active {
   opacity: 1;
-}
-
-.energy-footer {
-  font-family: 'Segoe UI', sans-serif;
-  font-size: clamp(8px, 0.75vw, 10px);
-  color: rgba(200, 200, 220, 0.5);
-  letter-spacing: 0.5px;
-}
-
-/* ============ ROW 3: MEDICAL SCAN ============ */
-
-.row-scanner {
-  display: flex;
-  align-items: center;
-  gap: clamp(8px, 1vw, 14px);
-  background: rgba(0, 20, 10, 0.45);
-  border: 1px solid rgba(0, 255, 136, 0.10);
-  border-radius: 8px;
-  padding: clamp(8px, 1vh, 12px) clamp(10px, 1.2vw, 14px);
-  margin-inline: clamp(24px, 3.2vw, 40px);
-  margin-top: 30px;
-}
-
-.scanner-left {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  min-width: 0;
-}
-
-.scanner-label {
-  font-family: 'Courier New', 'Consolas', monospace;
-  font-size: clamp(8px, 0.75vw, 10px);
-  font-weight: 700;
-  color: #00ff88;
-  letter-spacing: 1px;
 }
 
 .scanner-bar {
@@ -220,41 +259,8 @@
 }
 
 .segment.lit {
-  background: #00ff88;
-  box-shadow: 0 0 5px rgba(0, 255, 136, 0.5);
-}
-
-.scanner-right {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  flex-shrink: 0;
-  gap: 1px;
-}
-
-.scanner-seconds {
-  font-family: 'Courier New', 'Consolas', monospace;
-  font-size: clamp(18px, 2vw, 26px);
-  font-weight: 700;
-  color: #00ff88;
-  text-shadow: 0 0 12px rgba(0, 255, 136, 0.4);
-  line-height: 1;
-  letter-spacing: 1px;
-}
-
-.scanner-unit {
-  font-size: 0.5em;
-  color: rgba(0, 255, 136, 0.35);
-  font-weight: 400;
-  margin-left: 1px;
-}
-
-.scanner-alert {
-  font-family: 'Segoe UI', sans-serif;
-  font-size: clamp(7px, 0.65vw, 9px);
-  color: rgba(0, 255, 136, 0.4);
-  letter-spacing: 0.5px;
-  white-space: nowrap;
+  background: #00f3ff;
+  box-shadow: 0 0 5px rgba(0, 243, 255, 0.5);
 }
 
 /* ============ ROW 4: WEEKLY TIMELINE ============ */
@@ -263,54 +269,130 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: clamp(6px, 0.8vw, 12px);
-  padding: 3px 0;
-  margin-top: 40px;
-  margin-inline: clamp(32px, 4vw, 56px);
+  gap: clamp(10px, 1.5vw, 20px);
+  padding: 0;
+  margin-top: clamp(15px, 2vh, 30px);
+  margin-inline: auto;
+  z-index: 1;
 }
 
 .day-item {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 2px;
-  flex: 1;
-  min-width: 0;
+  gap: 4px;
 }
 
 .day-circle {
-  width: clamp(18px, 2vw, 24px);
-  height: clamp(18px, 2vw, 24px);
+  width: 8px;
+  height: 8px;
   border-radius: 50%;
-  transition: all 0.3s;
+  background: rgba(255, 255, 255, 0.15);
+  transition: all 0.3s ease;
 }
 
 .day-item.past .day-circle {
-  background: #44cc44;
-  box-shadow: 0 0 8px rgba(68, 204, 68, 0.4);
+  background: rgba(255, 255, 255, 0.25);
 }
 
 .day-item.today .day-circle {
-  background: #ff4444;
-  box-shadow: 0 0 14px rgba(255, 60, 60, 0.6);
-  animation: today-pulse 1.5s ease-in-out infinite;
-}
-
-@keyframes today-pulse {
-  0%, 100% { box-shadow: 0 0 8px rgba(255, 60, 60, 0.5); }
-  50%      { box-shadow: 0 0 20px rgba(255, 60, 60, 0.9); }
+  width: 8px;
+  height: 8px;
+  background: #00ff66;
+  box-shadow: 0 0 10px rgba(0, 255, 102, 0.8);
 }
 
 .day-item.future .day-circle {
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.1);
 }
 
 .day-label {
   font-family: 'Courier New', 'Consolas', monospace;
-  font-size: clamp(6px, 0.6vw, 8px);
-  color: rgba(200, 200, 220, 0.35);
+  font-size: clamp(8px, 0.75vw, 10px);
+  color: rgba(200, 200, 220, 0.3);
   letter-spacing: 0.5px;
+}
+
+.day-item.today .day-label {
+  color: rgba(0, 255, 102, 0.8);
+  font-weight: 700;
+}
+
+/* ============ ROW 4.5: MINUTES PROGRESS BAR ============ */
+
+.row-minutes-progress {
+  display: flex;
+  align-items: center;
+  gap: clamp(12px, 1.5vw, 20px);
+  padding: 0;
+  margin-top: clamp(25px, 3.5vh, 45px);
+  margin-inline: clamp(24px, 3.2vw, 40px);
+  z-index: 1;
+}
+
+.minutes-left {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.minutes-label {
+  font-family: 'Courier New', 'Consolas', monospace;
+  font-size: clamp(8px, 0.8vw, 10px);
+  color: #ff9f0a;
+  letter-spacing: 0.5px;
+  text-shadow: 0 0 6px rgba(255, 159, 10, 0.2);
+}
+
+.minutes-label strong {
+  color: #fff;
+}
+
+.minutes-track {
+  position: relative;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 3px;
+  overflow: visible;
+  border: 1px solid rgba(255, 159, 10, 0.15);
+  width: 100%;
+}
+
+.minutes-fill {
+  height: 100%;
+  border-radius: 3px;
+  background: linear-gradient(90deg, #ff8800, #ffbb00);
+  transition: width 0.15s linear;
+  box-shadow: 0 0 8px rgba(255, 159, 10, 0.25);
+}
+
+.minutes-track.critical {
+  border-color: rgba(255, 50, 50, 0.35);
+  animation: critical-pulse 0.6s ease-in-out infinite;
+}
+
+.minutes-track.critical .minutes-fill {
+  background: linear-gradient(90deg, #ff2222, #ff5555);
+  box-shadow: 0 0 12px rgba(255, 50, 50, 0.5);
+}
+
+.minutes-right {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-shrink: 0;
+}
+
+.minutes-counter {
+  font-family: 'Courier New', 'Consolas', monospace;
+  font-size: clamp(16px, 2vw, 20px);
+  font-weight: 700;
+  color: #ff9f0a;
+  text-shadow: 0 0 10px rgba(255, 159, 10, 0.3);
+  line-height: 1;
+  letter-spacing: 1px;
 }
 
 /* ============ ROW 5: MASTER TIME SLIDER ============ */
@@ -364,6 +446,10 @@ app-slider {
   --slider-thumb-hover-shadow: 0 0 8px rgba(0, 243, 255, 0.6);
   --slider-value-color: #00f3ff;
   --slider-value-font: 'Courier New', 'Consolas', monospace;
+}
+
+app-slider ::ng-deep .slider-value {
+  display: none !important;
 }
 
 .reset-btn {
