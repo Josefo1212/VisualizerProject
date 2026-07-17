@@ -1,4 +1,4 @@
-import { Component, input, inject, signal, computed, DestroyRef } from '@angular/core';
+import { Component, input, inject, signal, computed, DestroyRef, NgZone } from '@angular/core';
 import { SessionService } from '../../services/session';
 
 @Component({
@@ -10,6 +10,7 @@ import { SessionService } from '../../services/session';
 export class PanelTelemetriaComponent {
   private readonly session = inject(SessionService);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly ngZone = inject(NgZone);
 
   readonly sessionActive = input(false);
   readonly elapsedSeconds = input(0);
@@ -27,8 +28,7 @@ export class PanelTelemetriaComponent {
   readonly ramLoad = signal(38);
   readonly gpuLoad = signal(22);
 
-  private rafId: number | null = null;
-  private lastFrameTime = 0;
+  private intervalId: ReturnType<typeof setInterval> | null = null;
   private cpuSmooth = 12;
   private gpuSmooth = 22;
 
@@ -44,29 +44,29 @@ export class PanelTelemetriaComponent {
     return -1;
   }
 
-  private onFrame = (timestamp: number) => {
-    if (this.lastFrameTime > 0) {
-      const delta = timestamp - this.lastFrameTime;
-      const cpuRaw = Math.min(100, Math.max(0, ((delta - 12) / 88) * 100));
-      const gpuRaw = Math.min(100, Math.max(0, ((delta - 10) / 90) * 100));
-      this.cpuSmooth = this.cpuSmooth * 0.85 + cpuRaw * 0.15;
-      this.gpuSmooth = this.gpuSmooth * 0.85 + gpuRaw * 0.15;
+  private tick(): void {
+    const delta = 16 + Math.random() * 8;
+    const cpuRaw = Math.min(100, Math.max(0, ((delta - 12) / 88) * 100));
+    const gpuRaw = Math.min(100, Math.max(0, ((delta - 10) / 90) * 100));
+    this.cpuSmooth = this.cpuSmooth * 0.85 + cpuRaw * 0.15;
+    this.gpuSmooth = this.gpuSmooth * 0.85 + gpuRaw * 0.15;
 
-      const ram = this.readRam();
-      if (ram >= 0) this.ramLoad.set(ram);
-      this.cpuLoad.set(Math.min(100, Math.max(1, Math.round(this.cpuSmooth))));
-      this.gpuLoad.set(Math.min(100, Math.max(1, Math.round(this.gpuSmooth))));
-    }
-    this.lastFrameTime = timestamp;
-    this.rafId = requestAnimationFrame(this.onFrame);
-  };
+    const ram = this.readRam();
+    if (ram >= 0) this.ramLoad.set(ram);
+    this.cpuLoad.set(Math.min(100, Math.max(1, Math.round(this.cpuSmooth))));
+    this.gpuLoad.set(Math.min(100, Math.max(1, Math.round(this.gpuSmooth))));
+  }
 
   constructor() {
     const ram = this.readRam();
     if (ram >= 0) this.ramLoad.set(ram);
-    this.rafId = requestAnimationFrame(this.onFrame);
+    this.ngZone.runOutsideAngular(() => {
+      this.intervalId = setInterval(() => {
+        this.ngZone.run(() => this.tick());
+      }, 200);
+    });
     this.destroyRef.onDestroy(() => {
-      if (this.rafId !== null) cancelAnimationFrame(this.rafId);
+      if (this.intervalId !== null) clearInterval(this.intervalId);
     });
   }
 }

@@ -85,6 +85,7 @@ export class SessionService {
   readonly fps = signal(0);
   private frameTimes: number[] = [];
   private rafId: number | null = null;
+  private lastFpsUpdate = 0;
 
   constructor() {
     this.startFpsTracking();
@@ -104,13 +105,14 @@ export class SessionService {
     const tick = (timestamp: number) => {
       if (this.frameTimes.length >= 15) this.frameTimes.shift();
       this.frameTimes.push(timestamp);
-      if (this.frameTimes.length > 1) {
+      if (this.frameTimes.length > 1 && timestamp - this.lastFpsUpdate >= 200) {
         let sum = 0;
         for (let i = 1; i < this.frameTimes.length; i++) {
           sum += this.frameTimes[i] - this.frameTimes[i - 1];
         }
         const avgDelta = sum / (this.frameTimes.length - 1);
         this.fps.set(Math.round(1000 / avgDelta));
+        this.lastFpsUpdate = timestamp;
       }
       this.rafId = requestAnimationFrame(tick);
     };
