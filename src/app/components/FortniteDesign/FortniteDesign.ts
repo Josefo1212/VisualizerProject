@@ -21,14 +21,13 @@ export class FortniteDesignComponent {
   readonly time = inject(TimeEngineService);
   private readonly session = inject(SessionService);
 
+  readonly sliderValue = signal<number>(0);
+  readonly isDragging = signal(false);
+
   constructor() {
     this.session.addLog('FORTNITE WORLD INITIALIZED', 'success');
+    this.sliderValue.set(this.time.currentHour$());
   }
-
-  readonly sliderValue = computed(() => {
-    return this.time.currentHour$() + this.time.minutes$() / 60;
-  });
-  readonly isDragging = signal(false);
 
   readonly matchProgress = computed(() => (this.sliderValue() / 24) * 100);
 
@@ -45,7 +44,14 @@ export class FortniteDesignComponent {
   });
 
   readonly stormRadius = computed(() => {
-    return 150 * (1 - this.matchProgress() / 100);
+    const maxR = 250;
+    return maxR * (1 - this.matchProgress() / 100);
+  });
+
+  readonly safeZoneRadius = computed(() => {
+    const maxR = 250;
+    const t = this.matchProgress() / 100;
+    return maxR * (1 - t) * (1 - t * 0.45);
   });
 
   readonly realTime = computed(() => {
@@ -66,6 +72,59 @@ export class FortniteDesignComponent {
     if (pct <= 40) return 'search';
     if (pct <= 85) return 'alert';
     return 'danger';
+  });
+
+  readonly stormActive = computed(() => this.matchProgress() > 5 && this.matchProgress() < 100);
+
+  readonly currentRadiusKm = computed(() => {
+    const r = this.stormRadius();
+    return (r / 250 * 5.2).toFixed(1);
+  });
+
+  readonly nextRadius = computed(() => {
+    const pct = this.matchProgress();
+    const next = 250 * (1 - Math.min(100, pct + 12) / 100);
+    return (Math.max(0, next) / 250 * 5.2).toFixed(1);
+  });
+
+  readonly closingSpeed = computed(() => {
+    const pct = this.matchProgress();
+    if (pct < 15) return '0.8';
+    if (pct < 35) return '1.2';
+    if (pct < 55) return '2.1';
+    if (pct < 75) return '3.5';
+    if (pct < 100) return '5.8';
+    return '0.0';
+  });
+
+  readonly stormDamage = computed(() => {
+    const pct = this.matchProgress();
+    if (pct < 15) return '1';
+    if (pct < 35) return '3';
+    if (pct < 55) return '5';
+    if (pct < 75) return '8';
+    if (pct < 100) return '12';
+    return '0';
+  });
+
+  readonly dangerLevel = computed(() => {
+    const pct = this.matchProgress();
+    if (pct < 15) return 'LOW';
+    if (pct < 35) return 'MODERATE';
+    if (pct < 55) return 'ELEVATED';
+    if (pct < 75) return 'HIGH';
+    if (pct < 100) return 'CRITICAL';
+    return 'COLLAPSED';
+  });
+
+  readonly safeZoneEta = computed(() => {
+    const pct = this.matchProgress();
+    if (pct >= 100) return '--:--';
+    const remaining = 100 - pct;
+    const totalSec = Math.round(remaining * 2.4);
+    const m = Math.floor(totalSec / 60);
+    const s = totalSec % 60;
+    return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
   });
 
   readonly ringOffset = computed(() => {
@@ -100,9 +159,20 @@ export class FortniteDesignComponent {
     return logs;
   });
 
-  readonly busY = computed(() => {
+  readonly matchTime = computed(() => {
+    const h = this.time.hours$();
+    const m = this.time.minutes$();
+    return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:00`;
+  });
+
+  readonly nextClosing = computed(() => {
     const pct = this.matchProgress();
-    return Math.max(10, 180 - (pct / 100) * 170);
+    if (pct >= 100) return '--:--';
+    const remaining = 100 - pct;
+    const totalSec = Math.round(remaining * 1.8);
+    const mins = Math.floor(totalSec / 60);
+    const secs = totalSec % 60;
+    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
   });
 
   readonly matchStatus = computed(() => {
@@ -117,6 +187,7 @@ export class FortniteDesignComponent {
 
   onSliderChange(v: any): void {
     const val = typeof v === 'string' ? parseFloat(v) : v;
+    this.sliderValue.set(val);
     this.time.setHora(val);
   }
 
@@ -130,5 +201,6 @@ export class FortniteDesignComponent {
 
   onResetTime(): void {
     this.time.resetToRealTime();
+    this.sliderValue.set(this.time.currentHour$());
   }
 }

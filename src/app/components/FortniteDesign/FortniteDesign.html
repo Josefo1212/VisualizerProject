@@ -2,12 +2,23 @@
   <div class="bg-grid"></div>
   <div class="bg-cloud cloud-1"></div>
   <div class="bg-cloud cloud-2"></div>
+  <div class="particle p1"></div>
+  <div class="particle p2"></div>
+  <div class="particle p3"></div>
+  <div class="particle p4"></div>
+  <div class="particle p5"></div>
+  <span class="tac-text tt-2 blink">SCAN ACTIVE</span>
+  <span class="tac-text tt-3 glow">ZONE ANALYSIS</span>
+  <span class="tac-text tt-4 glow">SATELLITE LINK</span>
+  <span class="tac-text tt-5 blink">UPLINK READY</span>
+  <span class="tac-text tt-6 glow">SIGNAL STABLE</span>
+  <span class="tac-text tt-7">SYNC COMPLETE</span>
+  <span class="tac-text tt-8 blink">BATTLE NETWORK</span>
 
   <div class="top-bar">
     <div class="squad-block skew-box">
       <div class="skew-fix">
-        <div class="squad-header">
-          <span class="squad-icon">👤</span>
+        <div class="squad-header-compact">
           <span class="squad-name">JOSEFO_URU</span>
           <span class="squad-tag">[LIDER]</span>
         </div>
@@ -28,27 +39,88 @@
       </div>
     </div>
 
+    <div class="top-clock">
+      <svg class="clock-ico" width="48" height="48" viewBox="0 0 12 12" fill="none">
+        <circle cx="6" cy="6" r="5" stroke="#00bcff" stroke-width="0.8" opacity="0.6"/>
+        <line x1="6" y1="6" x2="6" y2="3" stroke="#00bcff" stroke-width="0.8" opacity="0.8"/>
+        <line x1="6" y1="6" x2="8.5" y2="6" stroke="#00bcff" stroke-width="0.6" opacity="0.6"/>
+        <circle cx="6" cy="6" r="0.8" fill="#00bcff" opacity="0.4"/>
+      </svg>
+      <span class="clock-time">{{ realTime() }}</span>
+    </div>
+
     <div class="storm-block skew-box">
-      <div class="skew-fix">
-        <div class="storm-header">
-          <span class="storm-icon">🌀</span>
-          <span class="storm-title">TORMENTA</span>
-          <svg class="storm-ring" viewBox="0 0 36 36">
-            <circle class="ring-bg" cx="18" cy="18" r="15" fill="none" stroke-width="3" />
-            <circle class="ring-fg" cx="18" cy="18" r="15" fill="none" stroke-width="3"
-              stroke-dasharray="94.25"
-              [attr.stroke-dashoffset]="ringOffset()" />
+      <div class="skew-fix storm-tactical">
+        <div class="tac-header">
+          <svg class="tac-header-icon" width="20" height="20" viewBox="0 0 14 14" fill="none">
+            <path d="M7 1v12M1 7h12" stroke="#bf00ff" stroke-width="1.2" opacity="0.5"/>
+            <circle cx="7" cy="7" r="3" fill="none" stroke="#bf00ff" stroke-width="1.2"/>
+            <circle cx="7" cy="7" r="1" fill="#bf00ff"/>
           </svg>
-          <span class="storm-phase">{{ stormPhase() }}</span>
+          <span class="tac-title">TORMENTA</span>
+          <div class="tac-led" [class.active]="stormActive()"></div>
+          <span class="tac-phase-badge">{{ stormPhase() }}</span>
         </div>
-        <div class="storm-info">
-          <span class="storm-timer">{{ realTime() }}</span>
+
+        <div class="tac-progress-wrap">
+          <div class="tac-progress-track">
+            <div class="tac-progress-fill" [style.width.%]="matchProgress()"></div>
+          </div>
+          <span class="tac-progress-pct">{{ matchProgress().toFixed(0) }}%</span>
         </div>
-        <div class="storm-status"
-          [class.status-search]="stormStatusClass() === 'search'"
-          [class.status-alert]="stormStatusClass() === 'alert'"
-          [class.status-danger]="stormStatusClass() === 'danger'">
-          {{ stormStatusText() }}
+
+        <div class="tac-grid">
+          <div class="tac-cell">
+            <svg class="tac-ico" width="14" height="14" viewBox="0 0 10 10" fill="none">
+              <polygon points="5,1 8,6 7,6 7,9 3,9 3,6 2,6" fill="none" stroke="#bf00ff" stroke-width="0.8"/>
+            </svg>
+            <span class="tac-lbl">PHASE</span>
+            <span class="tac-val">{{ stormPhase() }}</span>
+          </div>
+          <div class="tac-cell">
+            <svg class="tac-ico" width="14" height="14" viewBox="0 0 10 10" fill="none">
+              <circle cx="5" cy="5" r="4" fill="none" stroke="#00bcff" stroke-width="0.8"/>
+              <circle cx="5" cy="5" r="1.5" fill="none" stroke="#00bcff" stroke-width="0.8"/>
+            </svg>
+            <span class="tac-lbl">CURR RAD</span>
+            <span class="tac-val">{{ currentRadiusKm() }}km</span>
+          </div>
+          <div class="tac-cell">
+            <svg class="tac-ico" width="14" height="14" viewBox="0 0 10 10" fill="none">
+              <path d="M1 9 5 1 9 9" fill="none" stroke="#00ffaa" stroke-width="0.8"/>
+              <line x1="5" y1="1" x2="5" y2="5" stroke="#00ffaa" stroke-width="0.8"/>
+            </svg>
+            <span class="tac-lbl">CLOSE SPD</span>
+            <span class="tac-val">{{ closingSpeed() }}m/s</span>
+          </div>
+          <div class="tac-cell">
+            <svg class="tac-ico" width="14" height="14" viewBox="0 0 10 10" fill="none">
+              <rect x="2" y="1" width="6" height="8" rx="1" fill="none" stroke="#ff3355" stroke-width="0.8"/>
+              <line x1="5" y1="4" x2="5" y2="7" stroke="#ff3355" stroke-width="0.8"/>
+              <circle cx="5" cy="8.5" r="0.5" fill="#ff3355"/>
+            </svg>
+            <span class="tac-lbl">DAMAGE</span>
+            <span class="tac-val">{{ stormDamage() }}/tic</span>
+          </div>
+          <div class="tac-cell">
+            <svg class="tac-ico" width="14" height="14" viewBox="0 0 10 10" fill="none">
+              <circle cx="5" cy="5" r="4" fill="none" stroke="#00bcff" stroke-width="0.8"/>
+              <circle cx="5" cy="5" r="1.5" fill="#00bcff" opacity="0.4"/>
+            </svg>
+            <span class="tac-lbl">STATUS</span>
+            <span class="tac-val tac-val-status" [class.tac-danger]="stormStatusClass() === 'danger'" [class.tac-alert]="stormStatusClass() === 'alert'">
+              {{ stormStatusClass() === 'search' ? 'SCANNING' : stormStatusClass() === 'alert' ? 'MOVING' : 'COLLAPSE' }}
+            </span>
+          </div>
+          <div class="tac-cell">
+            <svg class="tac-ico" width="14" height="14" viewBox="0 0 10 10" fill="none">
+              <circle cx="5" cy="5" r="4" fill="none" stroke="#00ffaa" stroke-width="0.8"/>
+              <line x1="5" y1="5" x2="5" y2="2" stroke="#00ffaa" stroke-width="0.8"/>
+              <line x1="5" y1="5" x2="7" y2="5" stroke="#00ffaa" stroke-width="0.8"/>
+            </svg>
+            <span class="tac-lbl">ZONE ETA</span>
+            <span class="tac-val">{{ safeZoneEta() }}</span>
+          </div>
         </div>
       </div>
     </div>
@@ -58,8 +130,10 @@
     <div class="minimap-block">
       <div class="minimap-title">MAPA DE SUPERVIVENCIA</div>
       <div class="minimap-stage">
+        <div class="coord-top"><span>A</span><span>B</span><span>C</span><span>D</span><span>E</span><span>F</span></div>
+        <div class="coord-left"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span></div>
         <div class="minimap-overlay"></div>
-        <svg class="minimap-svg" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+        <svg class="minimap-svg" viewBox="0 0 350 350" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
           <defs>
             <filter id="storm-glow" x="-50%" y="-50%" width="200%" height="200%">
               <feGaussianBlur stdDeviation="3" result="blur" />
@@ -73,26 +147,72 @@
               <stop offset="100%" stop-color="#00bcff" stop-opacity="0" />
             </radialGradient>
             <mask id="storm-mask">
-              <rect x="-30" y="0" width="260" height="200" fill="white" />
-              <circle cx="100" cy="100" [attr.r]="stormRadius()" fill="black" />
+              <rect x="-80" y="-80" width="510" height="510" fill="white" />
+              <circle cx="175" cy="175" [attr.r]="stormRadius()" fill="black" />
             </mask>
             <clipPath id="viewbox-clip">
-              <rect x="0" y="0" width="200" height="200" />
+              <rect x="0" y="0" width="350" height="350" />
             </clipPath>
+            <radialGradient id="player-pulse" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stop-color="#00ff66" stop-opacity="0.4" />
+              <stop offset="100%" stop-color="#00ff66" stop-opacity="0" />
+            </radialGradient>
           </defs>
 
-          <image href="/Fortnite/mapaFortnite.webp" x="-10" y="-10" width="220" height="220" preserveAspectRatio="xMidYMid slice" clip-path="url(#viewbox-clip)" />
-          <rect x="-10" y="-10" width="220" height="220" fill="rgba(0,0,0,0.3)" clip-path="url(#viewbox-clip)" />
-          <rect x="-30" y="0" width="260" height="200" fill="rgba(191,0,255,0.35)" mask="url(#storm-mask)" filter="url(#storm-glow)" clip-path="url(#viewbox-clip)" />
-          <circle cx="100" cy="100" [attr.r]="stormRadius()" fill="none" stroke="#bf00ff" stroke-width="2.5" opacity="0.85" filter="url(#storm-glow)" />
+          <image href="/Fortnite/mapaFortnite.webp" x="0" y="0" width="350" height="350" preserveAspectRatio="xMidYMid slice" clip-path="url(#viewbox-clip)" />
+          <rect x="0" y="0" width="350" height="350" fill="rgba(0,0,0,0.3)" clip-path="url(#viewbox-clip)" />
+          <rect x="-80" y="-80" width="510" height="510" fill="rgba(191,0,255,0.35)" mask="url(#storm-mask)" filter="url(#storm-glow)" clip-path="url(#viewbox-clip)" />
+          <circle cx="175" cy="175" [attr.r]="stormRadius()" fill="none" stroke="#bf00ff" stroke-width="2.5" opacity="0.85" filter="url(#storm-glow)" />
 
-          <circle cx="100" cy="100" r="28" fill="url(#safe-zone)" stroke="#00bcff" stroke-width="1.5" opacity="0.9" />
-          <circle cx="100" cy="100" r="28" fill="none" stroke="#00ff66" stroke-width="0.5" opacity="0.4" />
+          <!-- TACTICAL GRID -->
+          <g class="tactical-grid" opacity="0.12">
+            <line x1="58.3" y1="0" x2="58.3" y2="350" stroke="#00f3ff" stroke-width="0.3"/>
+            <line x1="116.7" y1="0" x2="116.7" y2="350" stroke="#00f3ff" stroke-width="0.3"/>
+            <line x1="175" y1="0" x2="175" y2="350" stroke="#00f3ff" stroke-width="0.3"/>
+            <line x1="233.3" y1="0" x2="233.3" y2="350" stroke="#00f3ff" stroke-width="0.3"/>
+            <line x1="291.7" y1="0" x2="291.7" y2="350" stroke="#00f3ff" stroke-width="0.3"/>
+            <line x1="0" y1="58.3" x2="350" y2="58.3" stroke="#00f3ff" stroke-width="0.3"/>
+            <line x1="0" y1="116.7" x2="350" y2="116.7" stroke="#00f3ff" stroke-width="0.3"/>
+            <line x1="0" y1="175" x2="350" y2="175" stroke="#00f3ff" stroke-width="0.3"/>
+            <line x1="0" y1="233.3" x2="350" y2="233.3" stroke="#00f3ff" stroke-width="0.3"/>
+            <line x1="0" y1="291.7" x2="350" y2="291.7" stroke="#00f3ff" stroke-width="0.3"/>
+          </g>
 
-          <circle cx="100" cy="100" r="2.5" fill="#00ff66" opacity="0.9" filter="url(#storm-glow)" />
+          <!-- RADAR SWEEP -->
+          <polygon class="radar-sweep" points="175,175 350,0 350,17.5" fill="rgba(0,243,255,0.06)" clip-path="url(#viewbox-clip)" style="transform-origin:175px 175px;" />
 
-          <rect x="88" [attr.y]="busY()" width="24" height="10" rx="2" fill="#ffaa00" stroke="#fff" stroke-width="0.8" opacity="0.95" filter="url(#storm-glow)" />
-          <rect x="92" [attr.y]="busY()" width="16" height="4" rx="1" fill="#fff" opacity="0.4" />
+          <circle cx="175" cy="175" [attr.r]="safeZoneRadius()" fill="url(#safe-zone)" stroke="#00bcff" stroke-width="1.5" opacity="0.9" />
+          <circle cx="175" cy="175" [attr.r]="safeZoneRadius()" fill="none" stroke="#00ff66" stroke-width="0.5" opacity="0.4" />
+
+          <!-- MARKERS -->
+          <g class="marker loot" transform="translate(44, 53)">
+            <rect x="-4" y="-4" width="8" height="8" fill="none" stroke="#ffaa00" stroke-width="1.2" transform="rotate(45)"/>
+            <circle cx="0" cy="0" r="1" fill="#ffaa00"/>
+          </g>
+          <g class="marker supply-drop" transform="translate(298, 79)">
+            <line x1="0" y1="-5" x2="-3" y2="-2" stroke="#00bcff" stroke-width="0.8"/>
+            <line x1="0" y1="-5" x2="3" y2="-2" stroke="#00bcff" stroke-width="0.8"/>
+            <line x1="0" y1="-5" x2="0" y2="0" stroke="#00bcff" stroke-width="0.8"/>
+            <rect x="-3" y="0" width="6" height="4" rx="1" fill="none" stroke="#00bcff" stroke-width="0.8"/>
+          </g>
+          <g class="marker enemy" transform="translate(245, 263)">
+            <circle cx="0" cy="0" r="4" fill="none" stroke="#ff3355" stroke-width="1"/>
+            <line x1="0" y1="-5" x2="0" y2="-7" stroke="#ff3355" stroke-width="1"/>
+            <line x1="0" y1="5" x2="0" y2="7" stroke="#ff3355" stroke-width="1"/>
+            <line x1="-5" y1="0" x2="-7" y2="0" stroke="#ff3355" stroke-width="1"/>
+            <line x1="5" y1="0" x2="7" y2="0" stroke="#ff3355" stroke-width="1"/>
+          </g>
+          <g class="marker vehicle" transform="translate(97, 280)">
+            <rect x="-5" y="-2.5" width="10" height="5" rx="1" fill="none" stroke="#ff9f0a" stroke-width="0.8"/>
+            <circle cx="-3" cy="2.5" r="1.2" fill="#ff9f0a"/>
+            <circle cx="3" cy="2.5" r="1.2" fill="#ff9f0a"/>
+          </g>
+
+          <!-- PLAYER DOT WITH PULSE -->
+          <circle cx="175" cy="175" r="8" fill="url(#player-pulse)" class="player-pulse-ring"/>
+          <circle cx="175" cy="175" r="2.5" fill="#00ff66" opacity="0.95" filter="url(#storm-glow)" />
+
+
         </svg>
       </div>
     </div>
@@ -126,16 +246,101 @@
 
   <div class="bottom-bar">
     <div class="slider-section">
-      <div class="slider-header">
-        <span class="slider-label-left">INICIO</span>
-        <span class="slider-status">{{ matchStatus() }}</span>
-        <span class="slider-label-right">TORMENTA FINAL</span>
+      <div class="timeline-row timeline-top">
+        <div class="tl-data">
+          <svg class="tl-ico" width="10" height="10" viewBox="0 0 12 12" fill="none">
+            <circle cx="6" cy="6" r="4.5" stroke="#00bcff" stroke-width="0.8"/>
+            <line x1="6" y1="6" x2="6" y2="3" stroke="#00bcff" stroke-width="0.8"/>
+            <line x1="6" y1="6" x2="8.5" y2="6" stroke="#00bcff" stroke-width="0.8"/>
+          </svg>
+          <span class="tl-lbl">MATCH TIME</span>
+          <span class="tl-val">{{ matchTime() }}</span>
+        </div>
+        <div class="tl-data">
+          <svg class="tl-ico" width="10" height="10" viewBox="0 0 12 12" fill="none">
+            <polygon points="6,1 10,3 10,6 6,11 2,6 2,3" stroke="#bf00ff" stroke-width="0.8"/>
+            <circle cx="6" cy="4.5" r="1" fill="#bf00ff" opacity="0.4"/>
+          </svg>
+          <span class="tl-lbl">PHASE</span>
+          <span class="tl-val tl-phase">{{ stormPhase() }}</span>
+        </div>
+        <div class="tl-data">
+          <svg class="tl-ico" width="10" height="10" viewBox="0 0 12 12" fill="none">
+            <circle cx="6" cy="6" r="4.5" stroke="#00bcff" stroke-width="0.8"/>
+            <line x1="6" y1="1.5" x2="6" y2="10.5" stroke="#00bcff" stroke-width="0.4"/>
+            <line x1="1.5" y1="6" x2="10.5" y2="6" stroke="#00bcff" stroke-width="0.4"/>
+            <circle cx="6" cy="6" r="1" fill="#00bcff" opacity="0.4"/>
+          </svg>
+          <span class="tl-lbl">RADIUS</span>
+          <span class="tl-val">{{ currentRadiusKm() }}km</span>
+        </div>
+        <div class="tl-data">
+          <svg class="tl-ico" width="10" height="10" viewBox="0 0 12 12" fill="none">
+            <circle cx="6" cy="6" r="4.5" stroke="#ff9f0a" stroke-width="0.8"/>
+            <path d="M6 3v3l2 2" stroke="#ff9f0a" stroke-width="0.8" fill="none"/>
+          </svg>
+          <span class="tl-lbl">NEXT CLOSING</span>
+          <span class="tl-val">{{ nextClosing() }}</span>
+        </div>
       </div>
-      <div class="slider-wrapper">
-        <app-slider [value]="sliderValue()" [min]="0" [max]="24" [step]="0.1" (valueChange)="onSliderChange($event)" (dragStart)="onDragStart()" (dragEnd)="onDragEnd()"></app-slider>
+
+      <div class="timeline-slider-area">
+        <span class="tl-label-left">INICIO</span>
+        <div class="tl-track-wrap">
+          <div class="tl-marks">
+            <span class="tl-mark" style="left: 0%"></span>
+            <span class="tl-mark" style="left: 12.5%"></span>
+            <span class="tl-mark" style="left: 25%"></span>
+            <span class="tl-mark" style="left: 37.5%"></span>
+            <span class="tl-mark" style="left: 50%"></span>
+            <span class="tl-mark" style="left: 62.5%"></span>
+            <span class="tl-mark" style="left: 75%"></span>
+            <span class="tl-mark" style="left: 87.5%"></span>
+            <span class="tl-mark" style="left: 100%"></span>
+          </div>
+          <div class="tl-dots">
+            <span class="tl-dot" style="left: 0%" [class.on]="matchProgress() > 1"></span>
+            <span class="tl-dot" style="left: 16.6%" [class.on]="matchProgress() > 16"></span>
+            <span class="tl-dot" style="left: 33.3%" [class.on]="matchProgress() > 33"></span>
+            <span class="tl-dot" style="left: 50%" [class.on]="matchProgress() > 50"></span>
+            <span class="tl-dot" style="left: 66.6%" [class.on]="matchProgress() > 66"></span>
+            <span class="tl-dot" style="left: 83.3%" [class.on]="matchProgress() > 83"></span>
+            <span class="tl-dot" style="left: 100%" [class.on]="matchProgress() > 99"></span>
+          </div>
+          <app-slider [value]="sliderValue()" [min]="0" [max]="24" [step]="0.1" (valueChange)="onSliderChange($event)" (dragStart)="onDragStart()" (dragEnd)="onDragEnd()"></app-slider>
+        </div>
+        <span class="tl-pct">{{ matchProgress().toFixed(0) }}%</span>
+        <span class="tl-label-right">TORMENTA FINAL</span>
       </div>
-      <div class="slider-pct">{{ sliderValue().toFixed(1) }}%</div>
-      <button class="reset-btn" (click)="onResetTime()">REINICIAR</button>
+
+      <div class="timeline-row timeline-bottom">
+        <div class="tl-data">
+          <svg class="tl-ico" width="10" height="10" viewBox="0 0 12 12" fill="none">
+            <circle cx="6" cy="6" r="4.5" stroke="#00ffaa" stroke-width="0.8"/>
+            <path d="M6 3v3l2.5 1" stroke="#00ffaa" stroke-width="0.8" fill="none"/>
+          </svg>
+          <span class="tl-lbl">SAFE ZONE</span>
+          <span class="tl-val">{{ matchProgress().toFixed(0) }}%</span>
+        </div>
+        <div class="tl-data">
+          <svg class="tl-ico" width="10" height="10" viewBox="0 0 12 12" fill="none">
+            <rect x="2" y="1" width="8" height="10" rx="1.5" stroke="#ff3355" stroke-width="0.8"/>
+            <line x1="6" y1="4" x2="6" y2="7" stroke="#ff3355" stroke-width="0.8"/>
+            <circle cx="6" cy="9" r="0.6" fill="#ff3355"/>
+          </svg>
+          <span class="tl-lbl">DAMAGE</span>
+          <span class="tl-val">{{ stormDamage() }}/tic</span>
+        </div>
+        <div class="tl-data">
+          <svg class="tl-ico" width="10" height="10" viewBox="0 0 12 12" fill="none">
+            <circle cx="6" cy="6" r="4.5" stroke="#00bcff" stroke-width="0.8"/>
+            <polygon points="6,2 8,6 6,8 4,6" stroke="#00bcff" stroke-width="0.6" fill="none"/>
+          </svg>
+          <span class="tl-lbl">ZONE ETA</span>
+          <span class="tl-val tl-eta">{{ safeZoneEta() }}</span>
+        </div>
+        <button class="reset-btn" (click)="onResetTime()">REINICIAR</button>
+      </div>
     </div>
   </div>
 </div>

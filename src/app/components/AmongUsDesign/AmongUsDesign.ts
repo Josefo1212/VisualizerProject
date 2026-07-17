@@ -23,7 +23,8 @@ export class AmongUsDesignComponent implements OnInit, OnDestroy {
   readonly totalDays = computed(() => Math.floor(Math.abs(this.timeEngine.hours$()) / 24));
 
   readonly daysInfo = computed<DayInfo[]>(() => {
-    const today = new Date().getDay();
+    const jsDay = new Date().getDay();
+    const today = (jsDay + 6) % 7;
     return DAY_NAMES.map((name, i) => ({
       name,
       status: i < today ? 'past' : i === today ? 'today' : 'future'
