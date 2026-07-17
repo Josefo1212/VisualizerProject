@@ -134,6 +134,7 @@
   font-weight: 700;
   letter-spacing: 1px;
 }
+
 .scan-panel .subpanel-title {
   color: #00f3ff;
   text-shadow: 0 0 8px rgba(0, 243, 255, 0.25);
@@ -207,8 +208,15 @@
 }
 
 @keyframes critical-pulse {
-  0%, 100% { box-shadow: 0 0 8px rgba(255, 50, 50, 0.3); }
-  50%      { box-shadow: 0 0 24px rgba(255, 50, 50, 0.7); }
+
+  0%,
+  100% {
+    box-shadow: 0 0 8px rgba(255, 50, 50, 0.3);
+  }
+
+  50% {
+    box-shadow: 0 0 24px rgba(255, 50, 50, 0.7);
+  }
 }
 
 .crewmate {

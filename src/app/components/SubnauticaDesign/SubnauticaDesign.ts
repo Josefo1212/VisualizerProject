@@ -1,4 +1,4 @@
-import { Component, computed, inject } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { TimeEngineService } from '../../services/timeEngine';
 import { SessionService } from '../../services/session';
 
@@ -16,8 +16,12 @@ export class SubnauticaDesignComponent {
   readonly time = inject(TimeEngineService);
   private readonly session = inject(SessionService);
 
+  readonly sliderValue = signal<number>(0);
+  readonly isDragging = signal(false);
+
   constructor() {
     this.session.addLog('SUBNAUTICA WORLD INITIALIZED', 'success');
+    this.sliderValue.set(this.time.currentHour$());
   }
 
   readonly currentSecond = this.time.seconds$;
@@ -83,7 +87,7 @@ export class SubnauticaDesignComponent {
   });
 
   readonly totalMinutes = computed(() => this.time.hours$() * 60 + this.time.minutes$());
-  readonly sliderPercent = computed(() => (this.cycleMinutes() / 1439) * 100);
+  readonly sliderPercent = computed(() => (this.sliderValue() / 24) * 100);
 
   readonly arcPath = 'M -5,8 Q 50,-4 105,8';
 
@@ -96,7 +100,7 @@ export class SubnauticaDesignComponent {
   }
 
   readonly arcThumbPos = computed(() => {
-    const t = this.cycleMinutes() / 1439;
+    const t = Math.max(0, Math.min(1, this.sliderValue() / 24));
     return this.bezierPoint(t);
   });
 
@@ -119,26 +123,53 @@ export class SubnauticaDesignComponent {
     });
   });
 
-  onArcClick(event: MouseEvent): void {
-    const svg = event.currentTarget as SVGSVGElement;
-    const rect = svg.getBoundingClientRect();
-    const vb = svg.viewBox.baseVal;
+  private svgElement?: SVGSVGElement;
+
+  private arcYatT(t: number): number {
+    return 8 - 24 * t + 24 * t * t;
+  }
+
+  private setFromPointer(clientX: number, clientY: number, checkProximity = false): boolean {
+    if (!this.svgElement) return false;
+    const rect = this.svgElement.getBoundingClientRect();
+    const vb = this.svgElement.viewBox.baseVal;
     const sx = vb.width / rect.width;
     const sy = vb.height / rect.height;
-    const cx = (event.clientX - rect.left) * sx;
-    const cy = (event.clientY - rect.top) * sy;
-    let bestT = 0;
-    let minDist = Infinity;
-    for (let i = 0; i <= 200; i++) {
-      const t = i / 200;
-      const p = this.bezierPoint(t);
-      const d = (p.x - cx) ** 2 + (p.y - cy) ** 2;
-      if (d < minDist) { minDist = d; bestT = t; }
+    const cx = (clientX - rect.left) * sx;
+    const cy = (clientY - rect.top) * sy;
+    const t = Math.max(0, Math.min(1, (cx + 5) / 110));
+    if (checkProximity) {
+      const curveY = this.arcYatT(t);
+      if (Math.abs(cy - curveY) > 12) return false;
     }
-    this.time.setHora(bestT * 24);
+    const hours = t * 24;
+    this.sliderValue.set(hours);
+    this.time.setHora(hours);
+    return true;
+  }
+
+  onPointerDown(event: PointerEvent): void {
+    const svg = event.currentTarget as SVGSVGElement;
+    this.svgElement = svg;
+    if (!this.setFromPointer(event.clientX, event.clientY, true)) return;
+    svg.setPointerCapture(event.pointerId);
+    this.isDragging.set(true);
+  }
+
+  onPointerMove(event: PointerEvent): void {
+    if (!this.isDragging()) return;
+    this.setFromPointer(event.clientX, event.clientY, false);
+  }
+
+  onPointerUp(event: PointerEvent): void {
+    if (!this.isDragging()) return;
+    this.isDragging.set(false);
+    const svg = event.currentTarget as SVGSVGElement;
+    svg.releasePointerCapture(event.pointerId);
   }
 
   onResetTime(): void {
+    this.sliderValue.set(this.time.currentHour$());
     this.time.resetToRealTime();
   }
 }

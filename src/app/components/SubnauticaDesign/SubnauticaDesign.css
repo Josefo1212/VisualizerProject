@@ -32,7 +32,7 @@
 
 .pda-image {
   position: absolute;
-  top: 0;
+  top: -15px;
   left: 0;
   width: 100%;
   height: 100%;
@@ -46,7 +46,7 @@
 
 .pda-screen {
   position: absolute;
-  inset: 10.1% 21.35% 14% 17.5%;
+  inset: 8% 21.2% 16% 17.3%;
   z-index: 2;
   padding: 0;
   box-sizing: border-box;
@@ -59,7 +59,7 @@
   background: rgba(3, 10, 28, 0.97);
   border-radius: 2.4rem;
   display: grid;
-  grid-template-rows: minmax(0, 1fr) minmax(0, 22.2%);
+  grid-template-rows: minmax(0, 1fr) minmax(0, 30%);
   gap: clamp(0.3rem, 0.7vw, 0.55rem);
 }
 
@@ -213,8 +213,13 @@
 }
 
 @keyframes pulse-travel {
-  0%   { stroke-dashoffset: 0; }
-  100% { stroke-dashoffset: -400; }
+  0% {
+    stroke-dashoffset: 0;
+  }
+
+  100% {
+    stroke-dashoffset: -400;
+  }
 }
 
 .pulse-svg.critical .pulse-path {
@@ -252,8 +257,15 @@
 }
 
 @keyframes vitals-flash {
-  0%, 100% { opacity: 1; }
-  50%      { opacity: 0.6; }
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.6;
+  }
 }
 
 .vitals-dot {
@@ -324,22 +336,18 @@
   inset: -6px;
   border-radius: 50%;
   z-index: 0;
-  background: repeating-conic-gradient(
-    rgba(0, 240, 255, 0.3) 0deg 1deg,
-    transparent 1deg 7.2deg
-  );
+  background: repeating-conic-gradient(rgba(0, 240, 255, 0.3) 0deg 1deg,
+      transparent 1deg 7.2deg);
   -webkit-mask: radial-gradient(circle at center,
-    transparent calc(100% - 8px),
-    #000 calc(100% - 8px),
-    #000 calc(100% - 3px),
-    transparent calc(100% - 3px)
-  );
+      transparent calc(100% - 8px),
+      #000 calc(100% - 8px),
+      #000 calc(100% - 3px),
+      transparent calc(100% - 3px));
   mask: radial-gradient(circle at center,
-    transparent calc(100% - 8px),
-    #000 calc(100% - 8px),
-    #000 calc(100% - 3px),
-    transparent calc(100% - 3px)
-  );
+      transparent calc(100% - 8px),
+      #000 calc(100% - 8px),
+      #000 calc(100% - 3px),
+      transparent calc(100% - 3px));
   pointer-events: none;
 }
 
@@ -355,10 +363,8 @@
 }
 
 .ring-wrapper.critical::before {
-  background: repeating-conic-gradient(
-    rgba(255, 0, 60, 0.4) 0deg 1deg,
-    transparent 1deg 7.2deg
-  );
+  background: repeating-conic-gradient(rgba(255, 0, 60, 0.4) 0deg 1deg,
+      transparent 1deg 7.2deg);
 }
 
 .ring-wrapper.critical::after {
@@ -388,11 +394,9 @@
   position: absolute;
   inset: 0;
   border-radius: 50%;
-  background: radial-gradient(
-    circle at 32% 28%,
-    rgba(255, 255, 255, 0.08) 0%,
-    transparent 40%
-  );
+  background: radial-gradient(circle at 32% 28%,
+      rgba(255, 255, 255, 0.08) 0%,
+      transparent 40%);
   pointer-events: none;
   z-index: 1;
 }
@@ -420,11 +424,9 @@
   position: absolute;
   inset: 0;
   border-radius: 50%;
-  background: repeating-linear-gradient(
-    0deg,
-    rgba(0, 240, 255, 0.02) 0px 1px,
-    transparent 1px 3px
-  );
+  background: repeating-linear-gradient(0deg,
+      rgba(0, 240, 255, 0.02) 0px 1px,
+      transparent 1px 3px);
   pointer-events: none;
 }
 
@@ -462,8 +464,17 @@
 }
 
 @keyframes o2-critical-pulse {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50%      { opacity: 0.7; transform: scale(1.08); }
+
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  50% {
+    opacity: 0.7;
+    transform: scale(1.08);
+  }
 }
 
 .current-task {
@@ -651,6 +662,7 @@
 }
 
 @keyframes pressure-pulse {
+
   0%,
   100% {
     transform: scale(1);
@@ -695,52 +707,91 @@
   gap: clamp(0.25rem, 0.4vw, 0.35rem);
 }
 
+.slider-row {
+  display: flex;
+  align-items: center;
+  gap: clamp(0.4rem, 0.6vw, 0.6rem);
+}
+
 .arc-slider-svg {
   width: 100%;
-  height: clamp(4.5rem, 8vw, 7rem);
+  height: clamp(5rem, 9vw, 7.5rem);
   display: block;
   overflow: visible;
   cursor: pointer;
+  touch-action: none;
+  filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.3));
+}
+
+.arc-slider-svg:hover .arc-track {
+  stroke: rgba(0, 240, 255, 0.18);
 }
 
 .arc-track {
   fill: none;
-  stroke: rgba(0, 240, 255, 0.07);
-  stroke-width: 4;
+  stroke: rgba(0, 240, 255, 0.1);
+  stroke-width: 5;
   stroke-linecap: round;
   pointer-events: none;
+  transition: stroke 0.25s ease;
 }
 
 .arc-fill {
   fill: none;
-  stroke: #00f0ff;
-  stroke-width: 4;
+  stroke: url(#arc-grad);
+  stroke-width: 5;
   stroke-linecap: round;
-  filter: drop-shadow(0 0 8px rgba(0, 240, 255, 0.5));
-  /* transition removed: was causing delayed/linear movement instead of jumping to correct arc position */
+  filter: drop-shadow(0 0 6px rgba(0, 240, 255, 0.6)) drop-shadow(0 0 14px rgba(0, 200, 255, 0.2));
   pointer-events: none;
+}
+
+.arc-thumb-bg {
+  fill: rgba(0, 240, 255, 0.15);
+  filter: drop-shadow(0 0 6px rgba(0, 240, 255, 0.3));
+  pointer-events: none;
+  transition: r 0.2s ease, fill 0.2s ease;
+}
+
+.arc-slider-svg:hover .arc-thumb-bg {
+  r: 7;
+  fill: rgba(0, 240, 255, 0.25);
 }
 
 .arc-tick {
-  stroke: rgba(0, 240, 255, 0.45);
-  stroke-width: 1.8;
+  stroke: rgba(0, 240, 255, 0.25);
+  stroke-width: 2;
   stroke-linecap: round;
   pointer-events: none;
+  transition: stroke 0.25s ease;
+}
+
+.arc-slider-svg:hover .arc-tick {
+  stroke: rgba(0, 240, 255, 0.45);
 }
 
 .arc-label {
-  fill: #c0e8f8;
+  fill: #80b8c8;
   font-family: 'Courier New', monospace;
-  font-size: 4.5px;
+  font-size: 5px;
   text-anchor: middle;
   dominant-baseline: middle;
   pointer-events: none;
+  transition: fill 0.25s ease;
+}
+
+.arc-slider-svg:hover .arc-label {
+  fill: #c0e8f8;
 }
 
 .arc-thumb {
   fill: #ffffff;
-  filter: drop-shadow(0 0 8px rgba(0, 240, 255, 1));
+  filter: drop-shadow(0 0 4px rgba(0, 240, 255, 1)) drop-shadow(0 0 12px rgba(0, 240, 255, 0.6));
   pointer-events: none;
+  transition: r 0.15s ease;
+}
+
+.arc-slider-svg:hover .arc-thumb {
+  r: 4.5;
 }
 
 .depth-info {
@@ -786,17 +837,23 @@
 .reset-btn {
   font-family: 'Courier New', monospace;
   font-size: clamp(0.45rem, 0.6vw, 0.65rem);
-  padding: 0.1rem 0.3rem;
-  border: 1px solid rgba(0, 240, 255, 0.7);
-  background: transparent;
+  padding: 0.2rem 0.5rem;
+  border: 1px solid rgba(0, 240, 255, 0.4);
+  background: rgba(0, 240, 255, 0.06);
   color: #00f0ff;
   cursor: pointer;
   transition: all 0.3s ease;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  text-shadow: 0 0 6px rgba(0, 240, 255, 0.15);
 }
 
 .reset-btn:hover {
-  background: #00f0ff;
-  color: #000000;
+  background: rgba(0, 240, 255, 0.15);
+  border-color: rgba(0, 240, 255, 0.8);
+  box-shadow: 0 0 12px rgba(0, 240, 255, 0.15);
+  color: #ffffff;
+  text-shadow: 0 0 10px rgba(0, 240, 255, 0.4);
 }
 
 @media (max-width: 900px) {
