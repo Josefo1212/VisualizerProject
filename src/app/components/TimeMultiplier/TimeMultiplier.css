@@ -1,0 +1,60 @@
+:host {
+  display: block;
+  flex-shrink: 0;
+}
+
+.tm-container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  margin: 6px 12px;
+  border-radius: 8px;
+  border: 1px solid rgba(0, 243, 255, 0.15);
+  background: rgba(0, 243, 255, 0.04);
+  cursor: pointer;
+  transition: all 0.25s ease;
+  user-select: none;
+}
+
+.tm-container:hover:not(.disabled) {
+  background: rgba(0, 243, 255, 0.1);
+  border-color: rgba(0, 243, 255, 0.35);
+  box-shadow: 0 0 14px rgba(0, 243, 255, 0.1);
+}
+
+.tm-container.disabled {
+  opacity: 0.25;
+  cursor: default;
+  border-color: rgba(80, 80, 90, 0.1);
+  background: transparent;
+}
+
+.tm-label {
+  font-family: 'Courier New', monospace;
+  font-size: 10px;
+  letter-spacing: 2px;
+  color: rgba(0, 243, 255, 0.4);
+  text-transform: uppercase;
+}
+
+.tm-value {
+  font-family: 'Courier New', monospace;
+  font-size: 20px;
+  font-weight: 700;
+  color: #00f3ff;
+  text-shadow: 0 0 10px rgba(0, 243, 255, 0.3);
+  line-height: 1;
+  min-width: 32px;
+  text-align: center;
+}
+
+.tm-icon {
+  font-size: 14px;
+  opacity: 0.5;
+  transition: opacity 0.25s ease;
+}
+
+.tm-container:hover:not(.disabled) .tm-icon {
+  opacity: 0.9;
+}

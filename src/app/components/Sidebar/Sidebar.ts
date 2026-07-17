@@ -1,10 +1,11 @@
 import { Component, input, Output, EventEmitter, signal } from '@angular/core';
 import { HoverRevealComponent } from '../HoverReveal/HoverReveal';
+import { TimeMultiplierComponent } from '../TimeMultiplier/TimeMultiplier';
 
 @Component({
   selector: 'app-sidebar',
   standalone: true,
-  imports: [HoverRevealComponent],
+  imports: [HoverRevealComponent, TimeMultiplierComponent],
   templateUrl: './Sidebar.html',
   styleUrl: './Sidebar.css',
 })
