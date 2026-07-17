@@ -120,28 +120,6 @@
   letter-spacing: 2px;
   color: #d4c9b3;
 }
-.lp-repr-row {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 11px;
-}
-.lp-repr-icon {
-  color: #f09030;
-  width: 16px;
-  text-align: center;
-}
-.lp-repr-label {
-  color: rgba(212,201,179,0.6);
-  letter-spacing: 1px;
-  width: 48px;
-}
-.lp-repr-desc {
-  color: rgba(212,201,179,0.3);
-  font-size: 9px;
-  font-style: italic;
-}
-
 /* ─── CENTER STAGE ─── */
 .ds-center-stage {
   position: relative;
@@ -669,37 +647,11 @@
   font-variant-numeric: tabular-nums;
 }
 
-.rp-date {
-  font-size: 12px;
-  letter-spacing: 3px;
-  color: rgba(212,201,179,0.4);
-  margin-top: -6px;
-}
-
 .rp-divider {
   width: 100%;
   height: 1px;
   background: linear-gradient(90deg, transparent, rgba(212,201,179,0.2));
   margin: 4px 0;
-}
-
-.rp-row {
-  display: flex;
-  gap: 12px;
-  align-items: center;
-  font-size: 12px;
-  width: 100%;
-  justify-content: flex-end;
-}
-.rp-label {
-  font-weight: 700;
-  color: #f09030;
-  width: 20px;
-  text-align: right;
-}
-.rp-desc {
-  color: rgba(212,201,179,0.4);
-  letter-spacing: 1px;
 }
 
 .rp-date-row {

@@ -3,7 +3,7 @@ import { TimeEngineService } from '../../services/timeEngine';
 import { SessionService } from '../../services/session';
 import { SliderComponent } from '../Slider/Slider';
 import { cycleHour } from '../../helpers/math';
-import { padTime, formatTime } from '../../helpers/format';
+import { formatTime } from '../../helpers/format';
 
 const LOCATIONS = [
   'CONCORD', 'DIAMOND CITY', 'GOODNEIGHBOR', 'SANCTUARY HILLS',
@@ -118,8 +118,6 @@ export class FalloutDesignComponent {
     const idx = Math.abs(this.time.hours$()) % QUESTS.length;
     return QUESTS[idx];
   });
-
-  readonly totalMinutes = computed(() => this.time.hours$() * 60 + this.time.minutes$());
 
   readonly apDisplay = computed(() => {
     const totalH = Math.abs(this.time.hours$());

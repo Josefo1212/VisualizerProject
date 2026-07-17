@@ -4,24 +4,7 @@ import { SessionService } from '../../services/session';
 import { SliderComponent } from '../Slider/Slider';
 import { cycleHour } from '../../helpers/math';
 import { padTime } from '../../helpers/format';
-
-interface TimelineNode {
-  id: number;
-  label: string;
-  sub: string;
-  pos: number;
-  isGlitch: boolean;
-}
-
-interface NodeState extends TimelineNode {
-  active: boolean;
-  glitching: boolean;
-}
-
-interface SyncSegment {
-  active: boolean;
-  glitch: boolean;
-}
+import { TimelineNode, NodeState, SyncSegment } from '../../interfaces/assassinsCreed';
 
 @Component({
   selector: 'app-assassins-creed-design',

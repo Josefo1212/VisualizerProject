@@ -3,39 +3,15 @@ import { TimeEngineService } from '../../services/timeEngine';
 import { SessionService } from '../../services/session';
 import { SliderComponent } from '../Slider/Slider';
 import { seededMod, dayProgress } from '../../helpers/math';
-import { formatTime, dayName as getDayName, monthName as getMonthName, dayOfMonth as getDayOfMonth, yearNum as getYearNum } from '../../helpers/format';
-import { ROMAN, worldPhase, worldPhaseLabel } from '../../helpers/world';
-
-interface OrbitMark {
-  index: number;
-  angle: number;
-  roman: string;
-  isMajor: boolean;
-  nx: number;
-  ny: number;
-}
-
-interface PulseDot {
-  index: number;
-  angle: number;
-}
-
-interface SignalParticle {
-  id: number;
-  x: number;
-  y: number;
-  delay: number;
-  duration: number;
-  size: number;
-  opacity: number;
-}
+import { formatTime } from '../../helpers/format';
+import { ROMAN } from '../../helpers/world';
+import { OrbitMark, PulseDot, SignalParticle } from '../../interfaces/noMansSky';
 
 const CX = 300;
 const CY = 300;
 const MINUTE_R = 120;
 const MINUTE_CIRC = 2 * Math.PI * MINUTE_R;
 const HOUR_R = 215;
-const SECOND_R = 170;
 const NUMERAL_R = 245;
 
 @Component({
@@ -101,11 +77,6 @@ export class NoMansSkyDesignComponent {
     const months = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
     return `${days[now.getDay()]}, ${months[now.getMonth()]} ${now.getDate()}, ${now.getFullYear()}`;
   });
-
-  readonly dayName = computed(() => getDayName());
-  readonly monthName = computed(() => getMonthName());
-  readonly dayOfMonth = computed(() => getDayOfMonth());
-  readonly yearNum = computed(() => getYearNum());
 
   /* ─── ORBITAL HOUR RING ─── */
   readonly hourMarks: OrbitMark[] = Array.from({ length: 24 }, (_, i) => {

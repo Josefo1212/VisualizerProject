@@ -283,10 +283,6 @@
   animation: vitals-flash 0.9s ease-in-out infinite;
 }
 
-.date-label {
-  display: none;
-}
-
 .panel-center-clip {
   position: absolute;
   top: 0;

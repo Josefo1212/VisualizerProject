@@ -4,46 +4,7 @@ import { SessionService } from '../../services/session';
 import { SliderComponent } from '../Slider/Slider';
 import { seededMod, cycleHour, dayProgress } from '../../helpers/math';
 import { formatTime } from '../../helpers/format';
-import { worldPhase } from '../../helpers/world';
-
-interface ArcMark {
-  index: number;
-  angle: number;
-  x: number;
-  y: number;
-  isMajor: boolean;
-  itx: number;
-  ity: number;
-  otx: number;
-  oty: number;
-}
-
-interface RuneMark {
-  index: number;
-  itx: number; ity: number;
-  otx: number; oty: number;
-  rtx: number; rty: number;
-  rune: string;
-  isMajor: boolean;
-}
-
-interface TrailParticle {
-  angle: number;
-  x: number;
-  y: number;
-  size: number;
-  opacity: number;
-}
-
-interface Particle {
-  id: number;
-  x: number;
-  y: number;
-  delay: number;
-  duration: number;
-  size: number;
-  opacity: number;
-}
+import { ArcMark, RuneMark, TrailParticle, Particle } from '../../interfaces/godOfWar';
 
 /* ─── Arc geometry ─── */
 const ARC_CX = 600;

@@ -778,7 +778,7 @@ app-slider {
     padding: 6px 8px;
     gap: 6px;
   }
-  .storm-timer { font-size: 22px; }
+
   .squad-block { min-width: 200px; }
 }
 
@@ -951,7 +951,6 @@ app-slider {
 }
 
 /* ─── BREATHING ICONS ─── */
-.squad-icon,
 .tac-header-icon,
 .logs-header-icon {
   animation: breathe 3s ease-in-out infinite;
@@ -961,8 +960,7 @@ app-slider {
   animation: breathe 3.6s ease-in-out infinite;
 }
 
-.tac-ico,
-.stat-ico {
+.tac-ico {
   animation: breathe 2.8s ease-in-out infinite;
 }
 

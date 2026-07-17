@@ -5,37 +5,7 @@ import { SliderComponent } from '../Slider/Slider';
 import { seededMod } from '../../helpers/math';
 import { formatTime, dayName as getDayName, monthName as getMonthName, dayOfMonth as getDayOfMonth, yearNum as getYearNum } from '../../helpers/format';
 import { ROMAN } from '../../helpers/world';
-
-interface ArcHour {
-  index: number;
-  angleDeg: number;
-  x: number;
-  y: number;
-  x1: number;
-  y1: number;
-  x2: number;
-  y2: number;
-  nx: number;
-  ny: number;
-  roman: string;
-  isMajor: boolean;
-}
-
-interface AshParticle {
-  id: number;
-  left: number;
-  top: number;
-  delay: number;
-  duration: number;
-  size: number;
-  drift: number;
-  opacity: number;
-}
-
-interface EmberMark {
-  index: number;
-  angle: number;
-}
+import { ArcHour, AshParticle, EmberMark } from '../../interfaces/darkSouls';
 
 @Component({
   selector: 'app-dark-souls-design',
@@ -128,11 +98,6 @@ export class DarkSoulsDesignComponent {
 
   readonly timeDisplay = computed(() => {
     return formatTime(this.cycleHour(), this.minute(), this.second());
-  });
-
-  readonly dateDisplay = computed(() => {
-    const now = new Date();
-    return `${(now.getMonth() + 1).toString().padStart(2, '0')}/${now.getDate().toString().padStart(2, '0')}/${now.getFullYear()}`;
   });
 
   readonly dayName = computed(() => getDayName());

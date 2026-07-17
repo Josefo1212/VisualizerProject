@@ -99,24 +99,8 @@
   text-transform: uppercase;
 }
 
-.tb-value {
-  color: rgba(0, 240, 255, 0.7);
-  font-weight: 700;
-}
-
-.tb-value.phase-dawn { color: #ffa040; }
-.tb-value.phase-day { color: #80f0ff; }
-.tb-value.phase-dusk { color: #ff6040; }
-.tb-value.phase-night { color: #6080c0; }
-
 .tb-fill {
   flex: 1;
-}
-
-.tb-pulse {
-  color: rgba(0, 240, 255, 0.2);
-  font-size: 9px;
-  animation: sync-pulse 2s ease-in-out infinite;
 }
 
 @keyframes sync-pulse {
@@ -966,13 +950,7 @@
   color: rgba(0, 255, 100, 0.55);
 }
 
-.fp-bar-safe {
-  background: rgba(0, 255, 180, 0.35);
-}
 
-.fp-led-safe {
-  background: rgba(0, 255, 180, 0.25);
-}
 
 .fp-sub {
   display: block;

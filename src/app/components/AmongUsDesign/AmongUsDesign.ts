@@ -40,7 +40,6 @@ export class AmongUsDesignComponent implements OnInit, OnDestroy {
     }));
   });
 
-  readonly totalTime = computed(() => this.timeEngine.hours$() * 60 + this.timeEngine.minutes$());
   readonly scannerSegments = Array.from({ length: 60 }, (_, i) => i);
   readonly sliderPercentage = computed(() => (this.cycleMinutes() / 1439) * 100);
 

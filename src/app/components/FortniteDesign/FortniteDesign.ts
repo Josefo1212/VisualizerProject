@@ -4,12 +4,7 @@ import { SessionService } from '../../services/session';
 import { SliderComponent } from '../Slider/Slider';
 import { cycleHour } from '../../helpers/math';
 import { padTime } from '../../helpers/format';
-
-interface MatchLogEntry {
-  killer: string;
-  victim: string;
-  icon: string;
-}
+import { MatchLogEntry } from '../../interfaces/fortnite';
 
 @Component({
   selector: 'app-fortnite-design',
@@ -24,7 +19,6 @@ export class FortniteDesignComponent {
   private readonly session = inject(SessionService);
 
   readonly sliderValue = signal<number>(0);
-  readonly isDragging = signal(false);
 
   constructor() {
     this.session.addLog('FORTNITE WORLD INITIALIZED', 'success');
@@ -62,13 +56,6 @@ export class FortniteDesignComponent {
     return `${padTime(h)}:${padTime(m)}`;
   });
 
-  readonly stormStatusText = computed(() => {
-    const pct = this.matchProgress();
-    if (pct <= 40) return 'ESTADO: BUSCANDO ZONA';
-    if (pct <= 85) return 'ALERTA: TORMENTA EN MOVIMIENTO';
-    return 'PELIGRO: COLAPSO TOTAL';
-  });
-
   readonly stormStatusClass = computed(() => {
     const pct = this.matchProgress();
     if (pct <= 40) return 'search';
@@ -81,12 +68,6 @@ export class FortniteDesignComponent {
   readonly currentRadiusKm = computed(() => {
     const r = this.stormRadius();
     return (r / 250 * 5.2).toFixed(1);
-  });
-
-  readonly nextRadius = computed(() => {
-    const pct = this.matchProgress();
-    const next = 250 * (1 - Math.min(100, pct + 12) / 100);
-    return (Math.max(0, next) / 250 * 5.2).toFixed(1);
   });
 
   readonly closingSpeed = computed(() => {
@@ -109,16 +90,6 @@ export class FortniteDesignComponent {
     return '0';
   });
 
-  readonly dangerLevel = computed(() => {
-    const pct = this.matchProgress();
-    if (pct < 15) return 'LOW';
-    if (pct < 35) return 'MODERATE';
-    if (pct < 55) return 'ELEVATED';
-    if (pct < 75) return 'HIGH';
-    if (pct < 100) return 'CRITICAL';
-    return 'COLLAPSED';
-  });
-
   readonly safeZoneEta = computed(() => {
     const pct = this.matchProgress();
     if (pct >= 100) return '--:--';
@@ -127,11 +98,6 @@ export class FortniteDesignComponent {
     const m = Math.floor(totalSec / 60);
     const s = totalSec % 60;
     return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
-  });
-
-  readonly ringOffset = computed(() => {
-    const circumference = 2 * Math.PI * 15;
-    return circumference * (1 - this.matchProgress() / 100);
   });
 
   readonly stormPhase = computed(() => {
@@ -194,11 +160,9 @@ export class FortniteDesignComponent {
   }
 
   onDragStart(): void {
-    this.isDragging.set(true);
   }
 
   onDragEnd(): void {
-    this.isDragging.set(false);
   }
 
   onResetTime(): void {

@@ -2,7 +2,7 @@ import { Component, computed, inject, signal, ChangeDetectionStrategy, OnDestroy
 import { TimeEngineService } from '../../services/timeEngine';
 import { SessionService } from '../../services/session';
 import { SliderComponent } from '../Slider/Slider';
-import { describeArc, polygonPoints } from '../../helpers/svg';
+import { describeArc } from '../../helpers/svg';
 
 @Component({
   selector: 'app-cyberpunk-design',
@@ -48,8 +48,6 @@ export class CyberpunkDesignComponent implements OnDestroy {
     return `${drift >= 0 ? '+' : ''}${drift.toFixed(3)}s`;
   });
 
-  readonly clockDriftRaw = computed(() => Math.sin(this.time.hours$() * 0.01) * 0.003);
-
   readonly uptime = computed(() => {
     const h = Math.abs(this.time.hours$());
     const decline = h * 0.008;
@@ -64,20 +62,6 @@ export class CyberpunkDesignComponent implements OnDestroy {
 
   readonly ramUsed = computed(() => {
     return Math.min(10, Math.max(1, Math.floor(Math.abs(this.time.hours$()) + this.time.minutes$() / 10) % 11 + 1));
-  });
-
-  readonly ramPercent = computed(() => (this.ramUsed() / 10) * 100);
-
-  readonly bodyParts = computed(() => {
-    const h = this.cycleHour();
-    return {
-      head: h % 3 === 0 ? 'critical' : h % 3 === 1 ? 'warning' : 'stable',
-      chest: (h + 1) % 3 === 0 ? 'critical' : (h + 1) % 3 === 1 ? 'warning' : 'stable',
-      lArm: (h + 2) % 3 === 0 ? 'critical' : (h + 2) % 3 === 1 ? 'warning' : 'stable',
-      rArm: (h + 3) % 3 === 0 ? 'critical' : (h + 3) % 3 === 1 ? 'warning' : 'stable',
-      lLeg: (h + 4) % 3 === 0 ? 'critical' : (h + 4) % 3 === 1 ? 'warning' : 'stable',
-      rLeg: (h + 5) % 3 === 0 ? 'critical' : (h + 5) % 3 === 1 ? 'warning' : 'stable',
-    };
   });
 
   /* ─── TECH DATA MODULES ─── */
@@ -144,8 +128,6 @@ export class CyberpunkDesignComponent implements OnDestroy {
 
   readonly eventIndex = signal(0);
   readonly showAllEvents = signal(false);
-  readonly typeChars = signal(0);
-
   readonly visibleLogEntries = computed(() => {
     if (this.showAllEvents()) return this.eventLogEntries;
     const idx = this.eventIndex();
@@ -156,30 +138,6 @@ export class CyberpunkDesignComponent implements OnDestroy {
     return (this.eventIndex() / (this.eventLogEntries.length - 1)) * 100;
   });
 
-  readonly currentMessageLength = computed(() => {
-    const entries = this.visibleLogEntries();
-    if (entries.length === 0) return 0;
-    return entries[entries.length - 1].msg.length;
-  });
-
-  /* ─── NET LOGS (existing, kept for compatibility) ─── */
-  readonly netLogs = computed(() => {
-    const h = this.cycleHour();
-    const base = [
-      '> CONNECTING TO NET...',
-      '> SECURE PROTOCOL: OK',
-      '> NO THREATS DETECTED',
-    ];
-    if (h < 6) {
-      return [...base, '> WARNING: LOW SIGNAL IN SECTOR', '> SWITCHING TO BACKUP RELAY'];
-    } else if (h < 12) {
-      return [...base, '> NETWATCH PROTOCOL: STABLE', '> ENCRYPTION: AES-256'];
-    } else if (h < 18) {
-      return [...base, '> TRAFFIC ANALYSIS: NOMINAL', '> PACKET LOSS: 0.02%'];
-    }
-    return [...base, '> DANGER: ICE DETECTED IN NET', '> DEPLOYING COUNTERMEASURES'];
-  });
-
   /* ─── SLIDER ─── */
   readonly hoursDisplay = computed(() => {
     const h = this.time.hours$();
@@ -187,8 +145,6 @@ export class CyberpunkDesignComponent implements OnDestroy {
   });
 
   readonly sliderTicks = [0, 24, 48, 72, 96, 120, 144, 168, 192, 216, 240];
-
-  readonly isDragging = signal(false);
 
   readonly sliderValue = signal<number>(0);
 
@@ -280,20 +236,10 @@ export class CyberpunkDesignComponent implements OnDestroy {
         setTimeout(() => this.minutePulse.set(false), 600);
       }
 
-      if (!this.showAllEvents()) {
-        this.typeChars.update(t => {
-          const len = this.currentMessageLength();
-          if (t < len) return t + 1;
-          return t;
-        });
-      } else {
-        this.typeChars.set(999);
-      }
     }, 50);
 
     this._eventInterval = setInterval(() => {
       this.eventIndex.update(i => Math.min(i + 1, this.eventLogEntries.length - 1));
-      this.typeChars.set(0);
       if (this.eventIndex() >= this.eventLogEntries.length - 1) {
         this.showAllEvents.set(true);
       }
@@ -339,11 +285,9 @@ export class CyberpunkDesignComponent implements OnDestroy {
   }
 
   onDragStart(): void {
-    this.isDragging.set(true);
   }
 
   onDragEnd(): void {
-    this.isDragging.set(false);
   }
 
   onResetTime(): void {
@@ -353,9 +297,6 @@ export class CyberpunkDesignComponent implements OnDestroy {
 
   /* ─── SVG ARC HELPER ─── */
   readonly describeArc = describeArc;
-
-  /* ─── SVG POLYGON HELPER ─── */
-  readonly polygonPoints = polygonPoints;
 
   /* ─── EVENT LOG TIMESTAMP ─── */
   eventTs(index: number): string {

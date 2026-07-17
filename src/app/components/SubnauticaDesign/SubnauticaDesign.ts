@@ -1,7 +1,6 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { TimeEngineService } from '../../services/timeEngine';
 import { SessionService } from '../../services/session';
-import { cycleHour } from '../../helpers/math';
 import { formatTime } from '../../helpers/format';
 
 const DAYS_SPANISH = ['DOMINGO', 'LUNES', 'MARTES', 'MIÉRCOLES', 'JUEVES', 'VIERNES', 'SÁBADO'];
@@ -26,8 +25,6 @@ export class SubnauticaDesignComponent {
     this.sliderValue.set(this.time.currentHour$());
   }
 
-  readonly currentSecond = this.time.seconds$;
-
   readonly currentTaskName = computed(() => {
     const idx = this.time.hours$() % TASKS.length;
     return TASKS[idx];
@@ -50,11 +47,6 @@ export class SubnauticaDesignComponent {
   readonly isPressureCritical = computed(() => this.depthDisplay() > 600);
 
   readonly calculatedBar = computed(() => Math.round(this.depthDisplay() / 10) + 1);
-  
-  readonly cycleMinutes = computed(() => {
-    const h = cycleHour(this.time.hours$());
-    return h * 60 + this.time.minutes$();
-  });
 
   readonly depthDisplay = computed(() => {
     const mins = this.time.hours$() * 60 + this.time.minutes$();
