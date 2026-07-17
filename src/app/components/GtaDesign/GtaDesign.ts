@@ -2,27 +2,9 @@ import { Component, inject, computed, Signal } from '@angular/core';
 import { TimeEngineService } from '../../services/timeEngine';
 import { SliderComponent } from '../Slider/Slider';
 import { SessionService } from '../../services/session';
-import { Rgb, SkyPt, SKY_PTS } from '../../interfaces/gta';
-
-const lerp = (a: number, b: number, t: number): number => a + (b - a) * t;
-
-const lerpRgb = (a: Rgb, b: Rgb, t: number): Rgb => ({
-  r: lerp(a.r, b.r, t),
-  g: lerp(a.g, b.g, t),
-  b: lerp(a.b, b.b, t),
-});
-
-const findSegment = <T extends { h: number }>(pts: T[], h: number): [T, T, number] => {
-  if (h <= pts[0].h) return [pts[0], pts[1], 0];
-  if (h >= pts[pts.length - 1].h) return [pts[pts.length - 2], pts[pts.length - 1], 1];
-  for (let i = 0; i < pts.length - 1; i++) {
-    if (h >= pts[i].h && h < pts[i + 1].h) {
-      const t = (h - pts[i].h) / (pts[i + 1].h - pts[i].h);
-      return [pts[i], pts[i + 1], t];
-    }
-  }
-  return [pts[0], pts[1], 0];
-};
+import { SkyPt, SKY_PTS } from '../../interfaces/gta';
+import { lerp, lerpRgb, findSegment } from '../../helpers/math';
+import { padTime, formatHourMin } from '../../helpers/format';
 
 @Component({
   selector: 'app-gta-design',
@@ -119,16 +101,10 @@ export class GtaDesignComponent {
 
   readonly hourDisplay: Signal<string> = computed((): string => {
     const total = this.currentHour();
-    const h = Math.floor(total);
-    const m = Math.floor((total - h) * 60);
-    return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}`;
+    return `${padTime(Math.floor(total))}:${padTime(Math.floor((total - Math.floor(total)) * 60))}`;
   });
 
-  readonly formatSliderHour = (v: number): string => {
-    const h = Math.floor(v);
-    const m = Math.floor((v - h) * 60);
-    return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}`;
-  };
+  readonly formatSliderHour = (v: number): string => formatHourMin(v);
 
   onSliderChange(h: number): void {
     this.time.setHora(h);

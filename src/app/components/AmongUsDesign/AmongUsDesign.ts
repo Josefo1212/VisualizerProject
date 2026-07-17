@@ -3,6 +3,8 @@ import { TimeEngineService } from '../../services/timeEngine';
 import { SessionService } from '../../services/session';
 import { Task, DayInfo, DAY_NAMES } from '../../interfaces/amongUs';
 import { SliderComponent } from '../Slider/Slider';
+import { cycleHour } from '../../helpers/math';
+import { padTime, dayName, monthName, dayOfMonth } from '../../helpers/format';
 
 @Component({
   selector: 'app-among-us-design',
@@ -23,7 +25,7 @@ export class AmongUsDesignComponent implements OnInit, OnDestroy {
   }
 
   readonly cycleMinutes = computed(() => {
-    const ch = ((this.timeEngine.hours$() % 24) + 24) % 24;
+    const ch = cycleHour(this.timeEngine.hours$());
     return ch * 60 + this.timeEngine.minutes$();
   });
 
@@ -47,16 +49,14 @@ export class AmongUsDesignComponent implements OnInit, OnDestroy {
   readonly currentSecond = this.timeEngine.seconds$;
 
   readonly clockDisplay = computed(() => {
-    const h = this.currentHour().toString().padStart(2, '0');
-    const m = this.currentMinute().toString().padStart(2, '0');
+    const h = padTime(this.currentHour());
+    const m = padTime(this.currentMinute());
     return `${h}:${m}`;
   });
 
   readonly dateDisplay = computed(() => {
     const now = new Date();
-    const days = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
-    const months = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
-    return `${days[now.getDay()]}, ${now.getDate()} ${months[now.getMonth()]}`;
+    return `${dayName(now)}, ${dayOfMonth(now)} ${monthName(now)}`;
   });
 
   readonly tasks: Task[] = [

@@ -1,6 +1,8 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { TimeEngineService } from '../../services/timeEngine';
 import { SessionService } from '../../services/session';
+import { cycleHour } from '../../helpers/math';
+import { formatTime } from '../../helpers/format';
 
 const DAYS_SPANISH = ['DOMINGO', 'LUNES', 'MARTES', 'MIÉRCOLES', 'JUEVES', 'VIERNES', 'SÁBADO'];
 const MONTHS_SPANISH = ['ENERO', 'FEBRERO', 'MARZO', 'ABRIL', 'MAYO', 'JUNIO', 'JULIO', 'AGOSTO', 'SEPTIEMBRE', 'OCTUBRE', 'NOVIEMBRE', 'DICIEMBRE'];
@@ -32,10 +34,7 @@ export class SubnauticaDesignComponent {
   });
 
   readonly clockDisplay = computed(() => {
-    const h = this.time.hours$().toString().padStart(2, '0');
-    const m = this.time.minutes$().toString().padStart(2, '0');
-    const s = this.time.seconds$().toString().padStart(2, '0');
-    return `${h}:${m}:${s}`;
+    return formatTime(this.time.hours$(), this.time.minutes$(), this.time.seconds$());
   });
 
   readonly dateDisplay = computed(() => {
@@ -53,7 +52,7 @@ export class SubnauticaDesignComponent {
   readonly calculatedBar = computed(() => Math.round(this.depthDisplay() / 10) + 1);
   
   readonly cycleMinutes = computed(() => {
-    const h = ((this.time.hours$() % 24) + 24) % 24;
+    const h = cycleHour(this.time.hours$());
     return h * 60 + this.time.minutes$();
   });
 

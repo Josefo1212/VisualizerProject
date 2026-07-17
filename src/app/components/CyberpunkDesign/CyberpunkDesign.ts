@@ -2,6 +2,7 @@ import { Component, computed, inject, signal, ChangeDetectionStrategy, OnDestroy
 import { TimeEngineService } from '../../services/timeEngine';
 import { SessionService } from '../../services/session';
 import { SliderComponent } from '../Slider/Slider';
+import { describeArc, polygonPoints } from '../../helpers/svg';
 
 @Component({
   selector: 'app-cyberpunk-design',
@@ -351,21 +352,10 @@ export class CyberpunkDesignComponent implements OnDestroy {
   }
 
   /* ─── SVG ARC HELPER ─── */
-  describeArc(cx: number, cy: number, r: number, startAngle: number, endAngle: number): string {
-    const startRad = ((startAngle - 90) * Math.PI) / 180;
-    const endRad = ((endAngle - 90) * Math.PI) / 180;
-    const x1 = cx + r * Math.cos(startRad);
-    const y1 = cy + r * Math.sin(startRad);
-    const x2 = cx + r * Math.cos(endRad);
-    const y2 = cy + r * Math.sin(endRad);
-    const largeArc = endAngle - startAngle > 180 ? 1 : 0;
-    return `M ${x1} ${y1} A ${r} ${r} 0 ${largeArc} 1 ${x2} ${y2}`;
-  }
+  readonly describeArc = describeArc;
 
   /* ─── SVG POLYGON HELPER ─── */
-  polygonPoints(pts: { x: number; y: number }[]): string {
-    return pts.map(p => `${p.x},${p.y}`).join(' ');
-  }
+  readonly polygonPoints = polygonPoints;
 
   /* ─── EVENT LOG TIMESTAMP ─── */
   eventTs(index: number): string {

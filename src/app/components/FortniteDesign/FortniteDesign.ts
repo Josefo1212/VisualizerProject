@@ -2,6 +2,8 @@ import { Component, computed, inject, signal, ChangeDetectionStrategy } from '@a
 import { TimeEngineService } from '../../services/timeEngine';
 import { SessionService } from '../../services/session';
 import { SliderComponent } from '../Slider/Slider';
+import { cycleHour } from '../../helpers/math';
+import { padTime } from '../../helpers/format';
 
 interface MatchLogEntry {
   killer: string;
@@ -55,9 +57,9 @@ export class FortniteDesignComponent {
   });
 
   readonly realTime = computed(() => {
-    const h = this.time.hours$() % 24;
+    const h = cycleHour(this.time.hours$());
     const m = this.time.minutes$();
-    return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}`;
+    return `${padTime(h)}:${padTime(m)}`;
   });
 
   readonly stormStatusText = computed(() => {

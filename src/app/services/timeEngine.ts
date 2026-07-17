@@ -1,4 +1,4 @@
-import { Injectable, signal, computed, NgZone, DestroyRef, inject } from '@angular/core';
+import { Injectable, signal, computed, DestroyRef, inject } from '@angular/core';
 
 const getCurrentHour = (): number => {
   const now = new Date();
@@ -10,7 +10,6 @@ const STEP = TICK_MS / 3600000;
 
 @Injectable({ providedIn: 'root' })
 export class TimeEngineService {
-  private readonly ngZone = inject(NgZone);
   private readonly destroyRef = inject(DestroyRef);
 
   private readonly _currentHour = signal<number>(getCurrentHour());
@@ -35,24 +34,27 @@ export class TimeEngineService {
   });
 
   constructor() {
-    this.ngZone.runOutsideAngular(() => {
-      this.tickId = setInterval(() => {
-        const m = this._multiplier();
-        if (m > 1) {
-          const h = this._currentHour();
-          this._currentHour.set(h + m * STEP);
-          if (!this._manualMode()) this._manualMode.set(true);
-        } else if (!this._manualMode()) {
-          this._currentHour.set(getCurrentHour());
-        }
-      }, TICK_MS);
-    });
+    this.tickId = setInterval(() => {
+      const m = this._multiplier();
+      if (m > 1) {
+        const h = this._currentHour();
+        this._currentHour.set(h + m * STEP);
+        if (!this._manualMode()) this._manualMode.set(true);
+      } else if (!this._manualMode()) {
+        this._currentHour.set(getCurrentHour());
+      }
+    }, TICK_MS);
     this.destroyRef.onDestroy(() => clearInterval(this.tickId));
   }
 
   setMultiplier(n: number): void {
     this._multiplier.set(n);
-    if (n > 1) this._manualMode.set(true);
+    if (n > 1) {
+      this._manualMode.set(true);
+    } else {
+      this._manualMode.set(false);
+      this._currentHour.set(getCurrentHour());
+    }
   }
 
   cycleMultiplier(): void {

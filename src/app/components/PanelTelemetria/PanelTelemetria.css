@@ -186,23 +186,23 @@
 
 /* ═══════ UPTIME ═══════ */
 .uptime-body {
-  padding: 6px 10px 10px;
+  padding: 4px 10px 6px;
   display: flex;
   align-items: baseline;
-  gap: 6px;
+  gap: 5px;
 }
 
 .uptime-val {
   font-family: 'Courier New', monospace;
-  font-size: 22px;
+  font-size: 16px;
   font-weight: 700;
-  letter-spacing: 4px;
+  letter-spacing: 3px;
   color: rgba(48, 209, 88, 0.6);
 }
 
 .uptime-unit {
   font-family: 'Courier New', monospace;
-  font-size: 10px;
-  letter-spacing: 1.5px;
-  color: rgba(200, 200, 220, 0.45);
+  font-size: 9px;
+  letter-spacing: 1px;
+  color: rgba(200, 200, 220, 0.4);
 }

@@ -30,6 +30,8 @@
     [inactive]="!isSystemOnline()"
     [sessionActive]="session.sessionActive()"
     [selectedDesign]="selectedDesign()"
+    [collapsed]="sidebarCollapsed()"
+    (collapsedChange)="sidebarCollapsed.set($event)"
     (designChange)="onDesignChange($event)"
     (hoverChange)="onHoverChange($any($event))"
   />
@@ -37,12 +39,13 @@
   <!-- ═══ MAIN CONTENT ═══ -->
   <main class="main-content">
 
-    <!-- ── SYSTEM OFF ── -->
-    @if (!isSystemOnline()) {
+    <!-- ── POWER OVERLAY (covers everything while booting) ── -->
+    <div class="power-overlay" [class.hidden]="isSystemOnline()">
       <app-power-screen (powerOnFinished)="onPowerOnFinished()" />
-    }
+    </div>
 
-    @else {
+    <!-- ── DASHBOARD LAYOUT (visible after power-on) ── -->
+    <div class="dashboard-layout" [class.visible]="isSystemOnline()">
       <!-- ═══ STATUS BAR ═══ -->
       <div class="status-bar">
         <span class="sb-item">GAME CENTER</span>
@@ -102,10 +105,12 @@
               <div class="scanline-sweep"></div>
             </div>
 
-            <app-panel-telemetria
-              [sessionActive]="session.sessionActive()"
-              [elapsedSeconds]="session.elapsedSeconds()"
-            />
+            <div class="telemetria-wrapper" [class.visible]="session.sessionActive()">
+              <app-panel-telemetria
+                [sessionActive]="session.sessionActive()"
+                [elapsedSeconds]="session.elapsedSeconds()"
+              />
+            </div>
           </div>
         }
 
@@ -127,7 +132,7 @@
         <span class="fh-sep"></span>
         <span class="fh-item">FPS <span class="fh-v">{{ session.fps() }}</span></span>
       </div>
-    }
+    </div>
 
   </main>
 

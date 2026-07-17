@@ -2,6 +2,9 @@ import { Component, computed, inject } from '@angular/core';
 import { TimeEngineService } from '../../services/timeEngine';
 import { SessionService } from '../../services/session';
 import { SliderComponent } from '../Slider/Slider';
+import { seededMod, dayProgress } from '../../helpers/math';
+import { formatTime, dayName as getDayName, monthName as getMonthName, dayOfMonth as getDayOfMonth, yearNum as getYearNum } from '../../helpers/format';
+import { ROMAN, worldPhase, worldPhaseLabel } from '../../helpers/world';
 
 interface OrbitMark {
   index: number;
@@ -27,10 +30,6 @@ interface SignalParticle {
   opacity: number;
 }
 
-function seededMod(i: number, base: number, offset: number): number {
-  return ((i * offset * 2.3) % base + base) % base;
-}
-
 const CX = 300;
 const CY = 300;
 const MINUTE_R = 120;
@@ -38,11 +37,6 @@ const MINUTE_CIRC = 2 * Math.PI * MINUTE_R;
 const HOUR_R = 215;
 const SECOND_R = 170;
 const NUMERAL_R = 245;
-
-const ROMAN: Record<number, string> = {
-  0: 'XII', 1: 'I', 2: 'II', 3: 'III', 4: 'IV', 5: 'V',
-  6: 'VI', 7: 'VII', 8: 'VIII', 9: 'IX', 10: 'X', 11: 'XI',
-};
 
 @Component({
   selector: 'app-no-mans-sky-design',
@@ -98,10 +92,7 @@ export class NoMansSkyDesignComponent {
   });
 
   readonly timeDisplay = computed(() => {
-    const h = this.cycleHour();
-    const m = this.minute();
-    const s = this.second();
-    return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+    return formatTime(this.cycleHour(), this.minute(), this.second());
   });
 
   readonly dateDisplay = computed(() => {
@@ -111,18 +102,10 @@ export class NoMansSkyDesignComponent {
     return `${days[now.getDay()]}, ${months[now.getMonth()]} ${now.getDate()}, ${now.getFullYear()}`;
   });
 
-  readonly dayName = computed(() => {
-    const days = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
-    return days[new Date().getDay()];
-  });
-
-  readonly monthName = computed(() => {
-    const months = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
-    return months[new Date().getMonth()];
-  });
-
-  readonly dayOfMonth = computed(() => new Date().getDate());
-  readonly yearNum = computed(() => new Date().getFullYear());
+  readonly dayName = computed(() => getDayName());
+  readonly monthName = computed(() => getMonthName());
+  readonly dayOfMonth = computed(() => getDayOfMonth());
+  readonly yearNum = computed(() => getYearNum());
 
   /* ─── ORBITAL HOUR RING ─── */
   readonly hourMarks: OrbitMark[] = Array.from({ length: 24 }, (_, i) => {

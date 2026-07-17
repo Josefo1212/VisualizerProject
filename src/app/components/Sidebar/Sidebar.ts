@@ -1,4 +1,4 @@
-import { Component, input, Output, EventEmitter, signal } from '@angular/core';
+import { Component, input, Output, EventEmitter, model } from '@angular/core';
 import { HoverRevealComponent } from '../HoverReveal/HoverReveal';
 import { TimeMultiplierComponent } from '../TimeMultiplier/TimeMultiplier';
 
@@ -16,7 +16,7 @@ export class SidebarComponent {
   @Output() designChange = new EventEmitter<string>();
   @Output() hoverChange = new EventEmitter<string | null>();
 
-  readonly collapsed = signal<boolean>(false);
+  readonly collapsed = model(false);
 
   readonly designs = [
     { id: 'gta', icon: '🌆', name: 'Grand Theft Auto', cover: '/GTA/botonGTA.jpg', svgIcon: '/GTA/iconGta.svg' },

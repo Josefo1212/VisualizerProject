@@ -2,6 +2,9 @@ import { Component, computed, inject, signal, DestroyRef } from '@angular/core';
 import { TimeEngineService } from '../../services/timeEngine';
 import { SessionService } from '../../services/session';
 import { SliderComponent } from '../Slider/Slider';
+import { seededMod, cycleHour, dayProgress } from '../../helpers/math';
+import { formatTime } from '../../helpers/format';
+import { worldPhase } from '../../helpers/world';
 
 interface ArcMark {
   index: number;
@@ -40,10 +43,6 @@ interface Particle {
   duration: number;
   size: number;
   opacity: number;
-}
-
-function seededMod(i: number, base: number, offset: number): number {
-  return ((i * offset * 2.3) % base + base) % base;
 }
 
 /* ─── Arc geometry ─── */
@@ -92,10 +91,7 @@ export class GodOfWarDesignComponent {
   );
 
   readonly timeDisplay = computed(() => {
-    const h = this.cycleHour();
-    const m = this.minute();
-    const s = this.second();
-    return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+    return formatTime(this.cycleHour(), this.minute(), this.second());
   });
 
   readonly dateDisplay = computed(() => {

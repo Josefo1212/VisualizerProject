@@ -2,8 +2,8 @@ import { Component, computed, inject } from '@angular/core';
 import { TimeEngineService } from '../../services/timeEngine';
 import { SessionService } from '../../services/session';
 import { SliderComponent } from '../Slider/Slider';
-
-const CYCLE = (n: number) => ((n % 24) + 24) % 24;
+import { cycleHour } from '../../helpers/math';
+import { padTime, formatTime } from '../../helpers/format';
 
 const LOCATIONS = [
   'CONCORD', 'DIAMOND CITY', 'GOODNEIGHBOR', 'SANCTUARY HILLS',
@@ -59,10 +59,11 @@ export class FalloutDesignComponent {
   }
 
   readonly clockDisplay = computed(() => {
-    const h = CYCLE(this.time.hours$()).toString().padStart(2, '0');
-    const m = this.time.minutes$().toString().padStart(2, '0');
-    const s = this.time.seconds$().toString().padStart(2, '0');
-    return `${h}:${m}:${s}`;
+    return formatTime(
+      cycleHour(this.time.hours$()),
+      this.time.minutes$(),
+      this.time.seconds$(),
+    );
   });
 
   readonly timeLapsed = computed(() => {
@@ -90,19 +91,19 @@ export class FalloutDesignComponent {
   readonly radCount = computed(() => Math.round(this.rawRad() / 16.67).toString().padStart(3, '0'));
 
   readonly currentLocation = computed(() => {
-    const ch = CYCLE(this.time.hours$());
+    const ch = cycleHour(this.time.hours$());
     const idx = (ch + Math.floor(this.time.minutes$() / 30)) % LOCATIONS.length;
     return LOCATIONS[idx];
   });
 
   readonly coreTemp = computed(() => {
-    const ch = CYCLE(this.time.hours$());
+    const ch = cycleHour(this.time.hours$());
     const base = 22.0 + (ch % 8) * 0.6;
     return base.toFixed(1);
   });
 
   readonly satLink = computed(() => {
-    const ch = CYCLE(this.time.hours$());
+    const ch = cycleHour(this.time.hours$());
     return ch >= 6 && ch < 22 ? 'CONECTADO' : 'SIN SEÑAL';
   });
 

@@ -50,9 +50,4 @@ export class SpotlightComponent {
   onStartSession(): void {
     this.startSession.emit();
   }
-
-  onEnter(): void {
-    const id = this.worldId();
-    if (id) this.enterWorld.emit(id);
-  }
 }

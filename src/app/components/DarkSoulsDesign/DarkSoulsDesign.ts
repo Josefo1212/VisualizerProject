@@ -2,6 +2,9 @@ import { Component, computed, inject } from '@angular/core';
 import { TimeEngineService } from '../../services/timeEngine';
 import { SessionService } from '../../services/session';
 import { SliderComponent } from '../Slider/Slider';
+import { seededMod } from '../../helpers/math';
+import { formatTime, dayName as getDayName, monthName as getMonthName, dayOfMonth as getDayOfMonth, yearNum as getYearNum } from '../../helpers/format';
+import { ROMAN } from '../../helpers/world';
 
 interface ArcHour {
   index: number;
@@ -32,15 +35,6 @@ interface AshParticle {
 interface EmberMark {
   index: number;
   angle: number;
-}
-
-const ROMAN: Record<number, string> = {
-  0: 'XII', 1: 'I', 2: 'II', 3: 'III', 4: 'IV', 5: 'V',
-  6: 'VI', 7: 'VII', 8: 'VIII', 9: 'IX', 10: 'X', 11: 'XI',
-};
-
-function seededMod(i: number, base: number, offset: number): number {
-  return ((i * offset * 1.7) % base + base) % base;
 }
 
 @Component({
@@ -133,10 +127,7 @@ export class DarkSoulsDesignComponent {
   });
 
   readonly timeDisplay = computed(() => {
-    const h = this.cycleHour();
-    const m = this.minute();
-    const s = this.second();
-    return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+    return formatTime(this.cycleHour(), this.minute(), this.second());
   });
 
   readonly dateDisplay = computed(() => {
@@ -144,19 +135,10 @@ export class DarkSoulsDesignComponent {
     return `${(now.getMonth() + 1).toString().padStart(2, '0')}/${now.getDate().toString().padStart(2, '0')}/${now.getFullYear()}`;
   });
 
-  readonly dayName = computed(() => {
-    const days = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
-    return days[new Date().getDay()];
-  });
-
-  readonly monthName = computed(() => {
-    const months = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
-    return months[new Date().getMonth()];
-  });
-
-  readonly dayOfMonth = computed(() => new Date().getDate());
-
-  readonly yearNum = computed(() => new Date().getFullYear());
+  readonly dayName = computed(() => getDayName());
+  readonly monthName = computed(() => getMonthName());
+  readonly dayOfMonth = computed(() => getDayOfMonth());
+  readonly yearNum = computed(() => getYearNum());
 
   /* ─── ARC HOURS (180° semi-circle at top) ─── */
   private readonly ARC_CX = 300;
@@ -207,9 +189,9 @@ export class DarkSoulsDesignComponent {
   /* ─── ASH PARTICLES (ambient scene) ─── */
   readonly ashParticles: AshParticle[] = Array.from({ length: 30 }, (_, i) => ({
     id: i,
-    left: seededMod(i, 100, 3),
-    top: 20 + seededMod(i, 60, 7),
-    delay: seededMod(i, 15, 2),
+    left: seededMod(i, 100, 3, 1.7),
+    top: 20 + seededMod(i, 60, 7, 1.7),
+    delay: seededMod(i, 15, 2, 1.7),
     duration: 8 + (i % 6) * 2,
     size: 1.5 + (i % 3),
     drift: -30 + (i % 7) * 10,

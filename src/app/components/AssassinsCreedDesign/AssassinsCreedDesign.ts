@@ -2,6 +2,8 @@ import { Component, computed, inject, signal, ChangeDetectionStrategy, OnDestroy
 import { TimeEngineService } from '../../services/timeEngine';
 import { SessionService } from '../../services/session';
 import { SliderComponent } from '../Slider/Slider';
+import { cycleHour } from '../../helpers/math';
+import { padTime } from '../../helpers/format';
 
 interface TimelineNode {
   id: number;
@@ -38,12 +40,11 @@ export class AssassinsCreedDesignComponent implements OnDestroy {
   private readonly _clockInterval: ReturnType<typeof setInterval>;
 
   readonly clockDisplay = computed(() => {
-    const h = this.time.hours$();
+    const h = cycleHour(this.time.hours$());
     const m = this.time.minutes$();
     const s = this.time.seconds$();
     const ms = this._now().getMilliseconds().toString().padStart(3, '0');
-    const cyclic = ((h % 24) + 24) % 24;
-    return `${cyclic.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}.${ms}`;
+    return `${padTime(h)}:${padTime(m)}:${padTime(s)}.${ms}`;
   });
 
   /* ─── Genetic timeline ─── */
@@ -58,8 +59,7 @@ export class AssassinsCreedDesignComponent implements OnDestroy {
   ];
 
   readonly timeProgress = computed(() => {
-    const h = this.time.hours$();
-    return (((h % 24) + 24) % 24) / 24;
+    return cycleHour(this.time.hours$()) / 24;
   });
 
   readonly nodeStates = computed<NodeState[]>(() => {

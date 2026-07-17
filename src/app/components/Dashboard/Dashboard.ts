@@ -35,6 +35,7 @@ export class DashboardComponent {
   readonly isSystemOnline = signal(false);
   readonly selectedDesign = signal<string>('');
   readonly hoveredWorld = signal<string | null>(null);
+  readonly sidebarCollapsed = signal(true);
 
   readonly particles = Array.from({ length: 12 }, (_, i) => ({
     id: i,
@@ -48,11 +49,13 @@ export class DashboardComponent {
 
   onPowerOnFinished(): void {
     this.isSystemOnline.set(true);
+    this.sidebarCollapsed.set(true);
   }
 
   onStartSession(): void {
     this.session.startSession();
     this.session.addLog('USER INITIATED SESSION', 'info');
+    this.sidebarCollapsed.set(false);
   }
 
   onDesignChange(id: string): void {
