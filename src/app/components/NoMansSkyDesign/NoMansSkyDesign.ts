@@ -176,6 +176,60 @@ export class NoMansSkyDesignComponent {
     };
   });
 
+  /* ─── TECH MARKS for orbital scan ring ─── */
+  readonly techMarks = Array.from({ length: 24 }, (_, i) => ({
+    angle: (i / 24) * 360,
+  }));
+
+  /* ─── LUMINOUS POINTS ─── */
+  readonly luminousPoints = Array.from({ length: 20 }, (_, i) => {
+    const angle = (i / 20) * 360 + (i * 17) % 30;
+    const r = 125 + ((i * 23) % 95);
+    const rad = (angle * Math.PI) / 180;
+    return {
+      x: CX + r * Math.cos(rad),
+      y: CY + r * Math.sin(rad),
+      delay: (i * 0.4) % 5,
+      size: 0.6 + (i % 3) * 0.5,
+    };
+  });
+
+  /* ─── SPACE PARTICLES ─── */
+  readonly spaceParticles = Array.from({ length: 15 }, (_, i) => {
+    const angle = (i / 15) * 360 + 20;
+    const r = 115 + (i * 19) % 70;
+    const rad = (angle * Math.PI) / 180;
+    return {
+      x: CX + r * Math.cos(rad),
+      y: CY + r * Math.sin(rad),
+      delay: (i * 0.8) % 6,
+    };
+  });
+
+  /* ─── DUST PARTICLES (slow drift) ─── */
+  readonly dustParticles = Array.from({ length: 35 }, (_, i) => {
+    const angle = (i / 35) * 360 + (i * 11) % 40;
+    const r = 100 + ((i * 13) % 140);
+    const rad = (angle * Math.PI) / 180;
+    return {
+      x: CX + r * Math.cos(rad),
+      y: CY + r * Math.sin(rad),
+      delay: (i * 0.6) % 8,
+      dur: 12 + (i % 5) * 4,
+    };
+  });
+
+  /* ─── SATELLITES ─── */
+  readonly satellites = [
+    { angle: 30, r: 175, delay: 0 },
+    { angle: 150, r: 195, delay: 2.5 },
+    { angle: 280, r: 160, delay: 5 },
+  ].map(s => ({
+    ...s,
+    x: CX + s.r * Math.sin(s.angle * Math.PI / 180),
+    y: CY - s.r * Math.cos(s.angle * Math.PI / 180),
+  }));
+
   /* ─── SIGNAL PARTICLES ─── */
   readonly signalParticles: SignalParticle[] = Array.from({ length: 20 }, (_, i) => ({
     id: i,
