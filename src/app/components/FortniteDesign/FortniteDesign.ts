@@ -19,15 +19,23 @@ export class FortniteDesignComponent {
   private readonly session = inject(SessionService);
 
   readonly sliderValue = signal<number>(0);
+  readonly isDragging = signal(false);
 
   constructor() {
     this.session.addLog('FORTNITE WORLD INITIALIZED', 'success');
     this.sliderValue.set(this.time.currentHour$());
   }
 
-  readonly matchProgress = computed(() => (this.sliderValue() / 24) * 100);
+  readonly mappedHours = computed(() => {
+    if (this.isDragging()) return this.sliderValue();
+    const h = cycleHour(this.time.hours$());
+    const m = this.time.minutes$() / 60;
+    return h + m;
+  });
 
-  readonly isCritical = computed(() => this.sliderValue() >= 24);
+  readonly matchProgress = computed(() => (this.mappedHours() / 24) * 100);
+
+  readonly isCritical = computed(() => this.mappedHours() >= 24);
 
   readonly shieldPercent = computed(() => {
     const h = this.time.hours$();
@@ -128,9 +136,10 @@ export class FortniteDesignComponent {
   });
 
   readonly matchTime = computed(() => {
-    const h = this.time.hours$();
-    const m = this.time.minutes$();
-    return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:00`;
+    const h = this.mappedHours();
+    const hours = Math.floor(h);
+    const mins = Math.floor((h - hours) * 60);
+    return `${hours.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}:00`;
   });
 
   readonly nextClosing = computed(() => {
@@ -156,13 +165,15 @@ export class FortniteDesignComponent {
   onSliderChange(v: any): void {
     const val = typeof v === 'string' ? parseFloat(v) : v;
     this.sliderValue.set(val);
-    this.time.setHora(val);
   }
 
   onDragStart(): void {
+    this.isDragging.set(true);
   }
 
   onDragEnd(): void {
+    this.isDragging.set(false);
+    this.time.setHora(this.sliderValue());
   }
 
   onResetTime(): void {

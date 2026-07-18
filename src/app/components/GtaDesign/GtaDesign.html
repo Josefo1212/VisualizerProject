@@ -66,12 +66,14 @@
 
       <div class="time-controls">
         <app-slider
-          [value]="currentHour()"
+          [value]="mappedHours()"
           [min]="0"
           [max]="24"
           [step]="0.1"
           [formatFn]="formatSliderHour"
           (valueChange)="onSliderChange($event)"
+          (dragStart)="isDragging.set(true)"
+          (dragEnd)="onDragEnd()"
         />
         @if (time.manualMode$()) {
           <button class="reset-btn" (click)="onResetTime()">⏱ REAL</button>

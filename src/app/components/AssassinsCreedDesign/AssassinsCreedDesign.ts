@@ -15,9 +15,11 @@ import { TimelineNode, NodeState, SyncSegment } from '../../interfaces/assassins
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AssassinsCreedDesignComponent implements OnDestroy {
+
   readonly time = inject(TimeEngineService);
   private readonly session = inject(SessionService);
 
+  /* ─── Clock ─── */
   readonly clockDisplay = computed(() => {
     const h = cycleHour(this.time.hours$());
     const m = this.time.minutes$();
@@ -27,7 +29,15 @@ export class AssassinsCreedDesignComponent implements OnDestroy {
 
   /* ─── Glitch trigger (random every 6-10s) ─── */
   readonly glitchActive = signal(false);
-  private glitchTimer: ReturnType<typeof setInterval> | null = null;
+  private glitchTimer: ReturnType<typeof setTimeout> | null = null;
+
+  /* ─── Jitter signal (micro-fluctuation every 2-3s) ─── */
+  readonly jitter = signal(0);
+  private jitterTimer: ReturnType<typeof setTimeout> | null = null;
+
+  /* ─── Subject status cycle ─── */
+  readonly subjectStatus = signal('STABLE');
+  private statusTimer: ReturnType<typeof setTimeout> | null = null;
 
   /* ─── Animus data labels ─── */
   readonly dnaMemory = computed(() => {
@@ -47,21 +57,7 @@ export class AssassinsCreedDesignComponent implements OnDestroy {
     return `SEQ ${padTime(seq)} / CYC ${cyc}`;
   });
 
-  readonly dnaIntegrity = computed(() => {
-    const t = this.timeProgress();
-    return 85 + Math.round(t * 12);
-  });
-
-  readonly reconstruction = computed(() => {
-    const t = this.timeProgress();
-    return 70 + Math.round(t * 25);
-  });
-
-  readonly subjectStatus = computed(() => {
-    return 'STABLE';
-  });
-
-  /* ─── Genetic timeline ─── */
+  /* ─── Genetic timeline (fractional hours for smooth movement) ─── */
   readonly timelineNodes: TimelineNode[] = [
     { id: 0, label: 'MEMORY I', sub: 'Florence 1476', pos: 0, isGlitch: false },
     { id: 1, label: 'MEMORY II', sub: 'Monteriggioni', pos: 0.16, isGlitch: false },
@@ -73,7 +69,9 @@ export class AssassinsCreedDesignComponent implements OnDestroy {
   ];
 
   readonly timeProgress = computed(() => {
-    return cycleHour(this.time.hours$()) / 24;
+    const h = cycleHour(this.time.hours$());
+    const m = this.time.minutes$() / 60;
+    return (h + m) / 24;
   });
 
   readonly nodeStates = computed<NodeState[]>(() => {
@@ -91,13 +89,67 @@ export class AssassinsCreedDesignComponent implements OnDestroy {
   );
   readonly isDragging = signal(false);
 
-  readonly syncIndex = computed(() => {
-    const v = this.sliderValue();
-    return (70 + (v / 24) * 28).toFixed(1);
+  readonly mappedHours = computed(() => {
+    if (this.isDragging()) return this.sliderValue();
+    return cycleHour(this.time.hours$()) + this.time.minutes$() / 60;
+  });
+
+  readonly syncDisplay = computed(() => {
+    const v = this.mappedHours();
+    const base = (v / 24) * 100;
+    return Math.min(100, Math.max(0, base + this.jitter())).toFixed(1);
   });
 
   readonly isLowSync = computed(() => {
-    return parseFloat(this.syncIndex()) < 50;
+    return parseFloat(this.syncDisplay()) < 50;
+  });
+
+  readonly stabilityValue = computed(() => {
+    const v = this.mappedHours();
+    const base = (v / 24) * 100;
+    const s = this.time.seconds$();
+    const ripple = Math.sin(s * 0.15) * 2;
+    const j = this.jitter() * 0.5;
+    const g = this.glitchActive() ? -18 : 0;
+    return Math.min(100, Math.max(0, base + ripple + j + g)).toFixed(1);
+  });
+
+  readonly dnaIntegrityDisplay = computed(() => {
+    const h = cycleHour(this.time.hours$());
+    const t = h / 24;
+    const base = 85 + t * 12;
+    const ripple = Math.sin(this.time.seconds$() * 0.2) * 1.2;
+    const j = this.jitter() * 0.3;
+    return Math.min(100, Math.max(0, base + ripple + j)).toFixed(1);
+  });
+
+  readonly reconstructionCells = computed(() => {
+    const h = cycleHour(this.time.hours$());
+    const t = h / 24;
+    const raw = 70 + t * 25;
+    const j = this.jitter() * 0.5;
+    const val = Math.min(100, Math.max(0, raw + j));
+    const total = 16;
+    const activeCount = Math.round((val / 100) * total);
+    return Array.from({ length: total }, (_, i) => ({
+      active: i < activeCount,
+      index: i,
+    }));
+  });
+
+  readonly reconstructionValue = computed(() => {
+    const h = cycleHour(this.time.hours$());
+    const t = h / 24;
+    const raw = 70 + t * 25;
+    const j = this.jitter() * 0.5;
+    return Math.min(100, Math.max(0, raw + j)).toFixed(1);
+  });
+
+  readonly statusClass = computed(() => {
+    const s = this.subjectStatus();
+    if (s === 'STABLE') return 'stable';
+    if (s === 'ANOMALY DETECTED') return 'anomaly';
+    return 'transitioning';
   });
 
   readonly syncSegments = computed<SyncSegment[]>(() => {
@@ -120,36 +172,79 @@ export class AssassinsCreedDesignComponent implements OnDestroy {
     }));
   });
 
-  readonly mappedHours = computed(() => this.sliderValue());
-
   constructor() {
     this.session.addLog('ANIMUS 2.0 SYSTEM INITIALIZED', 'success');
-    this.startGlitchTimer();
+    this.startTimers();
   }
 
   ngOnDestroy(): void {
-    this.stopGlitchTimer();
+    this.stopAllTimers();
+  }
+
+  /* ─── Timers ─── */
+  private startTimers(): void {
+    this.startGlitchTimer();
+    this.startJitterTimer();
+    this.startStatusCycle();
+  }
+
+  private stopAllTimers(): void {
+    if (this.glitchTimer !== null) {
+      clearTimeout(this.glitchTimer);
+      this.glitchTimer = null;
+    }
+    if (this.jitterTimer !== null) {
+      clearTimeout(this.jitterTimer);
+      this.jitterTimer = null;
+    }
+    if (this.statusTimer !== null) {
+      clearTimeout(this.statusTimer);
+      this.statusTimer = null;
+    }
   }
 
   private startGlitchTimer(): void {
-    const schedule = () => {
+    const schedule = (): void => {
       const delay = 6000 + Math.random() * 4000;
       this.glitchTimer = setTimeout(() => {
         this.glitchActive.set(true);
-        setTimeout(() => this.glitchActive.set(false), 150 + Math.random() * 200);
+        this.subjectStatus.set('ANOMALY DETECTED');
+        setTimeout(() => {
+          this.glitchActive.set(false);
+          this.subjectStatus.set('STABLE');
+        }, 600 + Math.random() * 400);
         schedule();
       }, delay);
     };
     schedule();
   }
 
-  private stopGlitchTimer(): void {
-    if (this.glitchTimer !== null) {
-      clearTimeout(this.glitchTimer);
-      this.glitchTimer = null;
-    }
+  private startJitterTimer(): void {
+    const schedule = (): void => {
+      const delay = 2000 + Math.random() * 1000;
+      this.jitterTimer = setTimeout(() => {
+        this.jitter.set((Math.random() - 0.5) * 2.4);
+        schedule();
+      }, delay);
+    };
+    schedule();
   }
 
+  private startStatusCycle(): void {
+    const states: string[] = ['STABLE', 'CALIBRATING', 'MONITORING', 'STABLE', 'STABLE'];
+    const delays: number[] = [5000, 2000, 3500, 6000, 4000];
+    let i = 0;
+    const schedule = (): void => {
+      this.statusTimer = setTimeout(() => {
+        i = (i + 1) % states.length;
+        this.subjectStatus.set(states[i]);
+        schedule();
+      }, delays[i % delays.length]);
+    };
+    schedule();
+  }
+
+  /* ─── Handlers ─── */
   onSliderChange(v: number): void {
     this.sliderValue.set(v);
     this.time.setHora(v);
@@ -165,8 +260,5 @@ export class AssassinsCreedDesignComponent implements OnDestroy {
 
   onResetTime(): void {
     this.time.resetToRealTime();
-    this.sliderValue.set(
-      Math.max(0, Math.min(24, this.time.hours$() + this.time.minutes$() / 60))
-    );
   }
 }

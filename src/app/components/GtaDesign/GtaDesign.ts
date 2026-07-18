@@ -1,4 +1,4 @@
-import { Component, inject, computed, Signal } from '@angular/core';
+import { Component, inject, computed, signal, Signal } from '@angular/core';
 import { TimeEngineService } from '../../services/timeEngine';
 import { SliderComponent } from '../Slider/Slider';
 import { SessionService } from '../../services/session';
@@ -17,13 +17,22 @@ export class GtaDesignComponent {
   readonly time = inject(TimeEngineService);
   private readonly session = inject(SessionService);
 
+  readonly sliderValue = signal<number>(0);
+  readonly isDragging = signal(false);
+
   constructor() {
     this.session.addLog('GTA WORLD INITIALIZED', 'success');
+    this.sliderValue.set(this.time.currentHour$());
   }
 
   readonly currentHour: Signal<number> = this.time.currentHour$;
 
   readonly cycleHour: Signal<number> = computed(() => ((this.currentHour() % 24) + 24) % 24);
+
+  readonly mappedHours = computed(() => {
+    if (this.isDragging()) return this.sliderValue();
+    return this.cycleHour() + this.time.minutes$() / 60;
+  });
 
   readonly angle: Signal<number> = computed((): number => {
     const h = this.cycleHour();
@@ -100,17 +109,24 @@ export class GtaDesignComponent {
   });
 
   readonly hourDisplay: Signal<string> = computed((): string => {
-    const total = this.currentHour();
-    return `${padTime(Math.floor(total))}:${padTime(Math.floor((total - Math.floor(total)) * 60))}`;
+    const ch = Math.floor(this.cycleHour());
+    const mins = this.time.minutes$();
+    return `${padTime(ch)}:${padTime(mins)}`;
   });
 
   readonly formatSliderHour = (v: number): string => formatHourMin(v);
 
   onSliderChange(h: number): void {
-    this.time.setHora(h);
+    this.sliderValue.set(h);
+  }
+
+  onDragEnd(): void {
+    this.isDragging.set(false);
+    this.time.setHora(this.sliderValue());
   }
 
   onResetTime(): void {
+    this.sliderValue.set(this.time.currentHour$());
     this.time.resetToRealTime();
   }
 }

@@ -20,6 +20,12 @@ export class AmongUsDesignComponent implements OnInit, OnDestroy {
   readonly sliderValue = signal<number>(0);
   readonly isDragging = signal(false);
 
+  readonly mappedHours = computed(() => {
+    if (this.isDragging()) return this.sliderValue();
+    const ch = cycleHour(this.timeEngine.hours$());
+    return ch + this.timeEngine.minutes$() / 60;
+  });
+
   constructor() {
     this.sliderValue.set(this.timeEngine.currentHour$());
   }
@@ -43,7 +49,7 @@ export class AmongUsDesignComponent implements OnInit, OnDestroy {
   readonly scannerSegments = Array.from({ length: 60 }, (_, i) => i);
   readonly sliderPercentage = computed(() => (this.cycleMinutes() / 1439) * 100);
 
-  readonly currentHour = this.timeEngine.hours$;
+  readonly currentHour = computed(() => cycleHour(this.timeEngine.hours$()));
   readonly currentMinute = this.timeEngine.minutes$;
   readonly currentSecond = this.timeEngine.seconds$;
 
@@ -116,11 +122,15 @@ export class AmongUsDesignComponent implements OnInit, OnDestroy {
 
   onSliderChange(value: number): void {
     this.sliderValue.set(value);
-    this.timeEngine.setHora(value);
+  }
+
+  onDragEnd(): void {
+    this.isDragging.set(false);
+    this.timeEngine.setHora(this.sliderValue());
   }
 
   onResetTime(): void {
-    this.sliderValue.set(this.timeEngine.currentHour$());
+    this.sliderValue.set(cycleHour(this.timeEngine.hours$()) + this.timeEngine.minutes$() / 60);
     this.timeEngine.resetToRealTime();
   }
 }

@@ -58,7 +58,7 @@ export class TimeEngineService {
   }
 
   cycleMultiplier(): void {
-    const next: Record<number, number> = { 1: 2, 2: 5, 5: 10, 10: 50, 50: 100, 100: 500, 500: 1 };
+    const next: Record<number, number> = { 1: 2, 2: 5, 5: 10, 10: 50, 50: 100, 100: 500, 500: 1000, 1000: 1 };
     this.setMultiplier(next[this._multiplier()]);
   }
 

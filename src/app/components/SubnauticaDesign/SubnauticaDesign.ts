@@ -1,6 +1,7 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { TimeEngineService } from '../../services/timeEngine';
 import { SessionService } from '../../services/session';
+import { cycleHour } from '../../helpers/math';
 import { formatTime } from '../../helpers/format';
 
 const DAYS_SPANISH = ['DOMINGO', 'LUNES', 'MARTES', 'MIÉRCOLES', 'JUEVES', 'VIERNES', 'SÁBADO'];
@@ -25,8 +26,13 @@ export class SubnauticaDesignComponent {
     this.sliderValue.set(this.time.currentHour$());
   }
 
+  readonly mappedHours = computed(() => {
+    if (this.isDragging()) return this.sliderValue();
+    return cycleHour(this.time.hours$()) + this.time.minutes$() / 60;
+  });
+
   readonly currentTaskName = computed(() => {
-    const idx = this.time.hours$() % TASKS.length;
+    const idx = cycleHour(this.time.hours$()) % TASKS.length;
     return TASKS[idx];
   });
 
@@ -49,7 +55,8 @@ export class SubnauticaDesignComponent {
   readonly calculatedBar = computed(() => Math.round(this.depthDisplay() / 10) + 1);
 
   readonly depthDisplay = computed(() => {
-    const mins = this.time.hours$() * 60 + this.time.minutes$();
+    const ch = cycleHour(this.time.hours$());
+    const mins = ch * 60 + this.time.minutes$();
     return Math.round((mins / 1439) * 1000);
   });
 
@@ -77,8 +84,8 @@ export class SubnauticaDesignComponent {
     )`;
   });
 
-  readonly totalMinutes = computed(() => this.time.hours$() * 60 + this.time.minutes$());
-  readonly sliderPercent = computed(() => (this.sliderValue() / 24) * 100);
+  readonly totalMinutes = computed(() => cycleHour(this.time.hours$()) * 60 + this.time.minutes$());
+  readonly sliderPercent = computed(() => (this.mappedHours() / 24) * 100);
 
   readonly arcPath = 'M -5,8 Q 50,-4 105,8';
 
@@ -91,7 +98,7 @@ export class SubnauticaDesignComponent {
   }
 
   readonly arcThumbPos = computed(() => {
-    const t = Math.max(0, Math.min(1, this.sliderValue() / 24));
+    const t = Math.max(0, Math.min(1, this.mappedHours() / 24));
     return this.bezierPoint(t);
   });
 
@@ -133,9 +140,7 @@ export class SubnauticaDesignComponent {
       const curveY = this.arcYatT(t);
       if (Math.abs(cy - curveY) > 12) return false;
     }
-    const hours = t * 24;
-    this.sliderValue.set(hours);
-    this.time.setHora(hours);
+    this.sliderValue.set(t * 24);
     return true;
   }
 
@@ -155,12 +160,13 @@ export class SubnauticaDesignComponent {
   onPointerUp(event: PointerEvent): void {
     if (!this.isDragging()) return;
     this.isDragging.set(false);
+    this.time.setHora(this.sliderValue());
     const svg = event.currentTarget as SVGSVGElement;
     svg.releasePointerCapture(event.pointerId);
   }
 
   onResetTime(): void {
-    this.sliderValue.set(this.time.currentHour$());
+    this.sliderValue.set(cycleHour(this.time.hours$()) + this.time.minutes$() / 60);
     this.time.resetToRealTime();
   }
 }

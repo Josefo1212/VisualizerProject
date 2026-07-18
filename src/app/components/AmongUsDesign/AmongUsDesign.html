@@ -72,7 +72,7 @@
     <span class="slider-edge">-72h</span>
     <div class="slider-body">
       <div class="slider-wrapper">
-        <app-slider [value]="sliderValue()" [min]="0" [max]="24" [step]="0.1" (valueChange)="onSliderChange($event)" (dragStart)="isDragging.set(true)" (dragEnd)="isDragging.set(false)"></app-slider>
+        <app-slider [value]="mappedHours()" [min]="0" [max]="24" [step]="0.1" (valueChange)="onSliderChange($event)" (dragStart)="isDragging.set(true)" (dragEnd)="onDragEnd()"></app-slider>
       </div>
     </div>
     <span class="slider-edge">{{ totalDays() }}d {{ cycleMinutes() }}m</span>
