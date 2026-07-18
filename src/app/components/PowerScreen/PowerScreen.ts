@@ -15,7 +15,7 @@ export class PowerScreenComponent implements OnDestroy {
   readonly progress = signal<number>(0);
 
   private progressTimer: ReturnType<typeof setInterval> | null = null;
-  private readonly DURATION = 3500;
+  private readonly DURATION = 5000;
   private readonly TICK = 30;
 
   ngOnDestroy(): void {

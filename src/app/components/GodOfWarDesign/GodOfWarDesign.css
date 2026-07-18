@@ -204,6 +204,32 @@
   50% { filter: drop-shadow(0 0 12px rgba(200,224,255,0.08)); }
 }
 
+/* ─── Central Digital Clock ─── */
+.gow-digital-clock {
+  transition: opacity 0.3s ease;
+}
+.gow-ctime {
+  fill: #e8c865;
+  font-size: 30px;
+  font-weight: 700;
+  letter-spacing: 4px;
+  font-family: 'Cinzel', 'Times New Roman', serif;
+  filter: drop-shadow(0 0 20px rgba(232, 200, 101, 0.15));
+}
+.gow-ctime-rune {
+  fill: #c8a45c;
+  font-size: 14px;
+  opacity: 0.3;
+  font-family: 'Cinzel', serif;
+}
+.gow-ctime-sub {
+  fill: #c8a45c;
+  font-size: 9px;
+  opacity: 0.2;
+  letter-spacing: 2px;
+  font-family: 'Cinzel', 'Times New Roman', serif;
+}
+
 /* ─── Second pulse ─── */
 .second-pulse {
   animation: sec-pulse 0.5s ease-in-out infinite;

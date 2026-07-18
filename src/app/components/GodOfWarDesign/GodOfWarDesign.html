@@ -207,6 +207,14 @@
       <circle cx="600" cy="440" r="8" fill="rgba(180,200,220,0.02)"/>
       <circle cx="600" cy="440" r="3" fill="rgba(200,224,255,0.06)" filter="url(#clock-glow)"/>
 
+      <!-- ═══════ CENTRAL DIGITAL CLOCK ═══════ -->
+      <g class="gow-digital-clock">
+        <text x="580" y="535" text-anchor="end" class="gow-ctime-rune">ᚱ</text>
+        <text x="600" y="535" text-anchor="middle" class="gow-ctime">{{ timeDisplay() }}</text>
+        <text x="620" y="535" text-anchor="start" class="gow-ctime-rune">ᚦ</text>
+        <text x="600" y="553" text-anchor="middle" class="gow-ctime-sub">{{ dateDisplay() }}</text>
+      </g>
+
       <!-- ═══════ SUN ═══════ -->
       <g [attr.transform]="'translate(' + sunPos().x + ',' + sunPos().y + ')'"
         [style.opacity]="sunOpacity()" class="sun-group">
