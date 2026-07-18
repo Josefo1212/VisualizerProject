@@ -322,7 +322,6 @@
 .neural-line.pulsed {
   stroke: rgba(0, 240, 255, 0.45);
   stroke-width: 1;
-  filter: drop-shadow(0 0 3px rgba(0, 240, 255, 0.25));
 }
 
 .neural-line.dashed {
@@ -650,9 +649,8 @@
   letter-spacing: 0.04em;
   color: #ff5ce0;
   text-shadow:
-    0 0 10px rgba(255, 92, 224, 0.5),
-    0 0 30px rgba(255, 92, 224, 0.2),
-    0 0 60px rgba(255, 92, 224, 0.1);
+    0 0 15px rgba(255, 92, 224, 0.5),
+    0 0 40px rgba(255, 92, 224, 0.2);
   animation: chrono-glow 2s ease-in-out infinite alternate;
   line-height: 1.1;
   font-family: 'Orbitron', 'Consolas', monospace;
@@ -661,8 +659,8 @@
 }
 
 @keyframes chrono-glow {
-  0% { text-shadow: 0 0 10px rgba(255, 92, 224, 0.5), 0 0 30px rgba(255, 92, 224, 0.2), 0 0 60px rgba(255, 92, 224, 0.1); }
-  100% { text-shadow: 0 0 15px rgba(255, 92, 224, 0.7), 0 0 40px rgba(255, 92, 224, 0.3), 0 0 80px rgba(255, 92, 224, 0.15); }
+  from { opacity: 0.8; }
+  to { opacity: 1; }
 }
 
 .chrono-meta {
@@ -1355,9 +1353,8 @@ app-slider {
   inset: 0;
   z-index: 25;
   pointer-events: none;
-  mix-blend-mode: difference;
   background: rgba(0, 240, 255, 0.03);
-  animation: glitch-flash 0.08s infinite;
+  animation: glitch-flash 0.15s infinite;
 }
 
 @keyframes glitch-flash {
@@ -1370,7 +1367,7 @@ app-slider {
 }
 
 .hud-container.glitch-active .hud-frame {
-  animation: frame-glitch 0.1s infinite;
+  animation: frame-glitch 0.15s infinite;
 }
 
 @keyframes frame-glitch {

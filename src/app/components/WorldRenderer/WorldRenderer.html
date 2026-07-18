@@ -1,5 +1,5 @@
 <div class="world-stage">
-  @if (transitioning()) {
+  @if (previousWorld() && transitioning()) {
     <div class="design-wrapper design-leave">
       @switch (previousWorld()) {
         @case ('gta')           { <app-gta-design /> }
@@ -16,7 +16,7 @@
     </div>
   }
 
-  <div class="design-wrapper" [class.design-enter]="transitioning()">
+  <div class="design-wrapper" [class.design-enter]="transitioning()" [class.anim-ready]="animReady()">
     @switch (worldId()) {
       @case ('gta')           { <app-gta-design /> }
       @case ('amongus')       { <app-among-us-design /> }
@@ -40,7 +40,7 @@
             <div class="scanline-sweep"></div>
           </div>
           <div class="telemetria-wrapper" [class.visible]="session.sessionActive()">
-            <app-panel-telemetria
+            <app-panel-telemetry
               [sessionActive]="session.sessionActive()"
               [elapsedSeconds]="session.elapsedSeconds()"
             />

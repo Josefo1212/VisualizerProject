@@ -11,7 +11,7 @@ import { DarkSoulsDesignComponent } from '../DarkSoulsDesign/DarkSoulsDesign';
 import { NoMansSkyDesignComponent } from '../NoMansSkyDesign/NoMansSkyDesign';
 import { GodOfWarDesignComponent } from '../GodOfWarDesign/GodOfWarDesign';
 import { SpotlightComponent } from '../Spotlight/Spotlight';
-import { PanelTelemetriaComponent } from '../PanelTelemetria/PanelTelemetria';
+import { PanelTelemetryComponent } from '../PanelTelemetry/PanelTelemetry';
 
 @Component({
   selector: 'app-world-renderer',
@@ -20,7 +20,7 @@ import { PanelTelemetriaComponent } from '../PanelTelemetria/PanelTelemetria';
     GtaDesignComponent, AmongUsDesignComponent, SubnauticaDesignComponent,
     FalloutDesignComponent, CyberpunkDesignComponent, AssassinsCreedDesignComponent,
     FortniteDesignComponent, DarkSoulsDesignComponent, NoMansSkyDesignComponent,
-    GodOfWarDesignComponent, SpotlightComponent, PanelTelemetriaComponent,
+    GodOfWarDesignComponent, SpotlightComponent, PanelTelemetryComponent,
   ],
   templateUrl: './WorldRenderer.html',
   styleUrls: ['./WorldRenderer.css'],
@@ -37,9 +37,11 @@ export class WorldRendererComponent {
 
   readonly previousWorld = signal<string>('');
   readonly transitioning = signal(false);
+  readonly animReady = signal(true);
 
   private prev = '';
   private safetyTimer: ReturnType<typeof setTimeout> | null = null;
+  private animReadyTimeout: ReturnType<typeof setTimeout> | null = null;
 
   constructor() {
     effect(() => {
@@ -47,13 +49,16 @@ export class WorldRendererComponent {
       if (next === this.prev) return;
       this.previousWorld.set(this.prev);
       this.prev = next;
+      this.animReady.set(false);
       this.transitioning.set(true);
       if (this.safetyTimer) clearTimeout(this.safetyTimer);
-      this.safetyTimer = setTimeout(() => this.endTransition(), 350);
+      this.safetyTimer = setTimeout(() => this.endTransition(), 550);
     });
   }
 
   private endTransition(): void {
     this.transitioning.set(false);
+    if (this.animReadyTimeout) clearTimeout(this.animReadyTimeout);
+    this.animReadyTimeout = setTimeout(() => this.animReady.set(true), 150);
   }
 }

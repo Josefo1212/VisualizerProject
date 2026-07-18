@@ -16,15 +16,11 @@ export class CyberpunkDesignComponent implements OnDestroy {
   readonly time = inject(TimeEngineService);
   private readonly session = inject(SessionService);
 
-  private readonly _eventInterval: ReturnType<typeof setInterval>;
-  private readonly _glitchInterval: ReturnType<typeof setInterval>;
-  private readonly _scanInterval: ReturnType<typeof setInterval>;
-  private readonly _breachInterval: ReturnType<typeof setInterval>;
-  private readonly _breachGlitchInterval: ReturnType<typeof setInterval>;
-  private readonly _implantInterval: ReturnType<typeof setInterval>;
-  private readonly _eventGlitchInterval: ReturnType<typeof setInterval>;
-  private readonly _neuralInterval: ReturnType<typeof setInterval>;
-  private readonly _pulseInterval: ReturnType<typeof setInterval>;
+  private _pulseInterval!: ReturnType<typeof setInterval>;
+  private _neuralInterval!: ReturnType<typeof setInterval>;
+  private _breachInterval!: ReturnType<typeof setInterval>;
+  private _implantInterval!: ReturnType<typeof setInterval>;
+  private _slowInterval!: ReturnType<typeof setInterval>;
 
 
   /* ─── CHRONO CORE ─── */
@@ -280,65 +276,43 @@ export class CyberpunkDesignComponent implements OnDestroy {
   constructor() {
     this.session.addLog('CYBERPUNK WORLD INITIALIZED', 'success');
     this.syncFromTime();
+    setTimeout(() => this.startTimers(), 0);
+  }
 
-    this._neuralInterval = setInterval(() => {
-      this.neuralPulsePhase.update(p => (p + 1) % 360);
-    }, 100);
+  private startTimers(): void {
+    /* ─── SINGLE HEARTBEAT (250ms base) ─── */
+    let tick = 0;
 
-    let lastS = -1;
-    let lastM = -1;
     this._pulseInterval = setInterval(() => {
+      tick++;
+
+      /* every tick (250ms) — seconds/minutes pulse */
       const s = this.dragSeconds$();
-      if (s !== lastS) {
-        lastS = s;
+      if (s !== this._lastSecond) {
+        this._lastSecond = s;
         this.secondPulse.set(true);
         setTimeout(() => this.secondPulse.set(false), 200);
       }
       const m = this.dragMinutes$();
-      if (m !== lastM) {
-        lastM = m;
+      if (m !== this._lastMinute) {
+        this._lastMinute = m;
         this.minutePulse.set(true);
         setTimeout(() => this.minutePulse.set(false), 600);
       }
     }, 250);
 
-    this._eventInterval = setInterval(() => {
-      this.logLines.update(lines => {
-        const next = [...lines, this.generateLogEntry()];
-        return next.length > this.MAX_LOG_LINES ? next.slice(-this.MAX_LOG_LINES) : next;
-      });
-    }, 2000 + Math.random() * 1000);
+    /* every 500ms — neural + implant + breach */
+    this._neuralInterval = setInterval(() => {
+      this.neuralPulsePhase.update(p => (p + 1) % 360);
 
-    this._glitchInterval = setInterval(() => {
-      const roll = Math.random();
-      if (roll < 0.06) {
-        this.microGlitchType.set('line');
-        this.glitchActive.set(true);
-        this.glitchIntensity.set(0.1 + Math.random() * 0.2);
-        setTimeout(() => {
-          this.glitchActive.set(false);
-          this.glitchIntensity.set(0);
-          this.microGlitchType.set('none');
-        }, 80 + Math.random() * 60);
-      } else if (roll < 0.1) {
-        this.microGlitchType.set('vibrate');
-        setTimeout(() => this.microGlitchType.set('none'), 150);
-      } else if (roll < 0.13) {
-        this.microGlitchType.set('flicker');
-        setTimeout(() => this.microGlitchType.set('none'), 200);
-      }
-    }, 4000);
+      this.implants.update(list =>
+        list.map(imp => {
+          const drift = (Math.random() - 0.5) * 1.6;
+          const bar = Math.max(0, Math.min(100, imp.bar + drift));
+          return { ...imp, bar: parseFloat(bar.toFixed(1)) };
+        })
+      );
 
-    this._scanInterval = setInterval(() => {
-      this.scanLinePos.set(Math.random() * 100);
-      this.scanLineVisible.set(true);
-      setTimeout(() => this.scanLineVisible.set(false), 2000);
-    }, 10000 + Math.random() * 4000);
-
-    /* ─── BREACH PROTOCOL TICK ─── */
-    let tickCount = 0;
-    this._breachInterval = setInterval(() => {
-      tickCount++;
       this.ping.set(5 + Math.floor(Math.random() * 8));
       this.breachLatency.update(l => {
         const drift = (Math.random() - 0.5) * 4;
@@ -361,27 +335,58 @@ export class CyberpunkDesignComponent implements OnDestroy {
       this.blackwallStatus.set(Math.random() < 0.1 ? 'ACTIVE' : 'STANDBY');
       this.statusBlink.set(!this.statusBlink());
 
-      if (tickCount % 24 === 0) {
+      const tick48 = tick % 48;
+      if (tick48 === 0) {
         this.breachProvider.set(this.providers[Math.floor(Math.random() * this.providers.length)]);
         this.breachNode.set(this.nodes[Math.floor(Math.random() * this.nodes.length)]);
         this.breachAccess.set(Math.random() < 0.9 ? 'AUTHORIZED' : 'RESTRICTED');
         this.breachEncryption.set(Math.random() < 0.7 ? 'AES-256' : 'QUANTUM-X');
       }
-
-      if (tickCount % 12 === 0) {
+      if (tick48 % 24 === 0) {
         this.ports.set(3 + Math.floor(Math.random() * 9));
       }
-
-      if (tickCount % 28 === 0) {
+      if (tick48 % 8 === 0) {
+        this.statusMsg.set(this.statuses[Math.floor(Math.random() * this.statuses.length)]);
         this.daemonStatus.set(this.daemons[Math.floor(Math.random() * this.daemons.length)]);
       }
+    }, 500);
 
-      if (tickCount % 14 === 0) {
-        this.statusMsg.set(this.statuses[Math.floor(Math.random() * this.statuses.length)]);
+    /* every 2s — slow events (logs, glitch, scan, event glitch) */
+    this._slowInterval = setInterval(() => {
+      this.logLines.update(lines => {
+        const next = [...lines, this.generateLogEntry()];
+        return next.length > this.MAX_LOG_LINES ? next.slice(-this.MAX_LOG_LINES) : next;
+      });
+
+      const roll = Math.random();
+      if (roll < 0.06) {
+        this.microGlitchType.set('line');
+        this.glitchActive.set(true);
+        this.glitchIntensity.set(0.1 + Math.random() * 0.2);
+        setTimeout(() => {
+          this.glitchActive.set(false);
+          this.glitchIntensity.set(0);
+          this.microGlitchType.set('none');
+        }, 80 + Math.random() * 60);
+      } else if (roll < 0.1) {
+        this.microGlitchType.set('vibrate');
+        setTimeout(() => this.microGlitchType.set('none'), 150);
+      } else if (roll < 0.13) {
+        this.microGlitchType.set('flicker');
+        setTimeout(() => this.microGlitchType.set('none'), 200);
       }
-    }, 250);
 
-    this._breachGlitchInterval = setInterval(() => {
+      this.scanLinePos.set(Math.random() * 100);
+      this.scanLineVisible.set(true);
+      setTimeout(() => this.scanLineVisible.set(false), 2000);
+
+      const len = this.logLines().length;
+      if (len > 0 && Math.random() < 0.2) {
+        const idx = Math.floor(Math.random() * len);
+        this.eventGlitchLine.set(idx);
+        setTimeout(() => this.eventGlitchLine.set(-1), 80 + Math.random() * 60);
+      }
+
       if (Math.random() < 0.15) {
         const words = ['ERR', 'SYS', 'OVR', 'NUL', 'COR', '0x7F'];
         this.breachGlitchWord.set(words[Math.floor(Math.random() * words.length)]);
@@ -391,55 +396,30 @@ export class CyberpunkDesignComponent implements OnDestroy {
           this.breachGlitchWord.set('');
         }, 70 + Math.random() * 30);
       }
-    }, 5000 + Math.random() * 3000);
-
-    /* ─── IMPLANT ANIMATION ─── */
-    this._implantInterval = setInterval(() => {
-      this.implants.update(list =>
-        list.map(imp => {
-          const drift = (Math.random() - 0.5) * 1.6;
-          const bar = Math.max(0, Math.min(100, imp.bar + drift));
-          return { ...imp, bar: parseFloat(bar.toFixed(1)) };
-        })
-      );
-    }, 400);
-
-    /* ─── EVENT LOG GLITCH ─── */
-    this._eventGlitchInterval = setInterval(() => {
-      const len = this.logLines().length;
-      if (len > 0 && Math.random() < 0.2) {
-        const idx = Math.floor(Math.random() * len);
-        this.eventGlitchLine.set(idx);
-        setTimeout(() => this.eventGlitchLine.set(-1), 80 + Math.random() * 60);
-      }
-    }, 6000 + Math.random() * 3000);
+    }, 2000);
   }
+
+  private _lastSecond = -1;
+  private _lastMinute = -1;
 
   ngOnDestroy(): void {
     clearInterval(this._neuralInterval);
     clearInterval(this._pulseInterval);
-    clearInterval(this._eventInterval);
-    clearInterval(this._glitchInterval);
-    clearInterval(this._scanInterval);
     clearInterval(this._breachInterval);
-    clearInterval(this._breachGlitchInterval);
     clearInterval(this._implantInterval);
-    clearInterval(this._eventGlitchInterval);
+    clearInterval(this._slowInterval);
   }
 
   onSliderChange(v: number): void {
-    console.log('[CP] onSliderChange value:', v);
     this.isDragging.set(true);
     this.sliderValue.set(v);
   }
 
   onDragStart(): void {
-    console.log('[CP] onDragStart');
     this.isDragging.set(true);
   }
 
   onDragEnd(): void {
-    console.log('[CP] onDragEnd, final sliderValue:', this.sliderValue());
     this.isDragging.set(false);
     this.time.setHora(this.sliderValue());
   }

@@ -20,18 +20,35 @@ export class GtaDesignComponent {
   readonly sliderValue = signal<number>(0);
   readonly isDragging = signal(false);
 
+  readonly dragHours$ = computed(() => {
+    if (!this.isDragging()) return this.time.hours$();
+    return Math.trunc(this.sliderValue());
+  });
+  readonly dragMinutes$ = computed(() => {
+    if (!this.isDragging()) return this.time.minutes$();
+    const v = this.sliderValue();
+    const frac = v - Math.trunc(v);
+    return Math.floor(((frac * 60) % 60 + 60) % 60);
+  });
+  readonly dragSeconds$ = computed(() => {
+    if (!this.isDragging()) return this.time.seconds$();
+    const v = this.sliderValue();
+    const totalMin = v * 60;
+    return Math.floor(((totalMin - Math.floor(totalMin)) * 60 + 60) % 60);
+  });
+
   constructor() {
     this.session.addLog('GTA WORLD INITIALIZED', 'success');
     this.sliderValue.set(this.time.currentHour$());
   }
 
-  readonly currentHour: Signal<number> = this.time.currentHour$;
+  readonly currentHour = computed(() => this.dragHours$() + this.dragMinutes$() / 60);
 
   readonly cycleHour: Signal<number> = computed(() => ((this.currentHour() % 24) + 24) % 24);
 
   readonly mappedHours = computed(() => {
     if (this.isDragging()) return this.sliderValue();
-    return this.cycleHour() + this.time.minutes$() / 60;
+    return this.cycleHour() + this.dragMinutes$() / 60;
   });
 
   readonly angle: Signal<number> = computed((): number => {
@@ -110,13 +127,14 @@ export class GtaDesignComponent {
 
   readonly hourDisplay: Signal<string> = computed((): string => {
     const ch = Math.floor(this.cycleHour());
-    const mins = this.time.minutes$();
+    const mins = this.dragMinutes$();
     return `${padTime(ch)}:${padTime(mins)}`;
   });
 
   readonly formatSliderHour = (v: number): string => formatHourMin(v);
 
   onSliderChange(h: number): void {
+    this.isDragging.set(true);
     this.sliderValue.set(h);
   }
 

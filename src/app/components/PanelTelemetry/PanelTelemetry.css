@@ -4,7 +4,7 @@
   flex-shrink: 0;
 }
 
-.panel-telemetria {
+.panel-telemetry {
   display: flex;
   flex-direction: column;
   gap: 0;

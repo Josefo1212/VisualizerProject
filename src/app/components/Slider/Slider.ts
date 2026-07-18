@@ -33,18 +33,15 @@ export class SliderComponent {
   onInput(event: Event): void {
     const target = event.target as HTMLInputElement;
     const val = parseFloat(target.value);
-    console.log('[Slider] onInput value:', val, 'current @Input value:', this.value);
     this.valueChange.emit(val);
   }
 
   onDragStart(): void {
-    console.log('[Slider] onDragStart');
     this._dragging = true;
     this.dragStart.emit();
   }
 
   onDragEnd(): void {
-    console.log('[Slider] onDragEnd, _dragging:', this._dragging);
     if (!this._dragging) return;
     this._dragging = false;
     this.dragEnd.emit();

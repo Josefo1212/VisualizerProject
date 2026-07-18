@@ -20,10 +20,27 @@ export class AmongUsDesignComponent implements OnInit, OnDestroy {
   readonly sliderValue = signal<number>(0);
   readonly isDragging = signal(false);
 
+  readonly dragHours$ = computed(() => {
+    if (!this.isDragging()) return this.timeEngine.hours$();
+    return Math.trunc(this.sliderValue());
+  });
+  readonly dragMinutes$ = computed(() => {
+    if (!this.isDragging()) return this.timeEngine.minutes$();
+    const v = this.sliderValue();
+    const frac = v - Math.trunc(v);
+    return Math.floor(((frac * 60) % 60 + 60) % 60);
+  });
+  readonly dragSeconds$ = computed(() => {
+    if (!this.isDragging()) return this.timeEngine.seconds$();
+    const v = this.sliderValue();
+    const totalMin = v * 60;
+    return Math.floor(((totalMin - Math.floor(totalMin)) * 60 + 60) % 60);
+  });
+
   readonly mappedHours = computed(() => {
     if (this.isDragging()) return this.sliderValue();
-    const ch = cycleHour(this.timeEngine.hours$());
-    return ch + this.timeEngine.minutes$() / 60;
+    const ch = cycleHour(this.dragHours$());
+    return ch + this.dragMinutes$() / 60;
   });
 
   constructor() {
@@ -31,11 +48,11 @@ export class AmongUsDesignComponent implements OnInit, OnDestroy {
   }
 
   readonly cycleMinutes = computed(() => {
-    const ch = cycleHour(this.timeEngine.hours$());
-    return ch * 60 + this.timeEngine.minutes$();
+    const ch = cycleHour(this.dragHours$());
+    return ch * 60 + this.dragMinutes$();
   });
 
-  readonly totalDays = computed(() => Math.floor(Math.abs(this.timeEngine.hours$()) / 24));
+  readonly totalDays = computed(() => Math.floor(Math.abs(this.dragHours$()) / 24));
 
   readonly daysInfo = computed<DayInfo[]>(() => {
     const jsDay = new Date().getDay();
@@ -49,9 +66,9 @@ export class AmongUsDesignComponent implements OnInit, OnDestroy {
   readonly scannerSegments = Array.from({ length: 60 }, (_, i) => i);
   readonly sliderPercentage = computed(() => (this.cycleMinutes() / 1439) * 100);
 
-  readonly currentHour = computed(() => cycleHour(this.timeEngine.hours$()));
-  readonly currentMinute = this.timeEngine.minutes$;
-  readonly currentSecond = this.timeEngine.seconds$;
+  readonly currentHour = computed(() => cycleHour(this.dragHours$()));
+  readonly currentMinute = computed(() => this.dragMinutes$());
+  readonly currentSecond = computed(() => this.dragSeconds$());
 
   readonly clockDisplay = computed(() => {
     const h = padTime(this.currentHour());
@@ -121,6 +138,7 @@ export class AmongUsDesignComponent implements OnInit, OnDestroy {
   }
 
   onSliderChange(value: number): void {
+    this.isDragging.set(true);
     this.sliderValue.set(value);
   }
 

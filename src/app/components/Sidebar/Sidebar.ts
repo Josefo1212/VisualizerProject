@@ -1,6 +1,7 @@
-import { Component, input, Output, EventEmitter, model } from '@angular/core';
+import { Component, input, Output, EventEmitter, model, inject } from '@angular/core';
 import { HoverRevealComponent } from '../HoverReveal/HoverReveal';
 import { TimeMultiplierComponent } from '../TimeMultiplier/TimeMultiplier';
+import { AuthService } from '../../services/auth';
 
 @Component({
   selector: 'app-sidebar',
@@ -10,6 +11,8 @@ import { TimeMultiplierComponent } from '../TimeMultiplier/TimeMultiplier';
   styleUrl: './Sidebar.css',
 })
 export class SidebarComponent {
+  private readonly auth = inject(AuthService);
+
   readonly inactive = input(false);
   readonly sessionActive = input(false);
   readonly selectedDesign = input('');
@@ -43,5 +46,9 @@ export class SidebarComponent {
 
   goToDashboard(): void {
     this.designChange.emit('');
+  }
+
+  logout(): void {
+    this.auth.logout();
   }
 }

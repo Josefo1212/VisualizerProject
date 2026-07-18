@@ -1,4 +1,4 @@
-import { Component, computed, inject } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { TimeEngineService } from '../../services/timeEngine';
 import { SessionService } from '../../services/session';
 import { SliderComponent } from '../Slider/Slider';
@@ -27,6 +27,7 @@ export class NoMansSkyDesignComponent {
 
   constructor() {
     this.session.addLog('NO MANS SKY WORLD INITIALIZED', 'success');
+    this.sliderValue.set(this.time.currentHour$());
   }
 
   readonly CX = CX;
@@ -35,14 +36,29 @@ export class NoMansSkyDesignComponent {
   readonly MINUTE_CIRC = MINUTE_CIRC;
   readonly HOUR_R = HOUR_R;
 
-  readonly sliderValue = computed(() => {
-    const h = this.time.hours$();
-    return Math.max(0, Math.min(240, h));
+  readonly sliderValue = signal<number>(0);
+  readonly isDragging = signal(false);
+
+  readonly dragHours$ = computed(() => {
+    if (!this.isDragging()) return this.time.hours$();
+    return Math.trunc(this.sliderValue());
+  });
+  readonly dragMinutes$ = computed(() => {
+    if (!this.isDragging()) return this.time.minutes$();
+    const v = this.sliderValue();
+    const frac = v - Math.trunc(v);
+    return Math.floor(((frac * 60) % 60 + 60) % 60);
+  });
+  readonly dragSeconds$ = computed(() => {
+    if (!this.isDragging()) return this.time.seconds$();
+    const v = this.sliderValue();
+    const totalMin = v * 60;
+    return Math.floor(((totalMin - Math.floor(totalMin)) * 60 + 60) % 60);
   });
 
-  readonly cycleHour = computed(() => ((this.time.hours$() % 24) + 24) % 24);
-  readonly minute = this.time.minutes$;
-  readonly second = this.time.seconds$;
+  readonly cycleHour = computed(() => ((this.dragHours$() % 24) + 24) % 24);
+  readonly minute = computed(() => this.dragMinutes$());
+  readonly second = computed(() => this.dragSeconds$());
 
   readonly worldPhase = computed(() => {
     const h = this.cycleHour();
@@ -190,17 +206,28 @@ export class NoMansSkyDesignComponent {
     x: 20 + seededMod(i, 60, 3),
     y: 20 + seededMod(i, 60, 7),
     delay: seededMod(i, 8, 2),
-    duration: 6 + (i % 4) * 2,
+    duration: 10 + (i % 4) * 4,
     size: 1 + (i % 3),
     opacity: 0.06 + (i % 5) * 0.04,
   }));
 
   /* ─── METHODS ─── */
   onSliderChange(h: number): void {
-    this.time.setHora(h);
+    this.isDragging.set(true);
+    this.sliderValue.set(h);
+  }
+
+  onDragStart(): void {
+    this.isDragging.set(true);
+  }
+
+  onDragEnd(): void {
+    this.isDragging.set(false);
+    this.time.setHora(this.sliderValue());
   }
 
   onResetTime(): void {
+    this.sliderValue.set(this.time.currentHour$());
     this.time.resetToRealTime();
   }
 }

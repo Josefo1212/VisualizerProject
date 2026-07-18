@@ -77,7 +77,7 @@
 
           <div class="panel-body panel-center-body">
             <div class="sub-header">
-              ⏳ Oxígeno: {{ 60 - time.minutes$() }} minutos restantes
+              ⏳ Oxígeno: {{ 60 - dragMinutes$() }} minutos restantes
             </div>
 
             <div class="ring-wrapper" [class.critical]="isCritical()">

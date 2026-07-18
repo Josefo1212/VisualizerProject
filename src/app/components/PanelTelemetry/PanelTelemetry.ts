@@ -2,12 +2,12 @@ import { Component, input, inject, signal, computed, DestroyRef, NgZone } from '
 import { SessionService } from '../../services/session';
 
 @Component({
-  selector: 'app-panel-telemetria',
+  selector: 'app-panel-telemetry',
   standalone: true,
-  templateUrl: './PanelTelemetria.html',
-  styleUrl: './PanelTelemetria.css',
+  templateUrl: './PanelTelemetry.html',
+  styleUrl: './PanelTelemetry.css',
 })
-export class PanelTelemetriaComponent {
+export class PanelTelemetryComponent {
   private readonly session = inject(SessionService);
   private readonly destroyRef = inject(DestroyRef);
   private readonly ngZone = inject(NgZone);

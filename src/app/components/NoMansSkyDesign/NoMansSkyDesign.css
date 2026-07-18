@@ -41,8 +41,8 @@
 }
 
 @keyframes brand-glow {
-  0%, 100% { text-shadow: 0 0 12px rgba(0, 240, 255, 0.25); }
-  50% { text-shadow: 0 0 26px rgba(0, 240, 255, 0.6), 0 0 40px rgba(0, 240, 255, 0.25); }
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
 }
 
 .tb-value {
@@ -52,8 +52,8 @@
 }
 
 @keyframes value-glow {
-  0%, 100% { text-shadow: 0 0 4px rgba(0, 240, 255, 0.1); }
-  50% { text-shadow: 0 0 12px rgba(0, 240, 255, 0.35); }
+  0%, 100% { opacity: 0.7; }
+  50% { opacity: 1; }
 }
 
 .tb-value.phase-dawn { color: #ffa040; }
@@ -144,6 +144,7 @@
     rgba(0, 240, 255, 0.0) 90%,
     transparent 100%);
   animation: field-scan 6s linear infinite;
+  will-change: transform;
 }
 
 @keyframes field-scan {
@@ -244,12 +245,13 @@
 /* ─── Minute Ring ─── */
 .minute-arc {
   transition: stroke-dashoffset 0.4s ease, stroke-width 0.4s ease, opacity 0.4s ease;
+  filter: drop-shadow(0 0 10px rgba(0, 240, 255, 0.5));
   animation: minute-energy-pulse 3s ease-in-out infinite;
 }
 
 @keyframes minute-energy-pulse {
-  0%, 100% { filter: drop-shadow(0 0 6px rgba(0, 240, 255, 0.4)); }
-  50% { filter: drop-shadow(0 0 14px rgba(0, 240, 255, 0.7)); }
+  0%, 100% { opacity: 0.7; }
+  50% { opacity: 1; }
 }
 
 .minute-aura {
@@ -263,43 +265,47 @@
 }
 
 .minute-node {
+  r: 5.5;
   animation: node-pulse 2s ease-in-out infinite;
 }
 
 .minute-node-halo {
+  r: 10.5;
   animation: node-halo-pulse 2s ease-in-out infinite;
 }
 
 @keyframes node-pulse {
-  0%, 100% { r: 5; opacity: 1; }
-  50% { r: 6; opacity: 0.7; }
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
 }
 
 @keyframes node-halo-pulse {
-  0%, 100% { opacity: 0.15; r: 9; }
-  50% { opacity: 0.05; r: 12; }
+  0%, 100% { opacity: 0.15; }
+  50% { opacity: 0.05; }
 }
 
 /* ─── Star Node ─── */
 .star-node {
   animation: star-node-pulse 3s ease-in-out infinite;
   transform-origin: 300px 300px;
+  filter: drop-shadow(0 0 14px rgba(0, 240, 255, 0.3));
 }
 
 @keyframes star-node-pulse {
-  0%, 100% { filter: drop-shadow(0 0 8px rgba(0, 240, 255, 0.2)); }
-  50% { filter: drop-shadow(0 0 20px rgba(0, 240, 255, 0.4)); }
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
 }
 
 /* ─── Hour Marker ─── */
 .hour-marker {
   animation: hour-marker-pulse 2.5s ease-in-out infinite;
   transform-origin: center;
+  filter: drop-shadow(0 0 8px rgba(0, 240, 255, 0.35));
 }
 
 @keyframes hour-marker-pulse {
-  0%, 100% { filter: drop-shadow(0 0 4px rgba(0, 240, 255, 0.2)); }
-  50% { filter: drop-shadow(0 0 12px rgba(0, 240, 255, 0.5)); }
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
 }
 
 /* ═══════ HUD ANIMATIONS ═══════ */
@@ -327,18 +333,19 @@
 }
 
 @keyframes bracket-led-blink {
-  0%, 100% { r: 2.5; opacity: 0.08; }
-  50% { r: 3.5; opacity: 0.25; }
+  0%, 100% { opacity: 0.08; }
+  50% { opacity: 0.25; }
 }
 
 /* ─── Crosshair ─── */
 .crosshair-pulse {
   animation: crosshair-ring 3s ease-in-out infinite;
+  r: 5.5;
 }
 
 @keyframes crosshair-ring {
-  0%, 100% { opacity: 0.04; r: 5; }
-  50% { opacity: 0.1; r: 6; }
+  0%, 100% { opacity: 0.04; }
+  50% { opacity: 0.1; }
 }
 
 .crosshair-core {
@@ -362,18 +369,20 @@
 /* ─── Scanning travel dot ─── */
 .scan-travel-dot {
   animation: scan-dot-travel 6s ease-in-out infinite;
+  r: 1.5;
 }
 
 @keyframes scan-dot-travel {
-  0%, 100% { r: 0; opacity: 0; }
-  10% { r: 1.5; opacity: 0.15; }
-  20% { r: 0; opacity: 0; }
+  0%, 100% { opacity: 0; }
+  10% { opacity: 0.15; }
+  20% { opacity: 0; }
 }
 
 /* ─── Radar sweep ─── */
 .radar-sweep {
   transform-origin: 300px 300px;
   animation: radar-rotate 8s linear infinite;
+  will-change: transform;
 }
 
 @keyframes radar-rotate {
@@ -383,11 +392,12 @@
 /* ─── HUD text glow ─── */
 .hud-glow {
   animation: hud-text-glow 4s ease-in-out infinite;
+  filter: drop-shadow(0 0 5px rgba(0,240,255,0.15));
 }
 
 @keyframes hud-text-glow {
-  0%, 100% { opacity: 0.07; filter: drop-shadow(0 0 2px rgba(0,240,255,0.05)); }
-  50% { opacity: 0.2; filter: drop-shadow(0 0 8px rgba(0,240,255,0.2)); }
+  0%, 100% { opacity: 0.1; }
+  50% { opacity: 0.2; }
 }
 
 /* ─── Coordinate pulse ─── */
@@ -406,13 +416,14 @@
 }
 
 @keyframes header-glow {
-  0%, 100% { text-shadow: 0 0 4px rgba(0,240,255,0.08); }
-  50% { text-shadow: 0 0 16px rgba(0,240,255,0.2); }
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
 }
 
 /* ═══════ ORBITAL SCAN RINGS ═══════ */
 .scan-orbit {
   transform-origin: 300px 300px;
+  will-change: transform;
 }
 
 @keyframes spin-cw {
@@ -430,6 +441,7 @@
 
 .sparkle-dot {
   animation: sparkle-flash 2.5s ease-in-out infinite;
+  r: 2.5;
 }
 
 .sparkle-delay {
@@ -441,9 +453,9 @@
 }
 
 @keyframes sparkle-flash {
-  0%, 85%, 100% { r: 0; opacity: 0; }
-  90% { r: 2.5; opacity: 1; }
-  95% { r: 1.5; opacity: 0.5; }
+  0%, 85%, 100% { opacity: 0; }
+  90% { opacity: 1; }
+  95% { opacity: 0.5; }
 }
 
 /* ═══════ AI HOLOGRAPHIC ELEMENTS ═══════ */
@@ -548,8 +560,9 @@
 /* ─── Scan pulse nodes ─── */
 .h-scan-core {
   fill: #00f0ff;
-  filter: url(#nms-glow-strong);
+  filter: url(#nms-glow);
   animation: scan-core-pulse 2s ease-in-out infinite;
+  r: 2;
 }
 
 .h-scan-ring {
@@ -557,17 +570,18 @@
   stroke: rgba(0, 240, 255, 0.08);
   stroke-width: 0.5;
   animation: scan-ring-expand 2s ease-in-out infinite;
+  r: 3;
 }
 
 @keyframes scan-core-pulse {
-  0%, 100% { opacity: 0.3; r: 1.5; }
-  50% { opacity: 1; r: 2.5; }
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 1; }
 }
 
 @keyframes scan-ring-expand {
-  0%, 100% { opacity: 0; r: 3; }
+  0%, 100% { opacity: 0; }
   40% { opacity: 0.3; }
-  100% { opacity: 0; r: 8; }
+  100% { opacity: 0; }
 }
 
 /* ═══════ SPACE ENVIRONMENT ═══════ */
@@ -593,7 +607,7 @@
 
 /* ─── Space particles ─── */
 .space-particle {
-  animation: particle-drift 8s ease-in-out infinite;
+  animation: particle-drift 12s ease-in-out infinite;
 }
 
 @keyframes particle-drift {
@@ -661,6 +675,7 @@
 .planet-shimmer {
   animation: shimmer-rotate 10s linear infinite;
   transform-origin: 300px 300px;
+  will-change: transform;
 }
 
 @keyframes shimmer-rotate {
@@ -683,6 +698,7 @@
     inset 0 0 40px rgba(0, 240, 255, 0.02);
   filter: saturate(1.1) contrast(1.05);
   animation: planet-rotate 80s linear infinite;
+  will-change: transform;
 }
 
 @keyframes planet-rotate {
@@ -856,8 +872,8 @@
 }
 
 @keyframes fp-bar-flux {
-  0%, 100% { filter: brightness(0.85); }
-  50% { filter: brightness(1.3); }
+  0%, 100% { opacity: 0.7; }
+  50% { opacity: 1; }
 }
 
 @keyframes bar-glint {
@@ -983,8 +999,8 @@
 }
 
 @keyframes time-glow {
-  0%, 100% { text-shadow: 0 0 14px rgba(0, 240, 255, 0.25); }
-  50% { text-shadow: 0 0 28px rgba(0, 240, 255, 0.6), 0 0 44px rgba(0, 240, 255, 0.25); }
+  0%, 100% { opacity: 0.7; }
+  50% { opacity: 1; }
 }
 
 .fp-date {
@@ -1054,8 +1070,8 @@
 }
 
 @keyframes rg-gauge-pulse {
-  0%, 100% { filter: brightness(0.7); }
-  50% { filter: brightness(1.2); }
+  0%, 100% { opacity: 0.7; }
+  50% { opacity: 1; }
 }
 
 .rg-micro {
@@ -1095,8 +1111,8 @@
 }
 
 @keyframes deck-label-flux {
-  0%, 100% { color: rgba(0, 240, 255, 0.18); }
-  50% { color: rgba(0, 240, 255, 0.45); text-shadow: 0 0 10px rgba(0, 240, 255, 0.25); }
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 1; }
 }
 
 .deck-dot {
@@ -1117,8 +1133,8 @@
 }
 
 @keyframes dot-intensify {
-  0%, 100% { box-shadow: 0 0 2px currentColor; }
-  50% { box-shadow: 0 0 8px currentColor; }
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 1; }
 }
 
 .deck-center {

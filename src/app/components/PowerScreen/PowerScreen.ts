@@ -15,8 +15,9 @@ export class PowerScreenComponent implements OnDestroy {
   readonly progress = signal<number>(0);
 
   private progressTimer: ReturnType<typeof setInterval> | null = null;
-  private readonly DURATION = 5000;
+  private readonly DURATION = 2500;
   private readonly TICK = 30;
+  private soundPlayed = false;
 
   ngOnDestroy(): void {
     this.clearTimer();
@@ -25,16 +26,20 @@ export class PowerScreenComponent implements OnDestroy {
   powerOn(): void {
     if (this.state() !== 'OFF') return;
 
-   const audio = new Audio('sounds/JarvisSound.mp3');
-   audio.play().catch(() => {});
-
     this.state.set('BOOTING');
     this.progress.set(0);
+    this.soundPlayed = false;
 
+    const threshold = 1 - 1000 / this.DURATION;
     const step = this.TICK / this.DURATION;
     this.progressTimer = setInterval(() => {
       this.progress.update(v => {
         const next = v + step;
+        if (!this.soundPlayed && next >= threshold) {
+          this.soundPlayed = true;
+          const audio = new Audio('sounds/Windows11Sound.mp3');
+          audio.play().catch(() => {});
+        }
         if (next >= 1) {
           this.clearTimer();
           this.state.set('OFF');

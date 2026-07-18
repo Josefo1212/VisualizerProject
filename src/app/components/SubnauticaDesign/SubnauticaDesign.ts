@@ -21,6 +21,23 @@ export class SubnauticaDesignComponent {
   readonly sliderValue = signal<number>(0);
   readonly isDragging = signal(false);
 
+  readonly dragHours$ = computed(() => {
+    if (!this.isDragging()) return this.time.hours$();
+    return Math.trunc(this.sliderValue());
+  });
+  readonly dragMinutes$ = computed(() => {
+    if (!this.isDragging()) return this.time.minutes$();
+    const v = this.sliderValue();
+    const frac = v - Math.trunc(v);
+    return Math.floor(((frac * 60) % 60 + 60) % 60);
+  });
+  readonly dragSeconds$ = computed(() => {
+    if (!this.isDragging()) return this.time.seconds$();
+    const v = this.sliderValue();
+    const totalMin = v * 60;
+    return Math.floor(((totalMin - Math.floor(totalMin)) * 60 + 60) % 60);
+  });
+
   constructor() {
     this.session.addLog('SUBNAUTICA WORLD INITIALIZED', 'success');
     this.sliderValue.set(this.time.currentHour$());
@@ -28,16 +45,16 @@ export class SubnauticaDesignComponent {
 
   readonly mappedHours = computed(() => {
     if (this.isDragging()) return this.sliderValue();
-    return cycleHour(this.time.hours$()) + this.time.minutes$() / 60;
+    return cycleHour(this.dragHours$()) + this.dragMinutes$() / 60;
   });
 
   readonly currentTaskName = computed(() => {
-    const idx = cycleHour(this.time.hours$()) % TASKS.length;
+    const idx = cycleHour(this.dragHours$()) % TASKS.length;
     return TASKS[idx];
   });
 
   readonly clockDisplay = computed(() => {
-    return formatTime(this.time.hours$(), this.time.minutes$(), this.time.seconds$());
+    return formatTime(this.dragHours$(), this.dragMinutes$(), this.dragSeconds$());
   });
 
   readonly dateDisplay = computed(() => {
@@ -48,15 +65,15 @@ export class SubnauticaDesignComponent {
     return `${dayName}, ${dayNum} ${month}`.toUpperCase();
   });
 
-  readonly oxygenPercent = computed(() => Math.round((1 - this.time.minutes$() / 60) * 100));
-  readonly isCritical = computed(() => this.time.minutes$() > 50);
+  readonly oxygenPercent = computed(() => Math.round((1 - this.dragMinutes$() / 60) * 100));
+  readonly isCritical = computed(() => this.dragMinutes$() > 50);
   readonly isPressureCritical = computed(() => this.depthDisplay() > 600);
 
   readonly calculatedBar = computed(() => Math.round(this.depthDisplay() / 10) + 1);
 
   readonly depthDisplay = computed(() => {
-    const ch = cycleHour(this.time.hours$());
-    const mins = ch * 60 + this.time.minutes$();
+    const ch = cycleHour(this.dragHours$());
+    const mins = ch * 60 + this.dragMinutes$();
     return Math.round((mins / 1439) * 1000);
   });
 
@@ -84,7 +101,7 @@ export class SubnauticaDesignComponent {
     )`;
   });
 
-  readonly totalMinutes = computed(() => cycleHour(this.time.hours$()) * 60 + this.time.minutes$());
+  readonly totalMinutes = computed(() => cycleHour(this.dragHours$()) * 60 + this.dragMinutes$());
   readonly sliderPercent = computed(() => (this.mappedHours() / 24) * 100);
 
   readonly arcPath = 'M -5,8 Q 50,-4 105,8';

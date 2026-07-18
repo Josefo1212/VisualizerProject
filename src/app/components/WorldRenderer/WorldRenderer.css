@@ -15,27 +15,47 @@
   height: 100%;
 }
 
+.design-wrapper:not(.anim-ready) ::ng-deep * {
+  animation-play-state: paused !important;
+}
+
+.design-wrapper.anim-ready ::ng-deep * {
+  animation-play-state: running;
+}
+
 .design-leave {
   position: absolute;
   inset: 0;
-  z-index: 10;
-  animation: worldLeave 0.35s ease-out forwards;
+  z-index: 11;
+  animation: worldLeave 0.18s cubic-bezier(0.4, 0, 0.2, 1) forwards;
   pointer-events: none;
-  will-change: opacity, transform;
+  will-change: opacity;
+  contain: layout style paint;
+  content-visibility: auto;
+}
+
+.design-leave {
+  animation-play-state: running;
 }
 
 .design-enter {
-  animation: worldEnter 0.35s ease-out forwards;
+  opacity: 0;
+  animation: worldEnter 0.3s cubic-bezier(0.4, 0, 0.2, 1) 0.25s forwards;
   will-change: opacity, transform;
+  contain: layout style paint;
+}
+
+.design-enter {
+  animation-play-state: running;
 }
 
 @keyframes worldLeave {
-  from { opacity: 1; transform: scale(1); }
-  to   { opacity: 0; transform: scale(0.95); }
+  from { opacity: 1; }
+  to   { opacity: 0; }
 }
 
 @keyframes worldEnter {
-  from { opacity: 0; transform: scale(0.95); }
+  from { opacity: 0; transform: scale(0.97); }
   to   { opacity: 1; transform: scale(1); }
 }
 
@@ -92,5 +112,3 @@
   12% { transform: translateY(calc(100vh + 100%)); }
   100% { transform: translateY(calc(100vh + 100%)); }
 }
-
-

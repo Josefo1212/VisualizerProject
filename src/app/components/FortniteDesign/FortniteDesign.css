@@ -58,7 +58,7 @@
   width: 400px;
   height: 300px;
   border-radius: 50%;
-  filter: blur(60px);
+  filter: blur(30px);
   pointer-events: none;
   z-index: 0;
   opacity: 0.12;

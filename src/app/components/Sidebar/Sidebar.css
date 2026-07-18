@@ -354,3 +354,57 @@
     opacity 0.15s cubic-bezier(0.4, 0, 0.2, 1),
     visibility 0.15s cubic-bezier(0.4, 0, 0.2, 1);
 }
+
+/* ═══════ LOGOUT BUTTON ═══════ */
+.logout-divider {
+  margin: 6px 12px 4px;
+}
+
+.logout-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  margin: 0 12px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.2s ease, opacity 0.2s ease;
+}
+
+.logout-item.disabled {
+  cursor: default;
+  opacity: 0.2;
+}
+
+.logout-icon {
+  flex-shrink: 0;
+  width: 16px;
+  height: 16px;
+  color: rgba(255, 80, 80, 0.55);
+  transition: transform 0.2s ease;
+}
+
+.logout-label {
+  font-family: 'Courier New', monospace;
+  font-size: 11px;
+  letter-spacing: 3px;
+  color: rgba(255, 80, 80, 0.45);
+  text-transform: uppercase;
+}
+
+.sidebar:not(.disabled):not(.session-inactive) .logout-item:hover {
+  background: rgba(255, 60, 60, 0.06);
+}
+.sidebar:not(.disabled):not(.session-inactive) .logout-item:hover .logout-icon {
+  transform: translateX(2px);
+}
+
+.collapsed .logout-item {
+  justify-content: center;
+  padding: 10px 0;
+  margin: 0 8px 12px;
+}
+
+.collapsed .logout-label {
+  display: none;
+}
