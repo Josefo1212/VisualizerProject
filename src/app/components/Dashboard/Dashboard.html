@@ -1,8 +1,14 @@
 <div class="dashboard" [class.online]="isSystemOnline()">
 
-  <!-- ═══ VIDEO BACKGROUND ═══ -->
-  <video #bgVideo class="bg-video" [class.visible]="isSystemOnline()" autoplay muted playsinline preload="auto" loop
-    (timeupdate)="onVideoTimeUpdate(bgVideo)">
+  <!-- ═══ VIDEO BACKGROUND (dual-video crossfade for seamless loop) ═══ -->
+  <video #bgVideo1 class="bg-video" [class.visible]="isSystemOnline()" autoplay muted playsinline preload="auto"
+    (timeupdate)="onVideoTimeUpdate(bgVideo1, bgVideo2)"
+    [style.opacity]="displayOpacity1()">
+    <source src="/General/fondo.mp4" type="video/mp4" />
+  </video>
+  <video #bgVideo2 class="bg-video" [class.visible]="isSystemOnline()" muted playsinline preload="auto"
+    (timeupdate)="onVideoTimeUpdate(bgVideo2, bgVideo1)"
+    [style.opacity]="displayOpacity2()">
     <source src="/General/fondo.mp4" type="video/mp4" />
   </video>
 

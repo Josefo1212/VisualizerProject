@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, computed, ViewChild, ElementRef } from '@angular/core';
 import { SidebarComponent } from '../Sidebar/Sidebar';
 import { PowerScreenComponent } from '../PowerScreen/PowerScreen';
 import { WorldRendererComponent } from '../WorldRenderer/WorldRenderer';
@@ -21,6 +21,37 @@ export class DashboardComponent {
   readonly selectedDesign = signal<string>('');
   readonly hoveredWorld = signal<string | null>(null);
   readonly sidebarCollapsed = signal(true);
+
+  @ViewChild('bgVideo1') private v1Ref!: ElementRef<HTMLVideoElement>;
+
+  readonly video1Opacity = signal(1);
+  readonly video2Opacity = signal(0);
+  private isTransitioning = false;
+
+  readonly displayOpacity1 = computed(() => this.isSystemOnline() ? this.video1Opacity() : 0);
+  readonly displayOpacity2 = computed(() => this.isSystemOnline() ? this.video2Opacity() : 0);
+
+  onVideoTimeUpdate(current: HTMLVideoElement, other: HTMLVideoElement): void {
+    if (!current.duration || this.isTransitioning) return;
+
+    const threshold = 0.5;
+    if (current.currentTime >= current.duration - threshold) {
+      this.isTransitioning = true;
+
+      other.currentTime = 0;
+      other.play().catch(() => {});
+
+      const isV1 = current === this.v1Ref.nativeElement;
+      this.video1Opacity.set(isV1 ? 0 : 1);
+      this.video2Opacity.set(isV1 ? 1 : 0);
+
+      setTimeout(() => {
+        current.pause();
+        current.currentTime = 0;
+        this.isTransitioning = false;
+      }, 600);
+    }
+  }
 
   readonly particles = Array.from({ length: 12 }, (_, i) => ({
     id: i,
@@ -75,9 +106,4 @@ export class DashboardComponent {
     }
   }
 
-  onVideoTimeUpdate(video: HTMLVideoElement): void {
-    if (video.duration && video.currentTime >= video.duration - 0.35) {
-      video.currentTime = 0;
-    }
-  }
 }
