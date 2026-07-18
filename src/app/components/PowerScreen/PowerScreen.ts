@@ -25,6 +25,9 @@ export class PowerScreenComponent implements OnDestroy {
   powerOn(): void {
     if (this.state() !== 'OFF') return;
 
+   const audio = new Audio('sounds/JarvisSound.mp3');
+   audio.play().catch(() => {});
+
     this.state.set('BOOTING');
     this.progress.set(0);
 

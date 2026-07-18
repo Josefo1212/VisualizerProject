@@ -16,22 +16,27 @@ export class CyberpunkDesignComponent implements OnDestroy {
   readonly time = inject(TimeEngineService);
   private readonly session = inject(SessionService);
 
-  private readonly _now = signal<Date>(new Date());
-  private readonly _clockInterval: ReturnType<typeof setInterval>;
   private readonly _eventInterval: ReturnType<typeof setInterval>;
   private readonly _glitchInterval: ReturnType<typeof setInterval>;
   private readonly _scanInterval: ReturnType<typeof setInterval>;
+  private readonly _breachInterval: ReturnType<typeof setInterval>;
+  private readonly _breachGlitchInterval: ReturnType<typeof setInterval>;
+  private readonly _implantInterval: ReturnType<typeof setInterval>;
+  private readonly _eventGlitchInterval: ReturnType<typeof setInterval>;
+  private readonly _neuralInterval: ReturnType<typeof setInterval>;
+  private readonly _pulseInterval: ReturnType<typeof setInterval>;
+
 
   /* ─── CHRONO CORE ─── */
-  readonly clockMs = computed(() => {
+  readonly clock = computed(() => {
     const h = this.cycleHour();
-    const m = this.time.minutes$();
-    const s = this.time.seconds$();
-    const ms = this._now().getMilliseconds().toString().padStart(3, '0');
-    return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}.${ms}`;
+    const m = this.dragMinutes$();
+    const s = this.dragSeconds$();
+    if (isNaN(h) || isNaN(m) || isNaN(s)) return '--:--:--';
+    return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
   });
 
-  readonly cycleHour = computed(() => ((this.time.hours$() % 24) + 24) % 24);
+  readonly cycleHour = computed(() => ((this.dragHours$() % 24) + 24) % 24);
 
   readonly utcOffset = computed(() => {
     const offset = -new Date().getTimezoneOffset();
@@ -41,51 +46,51 @@ export class CyberpunkDesignComponent implements OnDestroy {
     return `UTC ${sign}${hours.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}`;
   });
 
-  readonly latency = computed(() => 1 + Math.floor(Math.abs(this.time.seconds$() * 0.3 + this.time.minutes$() * 0.1) % 8));
+  readonly latency = computed(() => 1 + Math.floor(Math.abs(this.dragSeconds$() * 0.3 + this.dragMinutes$() * 0.1) % 8));
 
   readonly clockDrift = computed(() => {
-    const drift = Math.sin(this.time.hours$() * 0.01) * 0.003;
+    const drift = Math.sin(this.dragHours$() * 0.01) * 0.003;
     return `${drift >= 0 ? '+' : ''}${drift.toFixed(3)}s`;
   });
 
   readonly uptime = computed(() => {
-    const h = Math.abs(this.time.hours$());
+    const h = Math.abs(this.dragHours$());
     const decline = h * 0.008;
     return Math.max(90, +(100 - decline).toFixed(2));
   });
 
   /* ─── VITAL STATS (existing) ─── */
   readonly hpPercent = computed(() => {
-    const damage = Math.floor(Math.abs(this.time.hours$()) * 0.6 + this.time.minutes$() * 0.04);
+    const damage = Math.floor(Math.abs(this.dragHours$()) * 0.6 + this.dragMinutes$() * 0.04);
     return Math.max(0, 100 - damage);
   });
 
   readonly ramUsed = computed(() => {
-    return Math.min(10, Math.max(1, Math.floor(Math.abs(this.time.hours$()) + this.time.minutes$() / 10) % 11 + 1));
+    return Math.min(10, Math.max(1, Math.floor(Math.abs(this.dragHours$()) + this.dragMinutes$() / 10) % 11 + 1));
   });
 
   /* ─── TECH DATA MODULES ─── */
-  readonly cpuLoad = computed(() => Math.min(100, Math.floor(Math.abs(this.time.hours$() * 1.2 + this.time.minutes$() * 0.3) % 100)));
-  readonly gpuLoad = computed(() => Math.min(100, Math.floor(Math.abs(this.time.hours$() * 1.5 + this.time.minutes$() * 0.5) % 100)));
-  readonly fps = computed(() => Math.floor(55 + Math.sin(this.time.hours$() * 0.3) * 10));
-  readonly packets = computed(() => Math.floor(1200 + Math.sin(this.time.hours$() * 0.1) * 300));
-  readonly signalStrength = computed(() => Math.min(100, Math.floor(85 + Math.sin(this.time.hours$() * 0.15) * 15)));
-  readonly threads = computed(() => Math.floor(8 + Math.sin(this.time.hours$() * 0.2) * 4));
-  readonly memoryUsed = computed(() => Math.min(100, Math.floor(Math.abs(this.time.hours$() * 0.8 + this.time.minutes$() * 0.1) % 100)));
-  readonly cacheLoad = computed(() => Math.min(100, Math.floor(Math.abs(this.time.hours$() * 0.5 + this.time.minutes$() * 0.3) % 100)));
-  readonly networkLoad = computed(() => Math.min(100, Math.floor(Math.abs(this.time.hours$() * 1.1 + this.time.minutes$() * 0.2) % 100)));
+  readonly cpuLoad = computed(() => Math.min(100, Math.floor(Math.abs(this.dragHours$() * 1.2 + this.dragMinutes$() * 0.3) % 100)));
+  readonly gpuLoad = computed(() => Math.min(100, Math.floor(Math.abs(this.dragHours$() * 1.5 + this.dragMinutes$() * 0.5) % 100)));
+  readonly fps = computed(() => Math.floor(55 + Math.sin(this.dragHours$() * 0.3) * 10));
+  readonly packets = computed(() => Math.floor(1200 + Math.sin(this.dragHours$() * 0.1) * 300));
+  readonly signalStrength = computed(() => Math.min(100, Math.floor(85 + Math.sin(this.dragHours$() * 0.15) * 15)));
+  readonly threads = computed(() => Math.floor(8 + Math.sin(this.dragHours$() * 0.2) * 4));
+  readonly memoryUsed = computed(() => Math.min(100, Math.floor(Math.abs(this.dragHours$() * 0.8 + this.dragMinutes$() * 0.1) % 100)));
+  readonly cacheLoad = computed(() => Math.min(100, Math.floor(Math.abs(this.dragHours$() * 0.5 + this.dragMinutes$() * 0.3) % 100)));
+  readonly networkLoad = computed(() => Math.min(100, Math.floor(Math.abs(this.dragHours$() * 1.1 + this.dragMinutes$() * 0.2) % 100)));
 
-  /* ─── CYBERWARE ─── */
-  readonly cyberwareList = [
-    { category: 'KIROSHI OPTICS', name: 'MK.5', status: 'ACTIVE', indicator: true, desc: 'Optical calibration complete' },
-    { category: 'SYNAPTIC ACCELERATOR', name: 'TK-47', status: 'ONLINE', indicator: true, desc: 'Neural boost engaged' },
-    { category: 'SMART LINK', name: 'Targeting Interface', status: 'CONNECTED', indicator: true, desc: 'Weapon sync established' },
-    { category: 'MANTIS BLADES', name: 'Thermal Edge', status: 'READY', indicator: true, desc: 'Combat mode available' },
-    { category: 'SUBDERMAL ARMOR', name: 'Militech Mesh', status: 'ACTIVE', indicator: true, desc: 'Impact resistance active' },
-    { category: 'REFLEX BOOSTER', name: 'Nervous System', status: 'STANDBY', indicator: false, desc: 'Awaiting combat stimulus' },
-  ];
-
-  readonly activeCyberIdx = computed(() => Math.abs(this.time.hours$()) % this.cyberwareList.length);
+  /* ─── IMPLANT MONITOR ─── */
+  readonly implants = signal([
+    { name: 'KIROSHI OPTICS', bar: 100, status: 'ONLINE' },
+    { name: 'SANDEVISTAN', bar: 76, status: 'READY' },
+    { name: 'BIOMONITOR', bar: 100, status: 'ACTIVE' },
+    { name: 'NEURAL LINK', bar: 91, status: 'SYNC 98%' },
+    { name: 'RELIC OS', bar: 100, status: 'STABLE' },
+    { name: 'SYNAPTIC ACCEL', bar: 65, status: 'STANDBY' },
+    { name: 'SUBDERMAL ARMOR', bar: 100, status: 'ACTIVE' },
+    { name: 'REFLEX BOOSTER', bar: 42, status: 'CHARGING' },
+  ]);
 
   readonly systemStatus = computed(() => {
     if (this.hpPercent() <= 0) return 'SYSTEM FAILURE';
@@ -95,61 +100,123 @@ export class CyberpunkDesignComponent implements OnDestroy {
   });
 
   /* ─── CIRCULAR INDICATORS ─── */
-  readonly neuralSync = computed(() => Math.min(100, Math.floor(70 + Math.sin(this.time.hours$() * 0.05 + this.time.minutes$() * 0.01) * 30)));
-  readonly opticalFocus = computed(() => Math.min(100, Math.floor(85 + Math.sin(this.time.hours$() * 0.08 + this.time.seconds$() * 0.02) * 15)));
-  readonly clockSyncPct = computed(() => Math.min(100, Math.floor(95 + Math.sin(this.time.hours$() * 0.03 + this.time.minutes$() * 0.005) * 5)));
-  readonly networkStatusPct = computed(() => Math.min(100, Math.floor(80 + Math.sin(this.time.hours$() * 0.1 + this.time.minutes$() * 0.02) * 20)));
-  readonly cpuCyclePct = computed(() => Math.min(100, Math.floor(Math.abs(this.time.hours$() * 1.5 + this.time.minutes$() * 0.2) % 100)));
+  readonly neuralSync = computed(() => Math.min(100, Math.floor(70 + Math.sin(this.dragHours$() * 0.05 + this.dragMinutes$() * 0.01) * 30)));
+  readonly opticalFocus = computed(() => Math.min(100, Math.floor(85 + Math.sin(this.dragHours$() * 0.08 + this.dragSeconds$() * 0.02) * 15)));
+  readonly clockSyncPct = computed(() => Math.min(100, Math.floor(95 + Math.sin(this.dragHours$() * 0.03 + this.dragMinutes$() * 0.005) * 5)));
+  readonly networkStatusPct = computed(() => Math.min(100, Math.floor(80 + Math.sin(this.dragHours$() * 0.1 + this.dragMinutes$() * 0.02) * 20)));
+  readonly cpuCyclePct = computed(() => Math.min(100, Math.floor(Math.abs(this.dragHours$() * 1.5 + this.dragMinutes$() * 0.2) % 100)));
 
   /* ─── BIOMETRIC STATUS ─── */
-  readonly heartRate = computed(() => 62 + Math.floor(Math.abs(this.time.hours$() * 0.3 + this.time.minutes$() * 0.1 + this.time.seconds$() * 0.02) % 38));
-  readonly oxygenLevel = computed(() => Math.max(90, 100 - Math.floor(Math.abs(this.time.hours$() * 0.1 + this.time.minutes$() * 0.02) % 10)));
-  readonly bodyTemp = computed(() => 36.0 + (Math.abs(this.time.hours$() * 0.05 + this.time.minutes$() * 0.01) % 10) * 0.2);
-  readonly bloodPressureSystolic = computed(() => 110 + Math.floor(Math.abs(this.time.hours$() * 0.2 + this.time.minutes$() * 0.05) % 30));
-  readonly bloodPressureDiastolic = computed(() => 70 + Math.floor(Math.abs(this.time.hours$() * 0.1 + this.time.minutes$() * 0.03) % 20));
-  readonly stressLevel = computed(() => Math.floor(Math.abs(this.time.hours$() * 0.5 + this.time.minutes$() * 0.05 + this.time.seconds$() * 0.01) % 100));
-  readonly neuralActivity = computed(() => Math.floor(Math.abs(this.time.hours$() * 1.2 + this.time.minutes$() * 0.2 + this.time.seconds$() * 0.05) % 100));
+  readonly heartRate = computed(() => 62 + Math.floor(Math.abs(this.dragHours$() * 0.3 + this.dragMinutes$() * 0.1 + this.dragSeconds$() * 0.02) % 38));
+  readonly oxygenLevel = computed(() => Math.max(90, 100 - Math.floor(Math.abs(this.dragHours$() * 0.1 + this.dragMinutes$() * 0.02) % 10)));
+  readonly bodyTemp = computed(() => 36.0 + (Math.abs(this.dragHours$() * 0.05 + this.dragMinutes$() * 0.01) % 10) * 0.2);
+  readonly bloodPressureSystolic = computed(() => 110 + Math.floor(Math.abs(this.dragHours$() * 0.2 + this.dragMinutes$() * 0.05) % 30));
+  readonly bloodPressureDiastolic = computed(() => 70 + Math.floor(Math.abs(this.dragHours$() * 0.1 + this.dragMinutes$() * 0.03) % 20));
+  readonly stressLevel = computed(() => Math.floor(Math.abs(this.dragHours$() * 0.5 + this.dragMinutes$() * 0.05 + this.dragSeconds$() * 0.01) % 100));
+  readonly neuralActivity = computed(() => Math.floor(Math.abs(this.dragHours$() * 1.2 + this.dragMinutes$() * 0.2 + this.dragSeconds$() * 0.05) % 100));
 
   readonly bpDisplay = computed(() => `${this.bloodPressureSystolic()}/${this.bloodPressureDiastolic()}`);
 
   /* ─── EVENT LOG ─── */
-  readonly eventLogEntries = [
-    { msg: 'Optical calibration complete', priority: 'success', icon: 'optic' },
-    { msg: 'Neural synchronization successful', priority: 'success', icon: 'neural' },
-    { msg: 'Kiroshi firmware verified', priority: 'info', icon: 'shield' },
-    { msg: 'GPS satellite linked', priority: 'info', icon: 'satellite' },
-    { msg: 'Network uplink established', priority: 'success', icon: 'wifi' },
-    { msg: 'Memory cache optimized', priority: 'info', icon: 'memory' },
-    { msg: 'Retinal scan complete', priority: 'success', icon: 'scan' },
-    { msg: 'Time synchronization successful', priority: 'success', icon: 'clock' },
-    { msg: 'Biometric analysis updated', priority: 'info', icon: 'heart' },
-    { msg: 'Internal diagnostics running', priority: 'warning', icon: 'cpu' },
+  readonly logLines = signal<string[]>([]);
+  readonly MAX_LOG_LINES = 20;
+  readonly eventGlitchLine = signal(-1);
+
+  private readonly eventPool = [
+    'LINK ESTABLISHED', 'NETWATCH VERIFIED', 'KIROSHI ONLINE',
+    'NETWORK VERIFIED', 'ENCRYPTION UPDATED', 'ICE SCAN COMPLETE',
+    'DATA STREAM OPEN', 'PORT 04 OPEN', 'CACHE SYNCHRONIZED',
+    'QUICKHACK READY', 'ACCESS TOKEN REFRESHED', 'PACKET ROUTE OPTIMIZED',
+    'BLACKWALL CHECK PASSED', 'ROUTE UPDATED', 'TRAFFIC NORMALIZED',
+    'SIGNAL VERIFIED', 'NEURAL INTERFACE CALIBRATED', 'DAEMON SPAWNED ON PORT 7',
+    'CYBERWARE LINK ESTABLISHED', 'FIREWALL BYPASS DETECTED', 'DNS CACHE PURGED',
+    'ICE PROTOCOL NEGOTIATED', 'ENCRYPTION KEY ROTATED', 'TCP HANDSHAKE COMPLETE',
+    'BANDWIDTH ALLOCATED', 'VIRTUAL CHANNEL OPENED', 'KERNEL MODULE LOADED',
+    'BIOMETRIC VERIFICATION PASSED', 'MEMORY SEGMENT RELOCATED', 'STACK FRAME VALIDATED',
+    'HEAP ALLOCATION CONFIRMED', 'NETWORK INTERFACE ACTIVE', 'PROXY CHAIN ESTABLISHED',
+    'QUANTUM KEY DISTRIBUTED', 'OPTICAL SIGNAL BOOSTED', 'RELIC INTEGRITY CHECK PASSED',
+    'NEURAL LINK SYNCHRONIZED', 'SUBDERMAL GRID CALIBRATED', 'REFLEX BOOSTER STANDBY',
+    'SYNAPSE ACCELERATOR READY', 'SMART LINK CONNECTED', 'COMBAT MODE AVAILABLE',
   ];
 
-  readonly eventIndex = signal(0);
-  readonly showAllEvents = signal(false);
-  readonly visibleLogEntries = computed(() => {
-    if (this.showAllEvents()) return this.eventLogEntries;
-    const idx = this.eventIndex();
-    return this.eventLogEntries.slice(0, idx + 1);
-  });
+  private generateLogEntry(): string {
+    const now = new Date();
+    const hh = now.getHours().toString().padStart(2, '0');
+    const mm = now.getMinutes().toString().padStart(2, '0');
+    const ss = now.getSeconds().toString().padStart(2, '0');
+    const msg = this.eventPool[Math.floor(Math.random() * this.eventPool.length)];
+    return `${hh}:${mm}:${ss} ${msg}`;
+  }
 
-  readonly eventProgress = computed(() => {
-    return (this.eventIndex() / (this.eventLogEntries.length - 1)) * 100;
-  });
+  /* ─── BREACH PROTOCOL TERMINAL ─── */
+  readonly breachProvider = signal('NETWATCH');
+  readonly breachNode = signal('NX-07');
+  readonly breachAccess = signal('AUTHORIZED');
+  readonly breachEncryption = signal('AES-256');
+
+  readonly ping = signal(8);
+  readonly breachLatency = signal(18);
+  readonly signalPct = signal(97);
+
+  readonly iceActive = signal(false);
+  readonly breachReady = signal(false);
+  readonly traceLevel = signal(0);
+  readonly traceGlitch = signal(false);
+  readonly blackwallStatus = signal('STANDBY');
+
+  readonly ramPct = signal(72);
+  readonly ports = signal(6);
+  readonly daemonStatus = signal('IDLE');
+
+  readonly statusMsg = signal('HANDSHAKE COMPLETE');
+  readonly statusBlink = signal(true);
+
+  readonly breachGlitchWord = signal('');
+  readonly breachGlitchActive = signal(false);
+
+  private readonly providers = ['NETWATCH', 'MILLITECH', 'ARASAKA', 'KANG TAO', 'ZETATECH'];
+  private readonly nodes = ['NX-07', 'BS-42', 'AL-19', 'DK-31', 'TR-88', 'VX-02'];
+  private readonly statuses = ['ENCRYPTING...', 'HANDSHAKE COMPLETE', 'SCANNING ICE', 'DECRYPTING PROTOCOL', 'ESTABLISHING LINK', 'PACKET LOSS WARNING'];
+  private readonly daemons = ['IDLE', 'PARSING', 'COMPILING', 'MONITORING', 'ACTIVE'];
 
   /* ─── SLIDER ─── */
+  readonly sliderValue = signal<number>(0);
+  readonly isDragging = signal(false);
+
+  readonly mappedHours = computed(() => {
+    if (this.isDragging()) return this.sliderValue();
+    return this.time.currentHour$();
+  });
+
   readonly hoursDisplay = computed(() => {
-    const h = this.time.hours$();
+    const h = this.isDragging() ? this.sliderValue() : this.time.currentHour$();
     return `${h >= 0 ? '+' : ''}${h.toFixed(1)}h`;
+  });
+
+  /* ─── DRAG-AWARE TIME (switches between slider preview & real engine) ─── */
+  readonly dragHours$ = computed(() => {
+    if (!this.isDragging()) return this.time.hours$();
+    return Math.trunc(this.sliderValue());
+  });
+
+  readonly dragMinutes$ = computed(() => {
+    if (!this.isDragging()) return this.time.minutes$();
+    const v = this.sliderValue();
+    const frac = v - Math.trunc(v);
+    return Math.floor(((frac * 60) % 60 + 60) % 60);
+  });
+
+  readonly dragSeconds$ = computed(() => {
+    if (!this.isDragging()) return this.time.seconds$();
+    const v = this.sliderValue();
+    const totalMin = v * 60;
+    return Math.floor(((totalMin - Math.floor(totalMin)) * 60 + 60) % 60);
   });
 
   readonly sliderTicks = [0, 24, 48, 72, 96, 120, 144, 168, 192, 216, 240];
 
-  readonly sliderValue = signal<number>(0);
-
   readonly scanColor = computed(() => {
-    const h = Math.max(0, this.time.hours$());
+    const h = Math.max(0, this.dragHours$());
     const t = Math.min(1, h / 240);
     const hue = 330 - t * 190;
     return `hsl(${hue}, 100%, 50%)`;
@@ -202,48 +269,45 @@ export class CyberpunkDesignComponent implements OnDestroy {
   /* ─── NEURAL MAP PULSE ─── */
   readonly neuralPulsePhase = signal(0);
 
-  /* ─── CHRONO PULSE ─── */
-  readonly chronoPhase = signal(0);
+  /* ─── PULSE ─── */
   readonly secondPulse = signal(false);
   readonly minutePulse = signal(false);
 
   private syncFromTime(): void {
-    this.sliderValue.set(this.time.hours$());
+    this.sliderValue.set(this.time.currentHour$());
   }
 
   constructor() {
     this.session.addLog('CYBERPUNK WORLD INITIALIZED', 'success');
     this.syncFromTime();
 
+    this._neuralInterval = setInterval(() => {
+      this.neuralPulsePhase.update(p => (p + 1) % 360);
+    }, 100);
+
     let lastS = -1;
     let lastM = -1;
-
-    this._clockInterval = setInterval(() => {
-      this._now.set(new Date());
-      this.neuralPulsePhase.update(p => (p + 1) % 360);
-      this.chronoPhase.update(p => (p + 1) % 360);
-
-      const s = this.time.seconds$();
-      const m = this.time.minutes$();
+    this._pulseInterval = setInterval(() => {
+      const s = this.dragSeconds$();
       if (s !== lastS) {
         lastS = s;
         this.secondPulse.set(true);
         setTimeout(() => this.secondPulse.set(false), 200);
       }
+      const m = this.dragMinutes$();
       if (m !== lastM) {
         lastM = m;
         this.minutePulse.set(true);
         setTimeout(() => this.minutePulse.set(false), 600);
       }
-
-    }, 50);
+    }, 250);
 
     this._eventInterval = setInterval(() => {
-      this.eventIndex.update(i => Math.min(i + 1, this.eventLogEntries.length - 1));
-      if (this.eventIndex() >= this.eventLogEntries.length - 1) {
-        this.showAllEvents.set(true);
-      }
-    }, 1800);
+      this.logLines.update(lines => {
+        const next = [...lines, this.generateLogEntry()];
+        return next.length > this.MAX_LOG_LINES ? next.slice(-this.MAX_LOG_LINES) : next;
+      });
+    }, 2000 + Math.random() * 1000);
 
     this._glitchInterval = setInterval(() => {
       const roll = Math.random();
@@ -270,24 +334,114 @@ export class CyberpunkDesignComponent implements OnDestroy {
       this.scanLineVisible.set(true);
       setTimeout(() => this.scanLineVisible.set(false), 2000);
     }, 10000 + Math.random() * 4000);
+
+    /* ─── BREACH PROTOCOL TICK ─── */
+    let tickCount = 0;
+    this._breachInterval = setInterval(() => {
+      tickCount++;
+      this.ping.set(5 + Math.floor(Math.random() * 8));
+      this.breachLatency.update(l => {
+        const drift = (Math.random() - 0.5) * 4;
+        return Math.max(10, Math.min(30, l + drift));
+      });
+      this.signalPct.set(94 + Math.floor(Math.random() * 7));
+      this.ramPct.set(65 + Math.floor(Math.random() * 28));
+      this.traceLevel.update(t => {
+        const inc = 0.5 + Math.random();
+        const next = t + inc;
+        if (next >= 100) {
+          this.traceGlitch.set(true);
+          setTimeout(() => this.traceGlitch.set(false), 120);
+          return 0;
+        }
+        return next;
+      });
+      this.iceActive.set(Math.random() < 0.3);
+      this.breachReady.set(Math.random() < 0.2);
+      this.blackwallStatus.set(Math.random() < 0.1 ? 'ACTIVE' : 'STANDBY');
+      this.statusBlink.set(!this.statusBlink());
+
+      if (tickCount % 24 === 0) {
+        this.breachProvider.set(this.providers[Math.floor(Math.random() * this.providers.length)]);
+        this.breachNode.set(this.nodes[Math.floor(Math.random() * this.nodes.length)]);
+        this.breachAccess.set(Math.random() < 0.9 ? 'AUTHORIZED' : 'RESTRICTED');
+        this.breachEncryption.set(Math.random() < 0.7 ? 'AES-256' : 'QUANTUM-X');
+      }
+
+      if (tickCount % 12 === 0) {
+        this.ports.set(3 + Math.floor(Math.random() * 9));
+      }
+
+      if (tickCount % 28 === 0) {
+        this.daemonStatus.set(this.daemons[Math.floor(Math.random() * this.daemons.length)]);
+      }
+
+      if (tickCount % 14 === 0) {
+        this.statusMsg.set(this.statuses[Math.floor(Math.random() * this.statuses.length)]);
+      }
+    }, 250);
+
+    this._breachGlitchInterval = setInterval(() => {
+      if (Math.random() < 0.15) {
+        const words = ['ERR', 'SYS', 'OVR', 'NUL', 'COR', '0x7F'];
+        this.breachGlitchWord.set(words[Math.floor(Math.random() * words.length)]);
+        this.breachGlitchActive.set(true);
+        setTimeout(() => {
+          this.breachGlitchActive.set(false);
+          this.breachGlitchWord.set('');
+        }, 70 + Math.random() * 30);
+      }
+    }, 5000 + Math.random() * 3000);
+
+    /* ─── IMPLANT ANIMATION ─── */
+    this._implantInterval = setInterval(() => {
+      this.implants.update(list =>
+        list.map(imp => {
+          const drift = (Math.random() - 0.5) * 1.6;
+          const bar = Math.max(0, Math.min(100, imp.bar + drift));
+          return { ...imp, bar: parseFloat(bar.toFixed(1)) };
+        })
+      );
+    }, 400);
+
+    /* ─── EVENT LOG GLITCH ─── */
+    this._eventGlitchInterval = setInterval(() => {
+      const len = this.logLines().length;
+      if (len > 0 && Math.random() < 0.2) {
+        const idx = Math.floor(Math.random() * len);
+        this.eventGlitchLine.set(idx);
+        setTimeout(() => this.eventGlitchLine.set(-1), 80 + Math.random() * 60);
+      }
+    }, 6000 + Math.random() * 3000);
   }
 
   ngOnDestroy(): void {
-    clearInterval(this._clockInterval);
+    clearInterval(this._neuralInterval);
+    clearInterval(this._pulseInterval);
     clearInterval(this._eventInterval);
     clearInterval(this._glitchInterval);
     clearInterval(this._scanInterval);
+    clearInterval(this._breachInterval);
+    clearInterval(this._breachGlitchInterval);
+    clearInterval(this._implantInterval);
+    clearInterval(this._eventGlitchInterval);
   }
 
   onSliderChange(v: number): void {
+    console.log('[CP] onSliderChange value:', v);
+    this.isDragging.set(true);
     this.sliderValue.set(v);
-    this.time.setHora(v);
   }
 
   onDragStart(): void {
+    console.log('[CP] onDragStart');
+    this.isDragging.set(true);
   }
 
   onDragEnd(): void {
+    console.log('[CP] onDragEnd, final sliderValue:', this.sliderValue());
+    this.isDragging.set(false);
+    this.time.setHora(this.sliderValue());
   }
 
   onResetTime(): void {
@@ -298,22 +452,4 @@ export class CyberpunkDesignComponent implements OnDestroy {
   /* ─── SVG ARC HELPER ─── */
   readonly describeArc = describeArc;
 
-  /* ─── EVENT LOG TIMESTAMP ─── */
-  eventTs(index: number): string {
-    const totalS = (index + 1) * 2;
-    const m = Math.floor(totalS / 60);
-    const s = totalS % 60;
-    const h = Math.floor(m / 60);
-    return `${h.toString().padStart(2, '0')}:${(m % 60).toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
-  }
-
-  /* ─── EVENT PRIORITY ICON ─── */
-  eventIcon(priority: string): string {
-    switch (priority) {
-      case 'success': return '◆';
-      case 'warning': return '▲';
-      case 'info': return '◈';
-      default: return '●';
-    }
-  }
 }

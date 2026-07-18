@@ -11,6 +11,8 @@
     (input)="onInput($event)"
     (pointerdown)="onDragStart()"
     (pointerup)="onDragEnd()"
+    (pointercancel)="onDragEnd()"
+    (change)="onDragEnd()"
   />
 
   <div class="slider-visual" aria-hidden="true">

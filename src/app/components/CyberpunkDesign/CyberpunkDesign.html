@@ -28,8 +28,8 @@
             <path class="brain-outline" d="M50,38 C32,20 12,28 12,48 C12,65 28,78 50,75 C72,78 88,65 88,48 C88,28 68,20 50,38 Z" />
             <path class="brain-outline brain-inner" d="M50,42 C38,30 22,36 22,50 C22,62 36,72 50,70 C64,72 78,62 78,50 C78,36 62,30 50,42 Z" />
             @for (conn of neuralConnections; track $index) {
-              <line [attr.x1]="neuralNodes[conn[0]].x" [attr.y1]="neuralNodes[conn[0]].y"
-                    [attr.x2]="neuralNodes[conn[1]].x" [attr.y2]="neuralNodes[conn[1]].y"
+              <line [attr.x1]="neuralNodes[conn[0]]?.x ?? 0" [attr.y1]="neuralNodes[conn[0]]?.y ?? 0"
+                    [attr.x2]="neuralNodes[conn[1]]?.x ?? 0" [attr.y2]="neuralNodes[conn[1]]?.y ?? 0"
                     class="neural-line" [class.pulsed]="$index % 4 === (neuralPulsePhase() % 4)"
                     [class.dashed]="$index > 30" />
             }
@@ -160,7 +160,7 @@
               <path class="cp-glow" d="M110,2 A38,38 0 0,1 148,40" [class.pulse]="secondPulse()" />
               <path class="cp-glow" d="M72,40 A38,38 0 0,1 110,2" />
             </svg>
-            <div class="chrono-display">{{ clockMs() }}</div>
+            <div class="chrono-display">{{ clock() }}</div>
           </div>
           <div class="chrono-meta">
             <span>{{ utcOffset() }}</span>
@@ -248,50 +248,129 @@
       <!-- RIGHT COLUMN -->
       <div class="hud-col col-right">
 
+        <div class="panel-depth-layer">
+          <span class="depth-coord">54.321 N</span>
+          <span class="depth-coord">78.456 W</span>
+          <span class="depth-coord">SIG 0.98</span>
+          <span class="depth-coord">FRM 0x7A</span>
+          <span class="depth-coord">CHK 0xB4</span>
+          <span class="depth-coord">IDX 0x3F</span>
+        </div>
+
         <!-- Event Log -->
         <div class="panel event-panel">
-          <div class="panel-header">[ EVENT LOG ] <span class="header-extra">SEQ {{ eventIndex() + 1 }}/{{ eventLogEntries.length }}</span></div>
+          <div class="panel-header">[ EVENT LOG ] <span class="header-extra">LIVE</span></div>
           <div class="event-console">
-            @for (entry of visibleLogEntries(); track $index) {
-              <div class="event-line" [class.latest]="$index === visibleLogEntries().length - 1"
-                   [class.priority-success]="entry.priority === 'success'"
-                   [class.priority-info]="entry.priority === 'info'"
-                   [class.priority-warning]="entry.priority === 'warning'">
-                <span class="event-ts">{{ eventTs($index) }}</span>
-                <span class="event-icon" [class]="'ev-icon-' + entry.priority">{{ eventIcon(entry.priority) }}</span>
-                <span class="event-msg">{{ entry.msg }}</span>
-                @if ($index === visibleLogEntries().length - 1 && !showAllEvents()) {
-                  <span class="event-cursor">&#9612;</span>
-                }
+            @for (line of logLines(); track $index) {
+              <div class="event-line" [class.event-glitch]="$index === eventGlitchLine()">
+                <span class="event-ts">{{ line.substring(0, 8) }}</span>
+                <span class="ev-icon">&#9655;</span>
+                <span class="event-msg">{{ line.substring(9) }}</span>
               </div>
             }
           </div>
-          <div class="event-progress-track">
-            <div class="event-progress-fill" [style.width.%]="eventProgress()"></div>
+        </div>
+
+        <!-- BREACH PROTOCOL TERMINAL -->
+        <div class="panel breach-panel" [class.breach-glitch]="breachGlitchActive()" [class.trace-glitch]="traceGlitch()">
+          <div class="panel-header" style="color: rgba(255,92,224,0.6);">[ BREACH PROTOCOL ] <span class="header-extra">NETWATCH v.4.1</span></div>
+
+          <!-- NETWORK STATUS -->
+          <div class="breach-net-grid">
+            <div class="bn-item"><span class="bn-label">PROVIDER</span><span class="bn-value" [class.breach-warn]="breachProvider() !== 'NETWATCH'">{{ breachProvider() }}</span></div>
+            <div class="bn-item"><span class="bn-label">NODE</span><span class="bn-value">{{ breachNode() }}</span></div>
+            <div class="bn-item"><span class="bn-label">ACCESS</span><span class="bn-value" [class.breach-danger]="breachAccess() === 'RESTRICTED'" [class.breach-ok]="breachAccess() === 'AUTHORIZED'">{{ breachAccess() }}</span></div>
+            <div class="bn-item"><span class="bn-label">ENCRYPT</span><span class="bn-value">{{ breachEncryption() }}</span></div>
+          </div>
+
+          <div class="breach-sep"></div>
+
+          <!-- CONNECTION -->
+          <div class="breach-conn-row">
+            <span class="bc-label">PING</span>
+            <span class="bc-value">{{ ping() }}ms</span>
+            <span class="bc-label">LATENCY</span>
+            <span class="bc-value" [class.breach-warn]="breachLatency() > 22">{{ breachLatency() }}ms</span>
+            <span class="bc-label">SIGNAL</span>
+            <div class="bc-track"><div class="bc-fill signal-fill" [style.width.%]="signalPct()"></div></div>
+          </div>
+
+          <div class="breach-sep"></div>
+
+          <!-- ICE PROTOCOL -->
+          <div class="breach-ice-row">
+            <div class="ice-pulse-wrap">
+              <span class="ice-dot" [class.ice-active]="iceActive()"></span>
+              <span class="ice-label">ICE</span>
+            </div>
+            <div class="ice-pulse-wrap">
+              <span class="breach-dot" [class.breach-ready]="breachReady()"></span>
+              <span class="ice-label">BREACH</span>
+            </div>
+            <div class="ice-trace-wrap">
+              <span class="ice-label">TRACE</span>
+              <div class="bc-track"><div class="bc-fill trace-fill" [style.width.%]="traceLevel()"></div></div>
+              <span class="bc-value">{{ traceLevel().toFixed(0) }}%</span>
+            </div>
+            <div class="ice-bw-wrap">
+              <span class="ice-label">BLACKWALL</span>
+              <span class="bc-value" [class.breach-ok]="blackwallStatus() === 'ACTIVE'">{{ blackwallStatus() }}</span>
+            </div>
+          </div>
+
+          <div class="breach-sep"></div>
+
+          <!-- RESOURCES -->
+          <div class="breach-res-row">
+            <span class="bc-label">RAM</span>
+            <div class="bc-track"><div class="bc-fill ram-fill" [style.width.%]="ramPct()"></div></div>
+            <span class="bc-value">{{ ramPct() }}%</span>
+            <span class="bc-label" style="margin-left:6px;">PORTS</span>
+            <span class="bc-value">{{ ports() }}</span>
+            <span class="bc-label" style="margin-left:6px;">DAEMON</span>
+            <span class="bc-value" [class.breach-ok]="daemonStatus() === 'ACTIVE'" [class.breach-warn]="daemonStatus() === 'PARSING' || daemonStatus() === 'COMPILING'">{{ daemonStatus() }}</span>
+          </div>
+
+          <div class="breach-sep"></div>
+
+          <!-- DATA FLOW -->
+          <div class="data-flow-bar">
+            <div class="data-flow-inner"></div>
+          </div>
+
+          <!-- STATUS LINE -->
+          <div class="breach-status">
+            <span class="bs-dot" [class.bs-blink]="statusBlink()">&#9679;</span>
+            <span class="bs-text" [class.breach-glitch-word]="breachGlitchActive()">{{ breachGlitchActive() ? breachGlitchWord() : statusMsg() }}</span>
           </div>
         </div>
 
-        <!-- Cyberware -->
+        <!-- Implant Monitor -->
         <div class="panel cyber-panel">
-          <div class="panel-header">[ CYBERWARE INTERFACE ] <span class="header-extra">{{ activeCyberIdx() + 1 }}/{{ cyberwareList.length }} ACTIVE</span></div>
-          @for (ware of cyberwareList; track ware.name; let i = $index) {
-            <div class="cyber-item" [class.active]="i === activeCyberIdx()">
-              <span class="cyber-led"
-                    [class.led-green]="ware.status === 'ONLINE' || ware.status === 'CONNECTED'"
-                    [class.led-yellow]="ware.status === 'READY' || ware.status === 'STANDBY'"
-                    [class.led-magenta]="ware.status === 'ACTIVE'"></span>
-              <span class="cyber-bullet">{{ i === activeCyberIdx() ? '&#9655;' : '&#9654;' }}</span>
-              <div class="cyber-body">
-                <span class="cyber-category">{{ ware.category }}:</span>
-                <span class="cyber-name">{{ ware.name }}</span>
-                <span class="cyber-status"
-                      [class.online]="ware.status === 'ONLINE' || ware.status === 'CONNECTED'"
-                      [class.ready]="ware.status === 'READY'"
-                      [class.standby]="ware.status === 'STANDBY'"
-                      [class.active-status]="ware.status === 'ACTIVE'">{{ ware.status }}</span>
+          <div class="panel-header">[ IMPLANT MONITOR ] <span class="header-extra">8 ACTIVE</span></div>
+          <div class="implant-list">
+            @for (imp of implants(); track imp.name) {
+              <div class="implant-item">
+                <div class="implant-head">
+                  <span class="implant-led" [class.implant-online]="imp.status === 'ONLINE' || imp.status === 'ACTIVE' || imp.status === 'STABLE'"
+                        [class.implant-ready]="imp.status === 'READY'"
+                        [class.implant-standby]="imp.status === 'STANDBY' || imp.status === 'CHARGING'"
+                        [class.implant-sync]="imp.status.startsWith('SYNC')"></span>
+                  <span class="implant-name">{{ imp.name }}</span>
+                </div>
+                <div class="implant-bar">
+                  <div class="implant-track">
+                    <div class="implant-fill" [style.width.%]="imp.bar" [class.fill-cyan]="imp.bar >= 90" [class.fill-magenta]="imp.bar >= 70 && imp.bar < 90" [class.fill-yellow]="imp.bar < 70"></div>
+                  </div>
+                  <span class="implant-status" [class.stat-online]="imp.status === 'ONLINE' || imp.status === 'ACTIVE' || imp.status === 'STABLE'"
+                        [class.stat-ready]="imp.status === 'READY'"
+                        [class.stat-standby]="imp.status === 'STANDBY'"
+                        [class.stat-charging]="imp.status === 'CHARGING'"
+                        [class.stat-sync]="imp.status.startsWith('SYNC')">{{ imp.status }}</span>
+                </div>
               </div>
-            </div>
-          }
+            }
+          </div>
         </div>
 
         <!-- Scattered data: bandwidth -->
@@ -355,12 +434,12 @@
       <div class="slider-wrapper">
         <div class="slider-ticks">
           @for (t of sliderTicks; track t) {
-            <span class="slider-tick" [class.active]="time.hours$() >= t - 12 && time.hours$() < t + 12"></span>
+            <span class="slider-tick" [class.active]="dragHours$() >= t - 12 && dragHours$() < t + 12"></span>
           }
         </div>
-        <app-slider [value]="sliderValue()" [min]="0" [max]="240" [step]="0.1" (valueChange)="onSliderChange($event)" (dragStart)="onDragStart()" (dragEnd)="onDragEnd()"></app-slider>
+        <app-slider [value]="mappedHours()" [min]="0" [max]="240" [step]="0.1" (valueChange)="onSliderChange($event)" (dragStart)="onDragStart()" (dragEnd)="onDragEnd()"></app-slider>
       </div>
-      <span class="slider-value">CHRONO: {{ hoursDisplay() }} &#9654;</span>
+      <span class="cp-slider-label">CHRONO: {{ hoursDisplay() }} &#9654;</span>
       <button class="reset-btn" (click)="onResetTime()">&#9654; REAL TIME</button>
     </div>
   </div>
