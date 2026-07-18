@@ -1,18 +1,7 @@
 import { Component, inject, signal } from '@angular/core';
 import { SidebarComponent } from '../Sidebar/Sidebar';
 import { PowerScreenComponent } from '../PowerScreen/PowerScreen';
-import { SpotlightComponent } from '../Spotlight/Spotlight';
-import { PanelTelemetriaComponent } from '../PanelTelemetria/PanelTelemetria';
-import { GtaDesignComponent } from '../GtaDesign/GtaDesign';
-import { AmongUsDesignComponent } from '../AmongUsDesign/AmongUsDesign';
-import { SubnauticaDesignComponent } from '../SubnauticaDesign/SubnauticaDesign';
-import { FalloutDesignComponent } from '../FalloutDesign/FalloutDesign';
-import { CyberpunkDesignComponent } from '../CyberpunkDesign/CyberpunkDesign';
-import { AssassinsCreedDesignComponent } from '../AssassinsCreedDesign/AssassinsCreedDesign';
-import { FortniteDesignComponent } from '../FortniteDesign/FortniteDesign';
-import { DarkSoulsDesignComponent } from '../DarkSoulsDesign/DarkSoulsDesign';
-import { NoMansSkyDesignComponent } from '../NoMansSkyDesign/NoMansSkyDesign';
-import { GodOfWarDesignComponent } from '../GodOfWarDesign/GodOfWarDesign';
+import { WorldRendererComponent } from '../WorldRenderer/WorldRenderer';
 import { SessionService } from '../../services/session';
 
 @Component({
@@ -20,11 +9,7 @@ import { SessionService } from '../../services/session';
   standalone: true,
   imports: [
     SidebarComponent, PowerScreenComponent,
-    SpotlightComponent, PanelTelemetriaComponent,
-    GtaDesignComponent, AmongUsDesignComponent, SubnauticaDesignComponent,
-    FalloutDesignComponent, CyberpunkDesignComponent, AssassinsCreedDesignComponent,
-    FortniteDesignComponent, DarkSoulsDesignComponent, NoMansSkyDesignComponent,
-    GodOfWarDesignComponent,
+    WorldRendererComponent,
   ],
   templateUrl: './Dashboard.html',
   styleUrl: './Dashboard.css',

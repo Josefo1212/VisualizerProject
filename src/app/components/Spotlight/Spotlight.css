@@ -14,6 +14,7 @@
 /* ═══════ COMMON TRANSITION ═══════ */
 .sp-world,
 .sp-default {
+  opacity: 1;
   transition: opacity 0.25s ease, transform 0.25s ease;
 }
 
@@ -24,6 +25,7 @@
 }
 
 /* ═══════ WORLD PREVIEW ═══════ */
+
 .sp-world {
   position: relative;
   display: flex;

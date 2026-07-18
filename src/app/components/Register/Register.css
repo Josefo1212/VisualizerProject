@@ -59,19 +59,21 @@
   position: absolute;
   top: 0;
   left: 0;
+  width: 560px;
+  max-width: 100%;
   height: 100%;
   z-index: 3;
   display: flex;
   align-items: center;
   justify-content: flex-start;
   padding-left: 120px;
+  overflow: hidden;
 }
 
 .frost-border-glow {
   position: absolute;
-  width: 440px;
-  height: 620px;
-  border-radius: 16px;
+  inset: 0;
+  border-radius: 14px;
   background: linear-gradient(
     135deg,
     rgba(0, 200, 255, 0.4) 0%,
@@ -86,7 +88,7 @@
   background-size: 200% 200%;
   filter: blur(10px);
   animation: frostFlow 5s ease-in-out infinite alternate;
-  z-index: 1;
+  z-index: -1;
   pointer-events: none;
 }
 
@@ -113,19 +115,19 @@
   border: 2px solid rgba(0, 180, 255, 0.3);
   border-radius: 14px;
   box-shadow:
-    0 0 30px rgba(0, 150, 255, 0.12),
-    0 0 60px rgba(0, 120, 255, 0.06),
     inset 0 0 80px rgba(0, 0, 0, 0.5),
-    inset 0 0 20px rgba(0, 150, 255, 0.05),
-    0 20px 60px rgba(0, 0, 0, 0.8);
+    inset 0 0 20px rgba(0, 150, 255, 0.05);
   z-index: 2;
+  overflow: hidden;
+  isolation: isolate;
+  clip-path: inset(0 round 14px);
 }
 
 .frost-panel::before {
   content: '';
   position: absolute;
-  inset: -3px;
-  border-radius: 16px;
+  inset: 0;
+  border-radius: 14px;
   background: linear-gradient(
     135deg,
     rgba(0, 200, 255, 0.35) 0%, transparent 12%,
@@ -149,8 +151,8 @@
 .frost-panel::after {
   content: '';
   position: absolute;
-  inset: -4px;
-  border-radius: 16px;
+  inset: 0;
+  border-radius: 14px;
   background: linear-gradient(
     45deg,
     rgba(0, 180, 255, 0.15) 0%, transparent 8%,

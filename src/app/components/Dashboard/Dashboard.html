@@ -45,7 +45,7 @@
     </div>
 
     <!-- ── DASHBOARD LAYOUT (visible after power-on) ── -->
-    <div class="dashboard-layout" [class.visible]="isSystemOnline()">
+    <div class="dashboard-layout">
       <!-- ═══ STATUS BAR ═══ -->
       <div class="status-bar">
         <span class="sb-item">GAME CENTER</span>
@@ -69,51 +69,13 @@
 
       <!-- ═══ CENTER AREA ═══ -->
       <div class="center-area">
-
-        @if (selectedDesign() === 'gta') {
-          <app-gta-design class="design-view" />
-        } @else if (selectedDesign() === 'amongus') {
-          <app-among-us-design class="design-view" />
-        } @else if (selectedDesign() === 'subnautica') {
-          <app-subnautica-design class="design-view" />
-        } @else if (selectedDesign() === 'fallout') {
-          <app-fallout-design class="design-view" />
-        } @else if (selectedDesign() === 'cyberpunk') {
-          <app-cyberpunk-design class="design-view" />
-        } @else if (selectedDesign() === 'assassins-creed') {
-          <app-assassins-creed-design class="design-view" />
-        } @else if (selectedDesign() === 'fortnite') {
-          <app-fortnite-design class="design-view" />
-        } @else if (selectedDesign() === 'dark-souls') {
-          <app-dark-souls-design class="design-view" />
-        } @else if (selectedDesign() === 'no-mans-sky') {
-          <app-no-mans-sky-design class="design-view" />
-        } @else if (selectedDesign() === 'god-of-war') {
-          <app-god-of-war-design class="design-view" />
-        }
-
-        @else {
-          <!-- ═══ HUB LAYOUT ═══ -->
-          <div class="hub-layout">
-            <div class="hub-center">
-              <app-spotlight
-                [worldId]="hoveredWorld()"
-                [sessionActive]="session.sessionActive()"
-                (enterWorld)="onEnterWorld($event)"
-                (startSession)="onStartSession()"
-              />
-              <div class="scanline-sweep"></div>
-            </div>
-
-            <div class="telemetria-wrapper" [class.visible]="session.sessionActive()">
-              <app-panel-telemetria
-                [sessionActive]="session.sessionActive()"
-                [elapsedSeconds]="session.elapsedSeconds()"
-              />
-            </div>
-          </div>
-        }
-
+        <app-world-renderer
+          [worldId]="selectedDesign()"
+          [hoveredWorld]="hoveredWorld()"
+          [sessionActive]="session.sessionActive()"
+          (enterWorld)="onEnterWorld($event)"
+          (startSession)="onStartSession()"
+        />
       </div>
 
       <!-- ═══ FOOTER ═══ -->

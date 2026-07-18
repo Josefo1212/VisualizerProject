@@ -119,21 +119,12 @@
   font-size: 10px;
   line-height: 1.5;
   white-space: nowrap;
+  animation: logEnter 0.25s ease-out;
 }
 
-.log-line.log-enter {
-  animation: logSlideIn 0.25s ease-out both;
-}
-
-@keyframes logSlideIn {
-  from {
-    opacity: 0;
-    transform: translateX(8px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
+@keyframes logEnter {
+  from { opacity: 0; transform: translateX(8px); }
+  to   { opacity: 1; transform: translateX(0); }
 }
 
 .log-ts {

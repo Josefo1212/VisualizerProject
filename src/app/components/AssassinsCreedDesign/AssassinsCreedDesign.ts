@@ -1,4 +1,4 @@
-import { Component, computed, inject, signal, ChangeDetectionStrategy, OnDestroy } from '@angular/core';
+import { Component, computed, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { TimeEngineService } from '../../services/timeEngine';
 import { SessionService } from '../../services/session';
 import { SliderComponent } from '../Slider/Slider';
@@ -14,20 +14,15 @@ import { TimelineNode, NodeState, SyncSegment } from '../../interfaces/assassins
   styleUrl: './AssassinsCreedDesign.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AssassinsCreedDesignComponent implements OnDestroy {
+export class AssassinsCreedDesignComponent {
   readonly time = inject(TimeEngineService);
   private readonly session = inject(SessionService);
-
-  /* ─── High-precision clock ─── */
-  private readonly _now = signal<Date>(new Date());
-  private readonly _clockInterval: ReturnType<typeof setInterval>;
 
   readonly clockDisplay = computed(() => {
     const h = cycleHour(this.time.hours$());
     const m = this.time.minutes$();
     const s = this.time.seconds$();
-    const ms = this._now().getMilliseconds().toString().padStart(3, '0');
-    return `${padTime(h)}:${padTime(m)}:${padTime(s)}.${ms}`;
+    return `${padTime(h)}:${padTime(m)}:${padTime(s)}`;
   });
 
   /* ─── Genetic timeline ─── */
@@ -55,7 +50,9 @@ export class AssassinsCreedDesignComponent implements OnDestroy {
   });
 
   /* ─── Sync slider ─── */
-  readonly sliderValue = signal<number>(0);
+  readonly sliderValue = signal<number>(
+    Math.max(0, Math.min(24, this.time.hours$() + this.time.minutes$() / 60))
+  );
   readonly isDragging = signal(false);
 
   readonly syncIndex = computed(() => {
@@ -78,17 +75,6 @@ export class AssassinsCreedDesignComponent implements OnDestroy {
 
   constructor() {
     this.session.addLog('ASSASSINS CREED WORLD INITIALIZED', 'success');
-    this.syncFromTime();
-    this._clockInterval = setInterval(() => this._now.set(new Date()), 50);
-  }
-
-  ngOnDestroy(): void {
-    clearInterval(this._clockInterval);
-  }
-
-  private syncFromTime(): void {
-    const h = this.time.hours$() + this.time.minutes$() / 60;
-    this.sliderValue.set(Math.max(0, Math.min(24, h)));
   }
 
   onSliderChange(v: number): void {
@@ -106,6 +92,8 @@ export class AssassinsCreedDesignComponent implements OnDestroy {
 
   onResetTime(): void {
     this.time.resetToRealTime();
-    this.syncFromTime();
+    this.sliderValue.set(
+      Math.max(0, Math.min(24, this.time.hours$() + this.time.minutes$() / 60))
+    );
   }
 }

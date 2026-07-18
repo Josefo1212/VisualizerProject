@@ -37,10 +37,12 @@ export class SpotlightComponent {
 
   readonly transitioning = signal(false);
   private transitionTimer: ReturnType<typeof setTimeout> | null = null;
+  private initial = true;
 
   constructor() {
     effect(() => {
       this.worldId();
+      if (this.initial) { this.initial = false; return; }
       this.transitioning.set(true);
       if (this.transitionTimer) clearTimeout(this.transitionTimer);
       this.transitionTimer = setTimeout(() => this.transitioning.set(false), 300);
