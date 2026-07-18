@@ -3,6 +3,7 @@ import { SidebarComponent } from '../Sidebar/Sidebar';
 import { PowerScreenComponent } from '../PowerScreen/PowerScreen';
 import { WorldRendererComponent } from '../WorldRenderer/WorldRenderer';
 import { SessionService } from '../../services/session';
+import { AudioService } from '../../services/audio';
 
 @Component({
   selector: 'app-dashboard',
@@ -16,6 +17,7 @@ import { SessionService } from '../../services/session';
 })
 export class DashboardComponent {
   readonly session = inject(SessionService);
+  private readonly audio = inject(AudioService);
 
   readonly isSystemOnline = signal(false);
   readonly selectedDesign = signal<string>('');
@@ -76,6 +78,7 @@ export class DashboardComponent {
 
   onDesignChange(id: string): void {
     this.selectedDesign.set(id);
+    this.audio.playWorldSound(id);
     if (this.session.sessionActive()) {
       const label = id.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
       this.session.addLog(`SELECTED: ${label}`, 'info');
@@ -91,6 +94,7 @@ export class DashboardComponent {
 
   onEnterWorld(id: string): void {
     this.selectedDesign.set(id);
+    this.audio.playWorldSound(id);
     if (this.session.sessionActive()) {
       const label = id.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
       this.session.addLog(`ENTERING WORLD: ${label}`, 'info');
