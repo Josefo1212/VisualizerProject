@@ -12,6 +12,21 @@
   <div class="lens-glow" [class.visible]="isSystemOnline()"></div>
   <div class="vignette" [class.visible]="isSystemOnline()"></div>
 
+  <!-- ═══ ANIMUS VERTICAL LINES ═══ -->
+  <svg class="vertical-lines" [class.visible]="isSystemOnline()" width="100%" height="100%" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+    <line x1="4%" y1="0" x2="4%" y2="100%" stroke="rgba(0,229,255,0.06)" stroke-width="1" />
+    <line x1="12%" y1="0" x2="12%" y2="100%" stroke="rgba(255,255,255,0.04)" stroke-width="1" />
+    <line x1="20%" y1="0" x2="20%" y2="100%" stroke="rgba(0,229,255,0.05)" stroke-width="1" />
+    <line x1="30%" y1="0" x2="30%" y2="100%" stroke="rgba(255,255,255,0.03)" stroke-width="1" />
+    <line x1="40%" y1="0" x2="40%" y2="100%" stroke="rgba(0,229,255,0.06)" stroke-width="1" />
+    <line x1="50%" y1="0" x2="50%" y2="100%" stroke="rgba(255,255,255,0.04)" stroke-width="1" />
+    <line x1="60%" y1="0" x2="60%" y2="100%" stroke="rgba(0,229,255,0.05)" stroke-width="1" />
+    <line x1="70%" y1="0" x2="70%" y2="100%" stroke="rgba(255,255,255,0.03)" stroke-width="1" />
+    <line x1="80%" y1="0" x2="80%" y2="100%" stroke="rgba(0,229,255,0.06)" stroke-width="1" />
+    <line x1="90%" y1="0" x2="90%" y2="100%" stroke="rgba(255,255,255,0.04)" stroke-width="1" />
+    <line x1="96%" y1="0" x2="96%" y2="100%" stroke="rgba(0,229,255,0.05)" stroke-width="1" />
+  </svg>
+
   <!-- ═══ DUST PARTICLES ═══ -->
   @for (p of particles; track p.id) {
     <div class="dust-particle"

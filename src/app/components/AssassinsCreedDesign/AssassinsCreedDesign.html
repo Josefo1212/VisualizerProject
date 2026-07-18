@@ -1,11 +1,42 @@
-<div class="animus-container" [class.interference]="isDragging()">
+<div class="animus-container" [class.interference]="isDragging()" [class.glitching]="glitchActive()">
+
+  <!-- ─── Animus Background ─── -->
+  <div class="animus-bg">
+    <svg class="animus-bg-svg" width="100%" height="100%" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+      <line class="v-line" x1="3%" y1="0" x2="3%" y2="100%"/>
+      <line class="v-line" x1="9%" y1="0" x2="9%" y2="100%"/>
+      <line class="v-line" x1="15%" y1="0" x2="15%" y2="100%"/>
+      <line class="v-line" x1="21%" y1="0" x2="21%" y2="100%"/>
+      <line class="v-line" x1="28%" y1="0" x2="28%" y2="100%"/>
+      <line class="v-line" x1="35%" y1="0" x2="35%" y2="100%"/>
+      <line class="v-line" x1="42%" y1="0" x2="42%" y2="100%"/>
+      <line class="v-line" x1="49%" y1="0" x2="49%" y2="100%"/>
+      <line class="v-line" x1="56%" y1="0" x2="56%" y2="100%"/>
+      <line class="v-line" x1="63%" y1="0" x2="63%" y2="100%"/>
+      <line class="v-line" x1="70%" y1="0" x2="70%" y2="100%"/>
+      <line class="v-line" x1="77%" y1="0" x2="77%" y2="100%"/>
+      <line class="v-line" x1="84%" y1="0" x2="84%" y2="100%"/>
+      <line class="v-line" x1="91%" y1="0" x2="91%" y2="100%"/>
+      <line class="v-line" x1="97%" y1="0" x2="97%" y2="100%"/>
+
+      <rect class="bg-part p1" x="5%" y="-20" width="2" height="6" fill="#00e5ff" />
+      <circle class="bg-part p2" cx="18%" cy="-10" r="1.5" fill="#00e5ff" />
+      <rect class="bg-part p3" x="30%" y="-20" width="3" height="3" fill="#ffffff" />
+      <rect class="bg-part p4" x="42%" y="-20" width="1.5" height="5" fill="#00e5ff" />
+      <circle class="bg-part p5" cx="55%" cy="-10" r="2" fill="#00e5ff" />
+      <rect class="bg-part p6" x="68%" y="-20" width="2.5" height="4" fill="#ffffff" />
+      <circle class="bg-part p7" cx="80%" cy="-10" r="1" fill="#00e5ff" />
+      <rect class="bg-part p8" x="92%" y="-20" width="2" height="7" fill="#00e5ff" />
+    </svg>
+  </div>
+
   <!-- Row 1: Status bar -->
   <div class="status-bar">
     <span class="status-tag">ANIMUS 2.0</span>
     <span class="status-sep">|</span>
     <span class="status-tag">SYNC INDEX: {{ syncIndex() }}%</span>
     <span class="status-sep">|</span>
-    <span class="status-tag">MEMORY TRAVEL</span>
+    <span class="status-tag">{{ sequenceInfo() }}</span>
     <span class="status-pulse">●</span>
   </div>
 
@@ -13,24 +44,21 @@
   <div class="timeline-section">
     <div class="timeline-title">GENETIC MEMORY TIMELINE</div>
     <div class="timeline-track-container">
-      <!-- Guia lines -->
       <div class="timeline-guides">
         @for (node of nodeStates(); track node.id) {
           <div class="guide-line" [class.active]="node.active" [style.left.%]="node.pos * 100"></div>
         }
       </div>
-      <!-- Progress rail -->
       <div class="timeline-rail">
         <div class="rail-fill" [style.width.%]="timeProgress() * 100"></div>
       </div>
-      <!-- Nodes -->
       <div class="timeline-nodes">
         @for (node of nodeStates(); track node.id) {
-          <div class="node-wrapper" [style.left.%]="node.pos * 100">
+          <div class="node-wrapper" [style.left.%]="node.pos * 100" [class.is-glitching]="node.glitching || glitchActive()">
             <div
               class="timeline-node"
               [class.active]="node.active"
-              [class.glitching]="node.glitching"
+              [class.glitching]="node.glitching || glitchActive()"
             >
               <span class="node-bracket">[</span>
               <span class="node-icon"></span>
@@ -41,101 +69,64 @@
           </div>
         }
       </div>
-      <!-- Cursor -->
-      <div class="cursor-line" [style.left.%]="timeProgress() * 100">
-        <div class="cursor-dot"></div>
+      <div class="cursor-line" [style.left.%]="timeProgress() * 100" [class.glitching]="glitchActive()">
+        <div class="cursor-dot" [class.glitching]="glitchActive()"></div>
       </div>
     </div>
   </div>
 
-  <!-- Row 3: Sync panel -->
+  <!-- Row 3: Sync panel + Clock -->
   <div class="sync-panel">
-    <div class="apple-section">
-      <svg class="apple-eden" viewBox="0 0 100 120" xmlns="http://www.w3.org/2000/svg">
-        <defs>
-          <radialGradient id="metal-sphere" cx="38%" cy="32%" r="65%">
-            <stop offset="0%" stop-color="#fff3cc" />
-            <stop offset="15%" stop-color="#efc966" />
-            <stop offset="40%" stop-color="#c9942e" />
-            <stop offset="70%" stop-color="#8a6f27" />
-            <stop offset="100%" stop-color="#4a3a10" />
-          </radialGradient>
-          <filter id="isu-glow" x="-50%" y="-50%" width="200%" height="200%">
-            <feGaussianBlur stdDeviation="2" result="blur" />
-            <feMerge>
-              <feMergeNode in="blur" />
-              <feMergeNode in="SourceGraphic" />
-            </feMerge>
-          </filter>
-          <filter id="isu-glow-soft" x="-50%" y="-50%" width="200%" height="200%">
-            <feGaussianBlur stdDeviation="1.2" result="blur" />
-            <feMerge>
-              <feMergeNode in="blur" />
-              <feMergeNode in="SourceGraphic" />
-            </feMerge>
-          </filter>
-        </defs>
-
-        <circle cx="50" cy="50" r="38" fill="none" stroke="#ffdf6d" stroke-width="0.6" opacity="0" class="pulse-ring-1" />
-        <circle cx="50" cy="50" r="38" fill="none" stroke="#ffdf6d" stroke-width="0.4" opacity="0" class="pulse-ring-2" />
-
-        <circle cx="50" cy="50" r="35" fill="url(#metal-sphere)" />
-
-        <path d="M47 15 Q54 16 56 20 Q60 28 58 34 Q56 38 52 40 Q48 38 46 34 Q44 28 46 22 Z" fill="#efc966" opacity="0.7" />
-        <path d="M48 17 Q52 18 54 22 Q55 28 53 32 Q50 34 48 32 Q46 28 47 22 Z" fill="#fff3cc" opacity="0.4" />
-
-        <circle cx="50" cy="50" r="28" fill="none" stroke="#ffdf6d" stroke-width="1" opacity="0.55" filter="url(#isu-glow)" />
-        <circle cx="50" cy="50" r="19" fill="none" stroke="#ffdf6d" stroke-width="0.8" opacity="0.45" filter="url(#isu-glow-soft)" />
-        <circle cx="50" cy="50" r="10" fill="none" stroke="#ffdf6d" stroke-width="0.6" opacity="0.35" filter="url(#isu-glow-soft)" />
-
-        <path d="M 24 28 Q 35 35 50 50 Q 65 65 76 72" fill="none" stroke="#ffdf6d" stroke-width="1" opacity="0.5" filter="url(#isu-glow)" />
-        <path d="M 76 28 Q 65 35 50 50 Q 35 65 24 72" fill="none" stroke="#ffdf6d" stroke-width="1" opacity="0.5" filter="url(#isu-glow)" />
-
-        <path d="M 18 50 Q 32 40 50 40 Q 68 40 82 50" fill="none" stroke="#ffdf6d" stroke-width="0.7" opacity="0.35" filter="url(#isu-glow-soft)" />
-        <path d="M 18 50 Q 32 60 50 60 Q 68 60 82 50" fill="none" stroke="#ffdf6d" stroke-width="0.7" opacity="0.35" filter="url(#isu-glow-soft)" />
-
-        <path d="M 50 22 A 28 28 0 0 1 70 34" fill="none" stroke="#ffdf6d" stroke-width="0.6" opacity="0.4" filter="url(#isu-glow-soft)" />
-        <path d="M 30 34 A 19 19 0 0 1 50 31" fill="none" stroke="#ffdf6d" stroke-width="0.6" opacity="0.4" filter="url(#isu-glow-soft)" />
-        <path d="M 70 66 A 19 19 0 0 0 50 69" fill="none" stroke="#ffdf6d" stroke-width="0.6" opacity="0.4" filter="url(#isu-glow-soft)" />
-        <path d="M 70 34 A 28 28 0 0 0 78 50" fill="none" stroke="#ffdf6d" stroke-width="0.6" opacity="0.4" filter="url(#isu-glow-soft)" />
-
-        <circle cx="50" cy="50" r="1.8" fill="#fff3cc" filter="url(#isu-glow)" />
-        <circle cx="50" cy="22" r="1.5" fill="#ffdf6d" opacity="0.8" filter="url(#isu-glow)" />
-        <circle cx="50" cy="78" r="1.5" fill="#ffdf6d" opacity="0.8" filter="url(#isu-glow)" />
-        <circle cx="22" cy="50" r="1.5" fill="#ffdf6d" opacity="0.8" filter="url(#isu-glow)" />
-        <circle cx="78" cy="50" r="1.5" fill="#ffdf6d" opacity="0.8" filter="url(#isu-glow)" />
-        <circle cx="31" cy="31" r="1.2" fill="#ffdf6d" opacity="0.6" filter="url(#isu-glow-soft)" />
-        <circle cx="69" cy="31" r="1.2" fill="#ffdf6d" opacity="0.6" filter="url(#isu-glow-soft)" />
-        <circle cx="31" cy="69" r="1.2" fill="#ffdf6d" opacity="0.6" filter="url(#isu-glow-soft)" />
-        <circle cx="69" cy="69" r="1.2" fill="#ffdf6d" opacity="0.6" filter="url(#isu-glow-soft)" />
-        <circle cx="40" cy="40" r="1" fill="#ffdf6d" opacity="0.5" filter="url(#isu-glow-soft)" />
-        <circle cx="60" cy="40" r="1" fill="#ffdf6d" opacity="0.5" filter="url(#isu-glow-soft)" />
-        <circle cx="40" cy="60" r="1" fill="#ffdf6d" opacity="0.5" filter="url(#isu-glow-soft)" />
-        <circle cx="60" cy="60" r="1" fill="#ffdf6d" opacity="0.5" filter="url(#isu-glow-soft)" />
-
-        <polygon points="50,47 53,50 50,53 47,50" fill="#fff3cc" filter="url(#isu-glow)" opacity="0.9" />
-      </svg>
+    <div class="panel-left">
+      <!-- DNA MEMORY section -->
+      <div class="dna-memory-section">
+        <div class="dna-label">DNA MEMORY</div>
+        <div class="dna-value">{{ dnaMemory() }}</div>
+        <div class="dna-subject">{{ subjectInfo }}</div>
+      </div>
+      <!-- Synchronization indicators -->
+      <div class="sync-indicators">
+        <div class="indicator-row">
+          <span class="ind-label">SYNCHRONIZATION</span>
+          <div class="ind-bar-container">
+            <div class="ind-bar-fill" [style.width.%]="syncIndex()"></div>
+          </div>
+          <span class="ind-value" [class.low]="isLowSync()">{{ syncIndex() }}%</span>
+        </div>
+        <div class="indicator-row">
+          <span class="ind-label">MEMORY STABILITY</span>
+          <div class="ind-bar-container">
+            <div class="ind-bar-fill" [style.width.%]="syncIndex()"></div>
+          </div>
+          <span class="ind-value">{{ syncIndex() }}%</span>
+        </div>
+        <div class="indicator-row">
+          <span class="ind-label">DNA INTEGRITY</span>
+          <div class="ind-bar-container">
+            <div class="ind-bar-fill" [style.width.%]="dnaIntegrity()"></div>
+          </div>
+          <span class="ind-value">{{ dnaIntegrity() }}%</span>
+        </div>
+        <div class="indicator-row">
+          <span class="ind-label">RECONSTRUCTION</span>
+          <div class="ind-bar-container">
+            <div class="ind-bar-fill" [style.width.%]="reconstruction()"></div>
+          </div>
+          <span class="ind-value">{{ reconstruction() }}%</span>
+        </div>
+        <div class="indicator-row status-row">
+          <span class="ind-label">SUBJECT STATUS</span>
+          <span class="status-indicator stable">{{ subjectStatus() }}</span>
+        </div>
+      </div>
     </div>
+
+    <!-- Clock -->
     <div class="clock-section">
-      <div class="clock-title">CICRAS  •  ANIMUS</div>
-      <div class="clock-value">{{ clockDisplay() }}</div>
-      <div class="clock-sub">SYNC CYCLE</div>
-    </div>
-    <div class="sync-index-section">
-      <div class="sync-header">
-        <span class="sync-title">SYNC INDEX</span>
-        <span class="sync-value">{{ syncIndex() }}%</span>
-      </div>
-      <div class="sync-segments">
-        @for (seg of syncSegments(); track $index) {
-          <div
-            class="sync-seg"
-            [class.active]="seg.active"
-            [class.glitch]="seg.glitch"
-          ></div>
-        }
-      </div>
-      <div class="sync-sub">MEMORY STABILITY</div>
+      <img src="/Assassin%27sCreed/logoCredo.png" alt="" class="credo-watermark" />
+      <div class="clock-sequence">{{ sequenceInfo() }}</div>
+      <div class="clock-value" [class.glitching]="glitchActive()">{{ clockDisplay() }}</div>
+      <div class="clock-cycle">SYNC CYCLE</div>
     </div>
   </div>
 
@@ -154,10 +145,4 @@
     </div>
   </div>
 
-  <!-- Background particles -->
-  <div class="particles">
-    @for (p of [1,2,3,4,5,6,7,8]; track p) {
-      <div class="particle" [style.animation-delay.s]="p * 0.4" [style.left.%]="p * 12.5"></div>
-    }
-  </div>
 </div>

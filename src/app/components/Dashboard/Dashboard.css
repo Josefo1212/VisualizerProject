@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
+
 :host {
   display: block;
   width: 100vw;
@@ -5,7 +7,6 @@
   overflow: hidden;
 }
 
-/* ─── Power-screen → Dashboard fade ─── */
 .power-overlay {
   position: fixed;
   inset: 0;
@@ -36,15 +37,14 @@
   width: 100%;
   height: 100%;
   display: flex;
-  background: #161618;
-  transition: background 2s ease;
+  background: #080c14;
 }
 
 .dashboard.online {
-  background: #050505;
+  background: #080c14;
 }
 
-/* ═══════ VIDEO ═══════ */
+/* ═══════ VIDEO BACKGROUND (kept for compatibility) ═══════ */
 .bg-video {
   position: fixed;
   inset: 0;
@@ -59,7 +59,7 @@
   opacity: 1;
 }
 
-/* ═══════ OVERLAYS ═══════ */
+/* ═══════ ANIMUS BACKGROUND ═══════ */
 .noise-overlay {
   position: fixed;
   inset: 0;
@@ -69,7 +69,7 @@
   transition: opacity 2s ease;
 }
 .noise-overlay.visible {
-  opacity: 0.025;
+  opacity: 0.018;
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   mix-blend-mode: overlay;
 }
@@ -84,30 +84,36 @@
   background: repeating-linear-gradient(
     0deg,
     transparent 0px,
-    transparent 3px,
-    rgba(0, 0, 0, 0.04) 3px,
-    rgba(0, 0, 0, 0.04) 4px
+    transparent 2px,
+    rgba(0, 229, 255, 0.02) 2px,
+    rgba(0, 229, 255, 0.02) 3px
   );
 }
 .scanlines.visible {
   opacity: 1;
 }
 
-.lens-glow {
-  position: fixed;
-  inset: 0;
-  z-index: 1;
+/* Animated horizontal scan sweep */
+.scanlines::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: -10%;
+  height: 8px;
+  background: linear-gradient(180deg, transparent 0%, rgba(0, 229, 255, 0.08) 40%, rgba(0, 229, 255, 0.15) 50%, rgba(0, 229, 255, 0.08) 60%, transparent 100%);
+  animation: scanSweep 6s ease-in-out infinite;
   pointer-events: none;
-  opacity: 0;
-  transition: opacity 2s ease;
-  background: radial-gradient(
-    ellipse 55% 45% at 50% 50%,
-    rgba(0, 243, 255, 0.006) 0%,
-    transparent 70%
-  );
 }
-.lens-glow.visible {
-  opacity: 1;
+
+@keyframes scanSweep {
+  0%   { transform: translateY(0); }
+  50%  { transform: translateY(110vh); }
+  100% { transform: translateY(0); }
+}
+
+.lens-glow {
+  display: none;
 }
 
 .vignette {
@@ -117,21 +123,42 @@
   pointer-events: none;
   opacity: 0;
   transition: opacity 2s ease;
-  background: radial-gradient(ellipse at center, transparent 55%, rgba(0, 0, 0, 0.2) 100%);
+  background: radial-gradient(ellipse at center, transparent 50%, rgba(0, 0, 0, 0.5) 100%);
 }
 .vignette.visible {
   opacity: 1;
 }
 
-/* ═══════ DUST PARTICLES ═══════ */
+/* ═══════ ANIMUS VERTICAL LINES ═══════ */
+.vertical-lines {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  opacity: 0.4;
+  transition: opacity 2s ease;
+}
+.vertical-lines.visible {
+  opacity: 0.5;
+}
+
+/* ═══════ DUST PARTICLES (restyled for Animus) ═══════ */
 .dust-particle {
   position: fixed;
   z-index: 1;
   pointer-events: none;
-  border-radius: 50%;
-  background: rgba(0, 243, 255, 0.2);
-  animation: dustFloat var(--d-dur, 22s) ease-in-out infinite;
+  border-radius: 1px;
+  background: rgba(255, 255, 255, 0.12);
+  opacity: 0;
+  animation: animusFloat var(--d-dur, 18s) ease-in-out infinite;
   animation-delay: var(--d-delay, 0s);
+}
+
+@keyframes animusFloat {
+  0%   { transform: translateY(0) translateX(0); opacity: 0; }
+  5%   { opacity: 0.5; }
+  90%  { opacity: 0.3; }
+  100% { transform: translateY(-105vh) translateX(10px); opacity: 0; }
 }
 
 /* ═══════ MAIN CONTENT ═══════ */
@@ -144,48 +171,49 @@
   overflow: hidden;
 }
 
-/* ═══════ STATUS BAR ═══════ */
+/* ═══════ STATUS BAR (Animus style) ═══════ */
 .status-bar {
   flex-shrink: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
-  padding: 5px 16px;
+  gap: 14px;
+  padding: 6px 20px;
+  /* Subtle top border line */
+  border-bottom: 1px solid rgba(0, 229, 255, 0.06);
 }
 
 .sb-item {
-  font-family: 'Courier New', monospace;
+  font-family: 'Share Tech Mono', 'Courier New', monospace;
   font-size: 10px;
-  letter-spacing: 2px;
-  color: rgba(200, 200, 220, 0.85);
+  letter-spacing: 3px;
+  color: rgba(200, 210, 230, 0.7);
   text-transform: uppercase;
 }
 
 .sb-val {
-  color: rgba(0, 243, 255, 0.92);
-  font-weight: 700;
+  color: rgba(0, 229, 255, 0.85);
 }
 
 .sb-online {
-  color: rgba(48, 209, 88, 0.92);
+  color: rgba(0, 229, 255, 0.85);
 }
 
 .sb-dot {
   display: inline-block;
   width: 4px;
   height: 4px;
-  border-radius: 50%;
-  background: #30d158;
-  margin-right: 4px;
+  background: #00e5ff;
+  margin-right: 5px;
   vertical-align: middle;
-  animation: dotPulse 2.5s ease-in-out infinite;
+  animation: dotPulse 2s ease-in-out infinite;
+  box-shadow: 0 0 4px #00e5ff;
 }
 
 .sb-sep {
   width: 1px;
   height: 10px;
-  background: rgba(0, 243, 255, 0.15);
+  background: rgba(0, 229, 255, 0.12);
 }
 
 /* ═══════ CENTER AREA ═══════ */
@@ -195,48 +223,41 @@
   overflow: hidden;
 }
 
-/* ═══════ FOOTER ═══════ */
+/* ═══════ FOOTER (Animus style) ═══════ */
 .footer {
   flex-shrink: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
-  padding: 5px 16px;
+  gap: 14px;
+  padding: 6px 20px;
+  border-top: 1px solid rgba(0, 229, 255, 0.06);
 }
 
 .fh-item {
-  font-family: 'Courier New', monospace;
+  font-family: 'Share Tech Mono', 'Courier New', monospace;
   font-size: 10px;
-  letter-spacing: 1.5px;
-  color: rgba(200, 200, 220, 0.7);
+  letter-spacing: 2.5px;
+  color: rgba(200, 210, 230, 0.55);
   text-transform: uppercase;
 }
 
 .fh-v {
-  color: rgba(0, 243, 255, 0.85);
-  font-weight: 700;
+  color: rgba(0, 229, 255, 0.75);
 }
 
 .fh-online {
-  color: rgba(48, 209, 88, 0.8);
+  color: rgba(0, 229, 255, 0.75);
 }
 
 .fh-sep {
   width: 1px;
   height: 10px;
-  background: rgba(0, 243, 255, 0.1);
+  background: rgba(0, 229, 255, 0.08);
 }
 
 /* ═══════ ANIMATIONS ═══════ */
 @keyframes dotPulse {
   0%, 100% { opacity: 1; }
   50% { opacity: 0.3; }
-}
-@keyframes dustFloat {
-  0% { transform: translateY(0) translateX(0); }
-  25% { transform: translateY(-20vh) translateX(6px); }
-  50% { transform: translateY(-45vh) translateX(-4px); }
-  75% { transform: translateY(-70vh) translateX(8px); }
-  100% { transform: translateY(-95vh) translateX(-2px); opacity: 0; }
 }
